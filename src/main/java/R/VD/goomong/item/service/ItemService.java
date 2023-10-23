@@ -6,27 +6,35 @@ import R.VD.goomong.item.dto.request.RequestItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.repository.ItemCategoryRepository;
 import R.VD.goomong.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ImageService imageService;
+    private final ItemCategoryRepository categoryRepository;
 
     // 아이템 저장
-    public Item save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
+    public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
         Item item = itemDto.toEntity();
         List<Image> imageList = imageService.saveImage(multipartFiles);
+        List<ItemCategory> categories = new ArrayList<>();
+        for (Long categoryId : itemDto.getItemCategories()) {
+            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
+            findCategory.ifPresent(categories::add);
+        }
+
+        item.setItemCategories(categories);
         item.setThumbNailList(imageList);
-        return itemRepository.save(item);
+        itemRepository.save(item);
     }
 
     // 아이템 찾기

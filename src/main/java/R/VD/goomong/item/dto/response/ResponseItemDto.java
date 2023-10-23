@@ -6,9 +6,11 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public class ResponseItemDto {
     private Long id;//DB 인덱스
     private String title;//제목

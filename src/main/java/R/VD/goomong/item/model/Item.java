@@ -49,4 +49,18 @@ public class Item {
     public void setThumbNailList(List<Image> thumbNailList) {
         this.thumbNailList = thumbNailList;
     }
+
+    public void setItemCategories(List<ItemCategory> itemCategories) {
+        this.itemCategories = itemCategories;
+    }
+
+    // 평점 계산
+    public void calculateRate() {
+        Float result = (float) 0;
+        for (Review review : reviewList) {
+            result += review.getRate();
+        }
+
+        rate = (result / reviewList.size());
+    }
 }

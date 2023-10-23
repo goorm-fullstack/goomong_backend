@@ -18,4 +18,9 @@ public class MemberService {
     public Member findOneMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("없는 회원입니다."));
     }
+    
+    // 테스트용 코드
+    public void save(Member member) {
+        memberRepository.save(member);
+    }
 }

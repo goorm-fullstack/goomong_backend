@@ -19,10 +19,9 @@ spring:
     jdbc:
       initialize-schema: always
 
-
 File:
   upload:
-    path: "./"
+    path: "C:\\upload"
 
 server:
   error:

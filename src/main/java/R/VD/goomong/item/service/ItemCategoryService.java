@@ -40,4 +40,8 @@ public class ItemCategoryService {
     public List<ResponseItemCategoryDto> findAll() {
         return itemCategoryRepository.findAll().stream().map(ResponseItemCategoryDto::new).toList();
     }
+
+    public List<ResponseItemCategoryDto> findAllByLevelOne() {
+        return itemCategoryRepository.findAllByLevel(1).stream().map(ResponseItemCategoryDto::new).toList();
+    }
 }

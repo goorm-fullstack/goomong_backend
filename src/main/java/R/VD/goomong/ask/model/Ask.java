@@ -3,13 +3,19 @@ package R.VD.goomong.ask.model;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Ask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +35,16 @@ public class Ask {
 
     @OneToMany
     private List<Ask> asks = new ArrayList<>();//답변 내용들
+
+    public void setParentAsk(Ask ask) {
+        this.ask = ask;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

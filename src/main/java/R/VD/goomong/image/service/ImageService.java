@@ -28,18 +28,23 @@ public class ImageService {
     @Value("${File.upload.path}")
     private String path;
 
-
     // 이미지 저장 로직 및 DB에 관련 내용 반영
     public List<Image> saveImage(MultipartFile[] fileList) {
         List<Image> result = new ArrayList<>();
+        if(fileList == null) {
+            return null;
+        }
         for (MultipartFile file : fileList) {
+            if (file.isEmpty()) {
+                return null;
+            }
             String fileName = file.getOriginalFilename();
             String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String newPath = path + date;
+            String newPath = path + "\\image\\" + date;
             File Folder = new File(newPath);
             if (!Folder.exists()) {
                 try {
-                    Folder.mkdir();
+                    Folder.mkdirs();
                 } catch (Exception e) {
                     throw new RuntimeException("폴더를 생성할 수 없습니다.");
                 }
