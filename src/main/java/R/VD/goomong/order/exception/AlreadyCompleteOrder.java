@@ -1,4 +1,4 @@
-package goomong.order.exception;
+package R.VD.goomong.order.exception;
 
 public class AlreadyCompleteOrder extends RuntimeException {
     public AlreadyCompleteOrder() {

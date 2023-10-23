@@ -1,4 +1,4 @@
-package goomong.image.model;
+package R.VD.goomong.image.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

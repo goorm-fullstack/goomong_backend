@@ -1,15 +1,15 @@
-package goomong.review.service;
+package R.VD.goomong.review.service;
 
-import goomong.image.model.Image;
-import goomong.image.service.ImageService;
-import goomong.item.exception.NotFoundItem;
-import goomong.item.model.Item;
-import goomong.item.repository.ItemRepository;
-import goomong.review.dto.request.RequestReviewDto;
-import goomong.review.dto.response.ResponseReviewDto;
-import goomong.review.exception.NotFoundReview;
-import goomong.review.model.Review;
-import goomong.review.repository.ReviewRepository;
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.image.service.ImageService;
+import R.VD.goomong.item.exception.NotFoundItem;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.repository.ItemRepository;
+import R.VD.goomong.review.dto.request.RequestReviewDto;
+import R.VD.goomong.review.dto.response.ResponseReviewDto;
+import R.VD.goomong.review.exception.NotFoundReview;
+import R.VD.goomong.review.model.Review;
+import R.VD.goomong.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,10 +1,10 @@
-package goomong.order.dto.response;
+package R.VD.goomong.order.dto.response;
 
-import goomong.global.model.Address;
-import goomong.item.model.Item;
-import goomong.member.model.Member;
-import goomong.order.model.Order;
-import goomong.order.model.Status;
+import R.VD.goomong.global.model.Address;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.order.model.Order;
+import R.VD.goomong.order.model.Status;
 import lombok.Data;
 
 import java.util.List;

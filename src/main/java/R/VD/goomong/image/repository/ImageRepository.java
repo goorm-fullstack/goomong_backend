@@ -1,6 +1,6 @@
-package goomong.image.repository;
+package R.VD.goomong.image.repository;
 
-import goomong.image.model.Image;
+import R.VD.goomong.image.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

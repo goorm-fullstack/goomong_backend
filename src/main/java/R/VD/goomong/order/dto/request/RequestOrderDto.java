@@ -1,9 +1,9 @@
-package goomong.order.dto.request;
+package R.VD.goomong.order.dto.request;
 
-import goomong.global.model.Address;
-import goomong.item.model.Item;
-import goomong.order.model.Order;
-import goomong.order.model.Status;
+import R.VD.goomong.global.model.Address;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.order.model.Order;
+import R.VD.goomong.order.model.Status;
 import lombok.Data;
 
 import java.util.List;

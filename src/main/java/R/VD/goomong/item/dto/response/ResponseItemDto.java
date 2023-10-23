@@ -1,11 +1,11 @@
-package goomong.item.dto.response;
+package R.VD.goomong.item.dto.response;
 
-import goomong.ask.model.Ask;
-import goomong.image.model.Image;
-import goomong.item.model.Item;
-import goomong.item.model.ItemCategory;
-import goomong.member.model.Member;
-import goomong.review.model.Review;
+import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.review.model.Review;
 import lombok.Data;
 
 import java.util.List;

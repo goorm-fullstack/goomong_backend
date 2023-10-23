@@ -1,6 +1,6 @@
-package goomong.member.repository;
+package R.VD.goomong.member.repository;
 
-import goomong.member.model.Member;
+import R.VD.goomong.member.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

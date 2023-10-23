@@ -1,7 +1,7 @@
-package goomong.member.service;
+package R.VD.goomong.member.service;
 
-import goomong.member.model.Member;
-import goomong.member.repository.MemberRepository;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package goomong.item.model;
+package R.VD.goomong.item.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

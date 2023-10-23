@@ -1,4 +1,4 @@
-package goomong.ask.exception;
+package R.VD.goomong.ask.exception;
 
 public class NotFoundAsk extends RuntimeException {
     public NotFoundAsk() {

@@ -1,6 +1,6 @@
-package goomong.item.dto.response;
+package R.VD.goomong.item.dto.response;
 
-import goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemCategory;
 import lombok.Data;
 
 import java.util.ArrayList;

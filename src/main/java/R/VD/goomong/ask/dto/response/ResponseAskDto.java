@@ -1,8 +1,8 @@
-package goomong.ask.dto.response;
+package R.VD.goomong.ask.dto.response;
 
-import goomong.ask.model.Ask;
-import goomong.item.model.Item;
-import goomong.member.model.Member;
+import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.model.Member;
 import lombok.Data;
 
 import java.util.ArrayList;

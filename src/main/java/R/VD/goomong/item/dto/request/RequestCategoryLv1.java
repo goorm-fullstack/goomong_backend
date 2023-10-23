@@ -1,6 +1,6 @@
-package goomong.item.dto.request;
+package R.VD.goomong.item.dto.request;
 
-import goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemCategory;
 import lombok.Data;
 
 @Data

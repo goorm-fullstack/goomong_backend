@@ -1,7 +1,7 @@
-package goomong.ask.model;
+package R.VD.goomong.ask.model;
 
-import goomong.item.model.Item;
-import goomong.member.model.Member;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
-package goomong.ask.dto.request;
+package R.VD.goomong.ask.dto.request;
 
-import goomong.ask.model.Ask;
+import R.VD.goomong.ask.model.Ask;
 import lombok.Data;
 
 // 문의 작성 Dto입니다.

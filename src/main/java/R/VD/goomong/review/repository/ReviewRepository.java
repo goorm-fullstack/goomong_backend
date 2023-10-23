@@ -1,6 +1,6 @@
-package goomong.review.repository;
+package R.VD.goomong.review.repository;
 
-import goomong.review.model.Review;
+import R.VD.goomong.review.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

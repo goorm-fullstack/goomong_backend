@@ -1,6 +1,6 @@
-package goomong.item.repository;
+package R.VD.goomong.item.repository;
 
-import goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

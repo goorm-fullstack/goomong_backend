@@ -1,8 +1,8 @@
-package goomong.review.controller;
+package R.VD.goomong.review.controller;
 
-import goomong.review.dto.request.RequestReviewDto;
-import goomong.review.dto.response.ResponseReviewDto;
-import goomong.review.service.ReviewService;
+import R.VD.goomong.review.dto.request.RequestReviewDto;
+import R.VD.goomong.review.dto.response.ResponseReviewDto;
+import R.VD.goomong.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

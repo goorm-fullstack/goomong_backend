@@ -1,7 +1,7 @@
-package goomong.image.service;
+package R.VD.goomong.image.service;
 
-import goomong.image.model.Image;
-import goomong.image.repository.ImageRepository;
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.image.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,9 @@ public class ImageService {
     // 이미지 저장 로직 및 DB에 관련 내용 반영
     public List<Image> saveImage(MultipartFile[] fileList) {
         List<Image> result = new ArrayList<>();
-
+        if(fileList == null) {
+            return null;
+        }
         for (MultipartFile file : fileList) {
             if (file.isEmpty()) {
                 return null;

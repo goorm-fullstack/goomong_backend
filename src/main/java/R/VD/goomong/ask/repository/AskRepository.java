@@ -1,6 +1,6 @@
-package goomong.ask.repository;
+package R.VD.goomong.ask.repository;
 
-import goomong.ask.model.Ask;
+import R.VD.goomong.ask.model.Ask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

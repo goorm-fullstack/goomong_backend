@@ -1,4 +1,4 @@
-package goomong.item.exception;
+package R.VD.goomong.item.exception;
 
 public class NotFoundItem extends RuntimeException {
     public NotFoundItem() {

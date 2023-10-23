@@ -1,9 +1,9 @@
-package goomong.member.model;
+package R.VD.goomong.member.model;
 
+import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.order.model.Order;
+import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import goomong.ask.model.Ask;
-import goomong.order.model.Order;
-import goomong.review.model.Review;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

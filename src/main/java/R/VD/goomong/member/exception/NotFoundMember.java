@@ -1,4 +1,4 @@
-package goomong.member.exception;
+package R.VD.goomong.member.exception;
 
 public class NotFoundMember extends RuntimeException {
     public NotFoundMember() {

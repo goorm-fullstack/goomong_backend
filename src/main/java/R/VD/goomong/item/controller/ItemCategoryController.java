@@ -1,9 +1,9 @@
-package goomong.item.controller;
+package R.VD.goomong.item.controller;
 
-import goomong.item.dto.request.RequestCategoryLv1;
-import goomong.item.dto.request.RequestCategoryLv2;
-import goomong.item.dto.response.ResponseItemCategoryDto;
-import goomong.item.service.ItemCategoryService;
+import R.VD.goomong.item.dto.request.RequestCategoryLv1;
+import R.VD.goomong.item.dto.request.RequestCategoryLv2;
+import R.VD.goomong.item.dto.response.ResponseItemCategoryDto;
+import R.VD.goomong.item.service.ItemCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

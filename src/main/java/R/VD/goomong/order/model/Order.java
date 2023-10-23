@@ -1,10 +1,10 @@
-package goomong.order.model;
+package R.VD.goomong.order.model;
 
+import R.VD.goomong.global.model.Address;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.order.exception.AlreadyCompleteOrder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import goomong.global.model.Address;
-import goomong.item.model.Item;
-import goomong.member.model.Member;
-import goomong.order.exception.AlreadyCompleteOrder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

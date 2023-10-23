@@ -1,8 +1,8 @@
-package goomong.review.dto.response;
+package R.VD.goomong.review.dto.response;
 
-import goomong.image.model.Image;
-import goomong.member.model.Member;
-import goomong.review.model.Review;
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.review.model.Review;
 import lombok.Data;
 
 import java.util.List;

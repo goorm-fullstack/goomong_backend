@@ -1,7 +1,7 @@
-package goomong.member.controller;
+package R.VD.goomong.member.controller;
 
-import goomong.member.model.Member;
-import goomong.member.service.MemberService;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

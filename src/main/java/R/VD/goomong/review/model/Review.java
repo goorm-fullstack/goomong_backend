@@ -1,9 +1,9 @@
-package goomong.review.model;
+package R.VD.goomong.review.model;
 
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.model.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import goomong.image.model.Image;
-import goomong.item.model.Item;
-import goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

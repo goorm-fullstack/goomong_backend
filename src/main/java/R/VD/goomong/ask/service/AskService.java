@@ -1,16 +1,17 @@
-package goomong.ask.service;
+package R.VD.goomong.ask.service;
 
-import goomong.ask.dto.request.RequestAnswerDto;
-import goomong.ask.dto.request.RequestAskDto;
-import goomong.ask.exception.NotFoundAsk;
-import goomong.ask.model.Ask;
-import goomong.ask.repository.AskRepository;
-import goomong.item.exception.NotFoundItem;
-import goomong.item.model.Item;
-import goomong.item.repository.ItemRepository;
-import goomong.member.exception.NotFoundMember;
-import goomong.member.model.Member;
-import goomong.member.repository.MemberRepository;
+import R.VD.goomong.ask.dto.request.RequestAnswerDto;
+import R.VD.goomong.ask.dto.request.RequestAskDto;
+import R.VD.goomong.ask.exception.NotFoundAsk;
+import R.VD.goomong.ask.model.Ask;
+
+import R.VD.goomong.ask.repository.AskRepository;
+import R.VD.goomong.item.exception.NotFoundItem;
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.repository.ItemRepository;
+import R.VD.goomong.member.exception.NotFoundMember;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

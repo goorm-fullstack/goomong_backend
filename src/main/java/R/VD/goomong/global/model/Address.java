@@ -1,4 +1,4 @@
-package goomong.global.model;
+package R.VD.goomong.global.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

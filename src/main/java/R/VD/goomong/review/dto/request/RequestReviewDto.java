@@ -1,7 +1,7 @@
-package goomong.review.dto.request;
+package R.VD.goomong.review.dto.request;
 
-import goomong.member.model.Member;
-import goomong.review.model.Review;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.review.model.Review;
 import lombok.Data;
 
 @Data
