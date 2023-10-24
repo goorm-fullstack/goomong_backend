@@ -40,6 +40,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;//배송 상태
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderItem=" + orderItem +
+                ", member=" + member +
+                ", price=" + price +
+                ", address=" + address +
+                ", status=" + status +
+                '}';
+    }
+
     public void setMember(Member member) {
         this.member = member;
     }
