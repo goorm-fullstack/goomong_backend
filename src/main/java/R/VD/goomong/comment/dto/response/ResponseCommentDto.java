@@ -1,4 +1,4 @@
-package R.VD.goomong.post.dto.response;
+package R.VD.goomong.comment.dto.response;
 
 import lombok.*;
 
@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ResponsePostCategoryDto {
+public class ResponseCommentDto {
 
     private Long id;
-    private String postCategoryName;
+    private String memberId;
+    private String content;
+    private int likeNo;
     private LocalDateTime regDate;
     private LocalDateTime chgDate;
     private LocalDateTime delDate;

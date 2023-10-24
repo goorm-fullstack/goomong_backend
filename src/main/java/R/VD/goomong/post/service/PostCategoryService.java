@@ -3,7 +3,9 @@ package R.VD.goomong.post.service;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.post.dto.request.RequestPostCategoryDto;
+import R.VD.goomong.post.exception.AlreadyDeletePostCategoryException;
 import R.VD.goomong.post.exception.NotExistPostCategoryException;
+import R.VD.goomong.post.exception.NotExistPostCategoryInfoException;
 import R.VD.goomong.post.model.PostCategory;
 import R.VD.goomong.post.repository.PostCategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,41 +28,56 @@ public class PostCategoryService {
     private final ImageService imageService;
 
     // 게시글 카테고리 생성
-    public Long savePostCategory(RequestPostCategoryDto requestPostCategoryDto, MultipartFile[] postCategoryImage) {
+    public void savePostCategory(RequestPostCategoryDto requestPostCategoryDto, MultipartFile[] postCategoryImage) {
+
+        if (postCategoryImage.length > 1) throw new NotExistPostCategoryInfoException("카테고리 이미지는 대표 이미지 1장만 가능합니다.");
+
         PostCategory entity = requestPostCategoryDto.toEntity();
 
-        List<Image> image = null;
-        if (postCategoryImage.length != 0) image = imageService.saveImage(postCategoryImage);
+        Image image = null;
+        if (postCategoryImage.length != 0) {
+            List<Image> images = imageService.saveImage(postCategoryImage);
+            image = images.get(0);
+        }
 
-        entity.toBuilder()
+        PostCategory build = entity.toBuilder()
                 .image(image)
                 .build();
-        return postCategoryRepository.save(entity).getId();
+        postCategoryRepository.save(build);
     }
 
     // 게시글 카테고리 수정
     public PostCategory updatePostCategory(Long postCategoryId, RequestPostCategoryDto requestPostCategoryDto, MultipartFile[] postCategoryImage) {
+
+        if (postCategoryImage.length > 1) throw new NotExistPostCategoryInfoException("카테고리 이미지는 대표 이미지 1장만 가능합니다.");
+
         PostCategory onePostCategory = findOnePostCategory(postCategoryId);
 
-        List<Image> image = null;
-        if (postCategoryImage.length != 0) image = imageService.saveImage(postCategoryImage);
+        Image image = null;
+        if (postCategoryImage.length != 0) {
+            List<Image> images = imageService.saveImage(postCategoryImage);
+            image = images.get(0);
+        }
 
-        onePostCategory.toBuilder()
+        PostCategory build = onePostCategory.toBuilder()
                 .postCategoryName(requestPostCategoryDto.getPostCategoryName())
                 .chgDate(LocalDateTime.now())
                 .build();
-        if (image != null) onePostCategory.toBuilder().image(image).build();
+        if (image != null) build = build.toBuilder().image(image).build();
 
-        postCategoryRepository.save(onePostCategory);
-        return onePostCategory;
+        postCategoryRepository.save(build);
+        return build;
     }
 
     // 게시글 카테고리 소프트딜리트
     public void softDeletePostCategory(Long postCategoryId) {
         PostCategory onePostCategory = findOnePostCategory(postCategoryId);
-        onePostCategory.toBuilder()
+        if (onePostCategory.getDelDate() != null) throw new AlreadyDeletePostCategoryException("이미 삭제된 카테고리입니다.");
+
+        PostCategory build = onePostCategory.toBuilder()
                 .delDate(LocalDateTime.now())
                 .build();
+        postCategoryRepository.save(build);
     }
 
     // 게시글 카테고리 완전 삭제

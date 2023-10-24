@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +20,7 @@ public class PostCategory {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
-    private List<Image> image = new ArrayList<>(); // 카테고리 썸네일(커뮤니티 카테고리의 경우)
+    private Image image; // 카테고리 썸네일(커뮤니티 카테고리의 경우)
 
     @Column(nullable = false)
     private String postCategoryName; // 카테고리 이름
@@ -44,6 +42,9 @@ public class PostCategory {
         return ResponsePostCategoryDto.builder()
                 .id(id)
                 .postCategoryName(postCategoryName)
+                .regDate(regDate)
+                .chgDate(chgDate)
+                .delDate(delDate)
                 .build();
     }
 }

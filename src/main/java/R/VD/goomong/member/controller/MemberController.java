@@ -1,12 +1,11 @@
 package R.VD.goomong.member.controller;
 
+import R.VD.goomong.member.dto.response.ResponseMemberDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +16,11 @@ public class MemberController {
     @PostMapping("/save")
     public void saveMember(@RequestBody Member member) {
         memberService.save(member);
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ResponseMemberDto> findOneMember(@PathVariable Long memberId) {
+        Member oneMember = memberService.findOneMember(memberId);
+        return ResponseEntity.ok(oneMember.toResponseMemberDto());
     }
 }

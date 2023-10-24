@@ -14,10 +14,13 @@ public class ResponsePostDto {
     private Long id;
     private String member;
     private ResponseItemDto item;
+    private ResponsePostCategoryDto postCategory;
     private String postType;
-    private String postName;
+    private String postTitle;
     private String postContent;
     private int postViews;
     private int postLikeNo;
     private LocalDateTime regDate;
+    private LocalDateTime chgDate;
+    private LocalDateTime delDate;
 }
