@@ -3,22 +3,43 @@ package R.VD.goomong.member.model;
 import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
+    private String memberId;
+
+    @Column(nullable = false)
+    private String memberPassword;
+
+    @Column(nullable = false)
+    private String memberName;
+
+    @Column(nullable = false)
+    private String memberEmail;
+
+    @Column(nullable = false)
+    @JsonFormat(timezone = "Asia/Seoul")
+    private LocalDateTime memberSignupTime;
 
     @OneToMany
     @JsonIgnore
@@ -29,4 +50,5 @@ public class Member {
 
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
+
 }
