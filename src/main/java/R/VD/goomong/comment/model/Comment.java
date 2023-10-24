@@ -48,12 +48,17 @@ public class Comment extends BaseTimeEntity {
 
     public ResponseCommentDto toResponseCommentDto() {
 
+        List<ResponseCommentDto> list = new ArrayList<>();
+        for (Comment comment : childrenComment) {
+            if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
+        }
+
         return ResponseCommentDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
                 .content(content)
                 .likeNo(likeNo)
-                .childrenComment(childrenComment.stream().map(Comment::toResponseCommentDto).toList())
+                .childrenComment(list)
                 .regDate(this.getRegDate())
                 .chgDate(this.getChgDate())
                 .delDate(delDate)

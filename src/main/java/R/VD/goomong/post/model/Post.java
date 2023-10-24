@@ -71,6 +71,7 @@ public class Post extends BaseTimeEntity {
 
     // response로 변환
     public ResponsePostDto toResponsePostDto() {
+
         ResponseItemDto item1 = null;
         if (item != null) item1 = new ResponseItemDto(item);
         ResponsePostCategoryDto postCategory1 = null;
@@ -78,7 +79,7 @@ public class Post extends BaseTimeEntity {
 
         List<ResponseCommentDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
-            if (comment.getParentComment() == null) {
+            if (comment.getParentComment() == null && comment.getDelDate() == null) {
                 comments.add(comment.toResponseCommentDto());
             }
         }
