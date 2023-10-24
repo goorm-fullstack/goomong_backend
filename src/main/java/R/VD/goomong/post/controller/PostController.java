@@ -57,7 +57,7 @@ public class PostController {
      * @return 수정된 게시글
      */
     @PutMapping("/post/{postId}")
-    public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @RequestPart RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
+    public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
         log.info("postId={}", postId);
         log.debug("requestPostDto={}", requestPostDto.toString());

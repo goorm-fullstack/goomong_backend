@@ -4,8 +4,6 @@ import R.VD.goomong.post.model.PostCategory;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,7 +21,6 @@ public class RequestPostCategoryDto {
         return PostCategory.builder()
                 .postCategoryGroup(postCategoryGroup)
                 .postCategoryName(postCategoryName)
-                .regDate(LocalDateTime.now())
                 .build();
     }
 }

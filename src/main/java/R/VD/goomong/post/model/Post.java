@@ -1,6 +1,9 @@
 package R.VD.goomong.post.model;
 
+import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.comment.model.Comment;
+import R.VD.goomong.file.model.Files;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
@@ -19,7 +22,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,25 +32,24 @@ public class Post {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 작성자
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item; // 상품
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postCategory_id")
     private PostCategory postCategory; // 카테고리
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
     private List<Comment> commentList = new ArrayList<>(); // 댓글
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "post_id")
     private List<Image> imageList = new ArrayList<>(); // 게시글 이미지
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    private List<Image> fileList = new ArrayList<>(); // 게시글 파일
+    @JoinColumn(name = "post_id")
+    private List<Files> fileList = new ArrayList<>(); // 게시글 파일
 
     @Column(nullable = false)
     private String postType; // 게시글 종류(ex. 커뮤니티/QnA 등등)
@@ -64,12 +66,6 @@ public class Post {
     @Column(nullable = false)
     private int postLikeNo; // 게시글 좋아요수
 
-    @Column(nullable = false)
-    private LocalDateTime regDate; // 생성일
-
-    @Column
-    private LocalDateTime chgDate; // 수정일
-
     @Column
     private LocalDateTime delDate; // 삭제일
 
@@ -79,6 +75,13 @@ public class Post {
         if (item != null) item1 = new ResponseItemDto(item);
         ResponsePostCategoryDto postCategory1 = null;
         if (postCategory != null) postCategory1 = postCategory.toResponsePostCategoryDto();
+
+        List<ResponseCommentDto> comments = new ArrayList<>();
+        for (Comment comment : commentList) {
+            if (comment.getParentComment() == null) {
+                comments.add(comment.toResponseCommentDto());
+            }
+        }
 
         return ResponsePostDto.builder()
                 .id(id)
@@ -90,8 +93,11 @@ public class Post {
                 .postContent(postContent)
                 .postViews(postViews)
                 .postLikeNo(postLikeNo)
-                .regDate(regDate)
-                .chgDate(chgDate)
+                .imageList(imageList)
+                .fileList(fileList)
+                .commentList(comments)
+                .regDate(this.getRegDate())
+                .chgDate(this.getChgDate())
                 .delDate(delDate)
                 .build();
     }

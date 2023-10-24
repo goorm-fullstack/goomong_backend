@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -20,7 +18,7 @@ public class RequestPostDto {
 
     private Long postCategoryId;
 
-    @NotBlank
+    @NotBlank(message = "게시글 종류를 입력해주세요.")
     private String postType; // 게시글 종류(ex. 커뮤니티/QnA 등등)
 
     @NotBlank(message = "게시글 제목을 입력해주세요.")
@@ -37,7 +35,6 @@ public class RequestPostDto {
                 .postContent(postContent)
                 .postLikeNo(0)
                 .postViews(0)
-                .regDate(LocalDateTime.now())
                 .build();
     }
 }

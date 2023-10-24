@@ -61,7 +61,6 @@ public class PostCategoryService {
 
         PostCategory build = onePostCategory.toBuilder()
                 .postCategoryName(requestPostCategoryDto.getPostCategoryName())
-                .chgDate(LocalDateTime.now())
                 .build();
         if (image != null) build = build.toBuilder().image(image).build();
 

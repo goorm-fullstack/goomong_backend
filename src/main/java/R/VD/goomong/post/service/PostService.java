@@ -1,5 +1,7 @@
 package R.VD.goomong.post.service;
 
+import R.VD.goomong.file.model.Files;
+import R.VD.goomong.file.service.FilesService;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.item.exception.NotFoundItem;
@@ -40,6 +42,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostCategoryRepository postCategoryRepository;
     private final ImageService imageService;
+    private final FilesService filesService;
 
     // 게시글 생성
     public void savePost(RequestPostDto requestPostDto, MultipartFile[] postImages, MultipartFile[] postFiles) {
@@ -62,8 +65,8 @@ public class PostService {
         List<Image> postImageList = entity.getImageList();
         if (postImages.length != 0) postImageList = imageService.saveImage(postImages);
 
-        List<Image> postFileList = entity.getFileList();
-        if (postFiles.length != 0) postFileList = imageService.saveImage(postFiles);
+        List<Files> postFileList = entity.getFileList();
+        if (postFiles.length != 0) postFileList = filesService.saveFiles(postFiles);
 
         Post dbg = entity.toBuilder()
                 .member(writer)
@@ -82,15 +85,14 @@ public class PostService {
         List<Image> postImageList = null;
         if (postImages.length != 0) postImageList = imageService.saveImage(postImages);
 
-        List<Image> postFileList = null;
-        if (postFiles.length != 0) postFileList = imageService.saveImage(postFiles);
+        List<Files> postFileList = null;
+        if (postFiles.length != 0) postFileList = filesService.saveFiles(postFiles);
 
         Post build = onePost.toBuilder()
                 .postTitle(requestPostDto.getPostTitle())
                 .postContent(requestPostDto.getPostContent())
                 .imageList(postImageList)
                 .fileList(postFileList)
-                .chgDate(LocalDateTime.now())
                 .build();
         postRepository.save(build);
 

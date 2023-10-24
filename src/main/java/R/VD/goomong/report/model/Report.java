@@ -22,7 +22,7 @@ public class Report {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 작성자
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "report")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post; // 신고 대상 게시글
 

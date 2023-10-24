@@ -37,7 +37,6 @@ public class CommentService {
         Post post = postRepository.findById(requestCommentDto.getPostId()).orElseThrow(() -> new NotExistPostException("해당 게시글을 찾을 수 없습니다."));
 
         Comment parent = null;
-        List<Comment> childCommentList = entity.getChildrenComment();
         if (requestCommentDto.getParentCommentId() != null)
             parent = commentRepository.findById(requestCommentDto.getParentCommentId()).orElseThrow(() -> new NotExistCommentException("해당 댓글을 찾을 수 없습니다."));
 
@@ -46,12 +45,6 @@ public class CommentService {
                 .post(post)
                 .parentComment(parent)
                 .build();
-        if (parent != null) {
-            childCommentList.add(build);
-            build = build.toBuilder()
-                    .childrenComment(childCommentList)
-                    .build();
-        }
         commentRepository.save(build);
     }
 
@@ -61,7 +54,6 @@ public class CommentService {
 
         Comment build = comment.toBuilder()
                 .content(requestCommentDto.getContent())
-                .chgDate(LocalDateTime.now())
                 .build();
         commentRepository.save(build);
         return build;
