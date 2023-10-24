@@ -6,10 +6,7 @@ import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +37,9 @@ public class Member {
     @Column(nullable = false)
     @JsonFormat(timezone = "Asia/Seoul")
     private LocalDateTime memberSignupTime;
+
+    @Setter
+    private LocalDateTime memberDeleteTime;
 
     @OneToMany
     @JsonIgnore

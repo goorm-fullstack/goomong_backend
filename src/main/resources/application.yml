@@ -6,7 +6,7 @@ spring:
 #    url: jdbc:h2:mem:goomong
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
   session:
     jdbc:
