@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,8 @@ public class Item extends BaseTimeEntity {
     private List<Ask> askList = new ArrayList<>();
 
     private Float rate;//평점
+
+    private LocalDateTime delDate;
 
     public void setThumbNailList(List<Image> thumbNailList) {
         this.thumbNailList = thumbNailList;

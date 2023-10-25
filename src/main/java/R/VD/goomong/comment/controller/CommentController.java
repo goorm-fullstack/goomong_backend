@@ -83,6 +83,18 @@ public class CommentController {
     }
 
     /**
+     * 삭제된 댓글 복구
+     *
+     * @param commentId - 복구할 댓글 pk
+     * @return - 복구 완료 시 200
+     */
+    @PutMapping("/comment/undel/{commentId}")
+    public ResponseEntity<Object> unDeleteComment(@PathVariable Long commentId) {
+        commentService.unDelete(commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 특정 댓글 조회
      *
      * @param commentId - 조회할 댓글 pk
@@ -107,11 +119,42 @@ public class CommentController {
         return ResponseEntity.ok(oneComment.getLikeNo());
     }
 
+    /**
+     * 삭제되지 않은 댓글 조회
+     *
+     * @param pageable - 페이징
+     * @return - 조회된 댓글
+     */
     @GetMapping
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Comment> comments = commentService.listOfNotDeletedComment(pageable);
+        return getListResponseEntity(comments);
+    }
 
+    /**
+     * 삭제된 댓글 조회
+     *
+     * @param pageable - 페이징
+     * @return - 조회된 댓글
+     */
+    @GetMapping("/deleted")
+    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
+    public ResponseEntity<List<ResponseCommentDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Comment> comments = commentService.listOfDeletedComment(pageable);
+        return getListResponseEntity(comments);
+    }
+
+    /**
+     * 전체 댓글 리스트(삭제된 것과 삭제 안된 것 모두 포함)
+     *
+     * @param pageable - 페이징
+     * @return - 조회된 댓글
+     */
+    @GetMapping("/all")
+    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
+    public ResponseEntity<List<ResponseCommentDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Comment> comments = commentService.allList(pageable);
         return getListResponseEntity(comments);
     }
 }

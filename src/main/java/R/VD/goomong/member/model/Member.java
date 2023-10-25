@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class Member {
 
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
+
+    private LocalDateTime delDate;
 
     public ResponseMemberDto toResponseMemberDto() {
         List<ResponsePostDto> posts = null;

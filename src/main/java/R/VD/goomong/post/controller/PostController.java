@@ -57,7 +57,7 @@ public class PostController {
      * @return 수정된 게시글
      */
     @PutMapping("/post/{postId}")
-    public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @RequestPart RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
+    public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
         log.info("postId={}", postId);
         log.debug("requestPostDto={}", requestPostDto.toString());
@@ -95,6 +95,18 @@ public class PostController {
         log.info("postId={}", postId);
 
         postService.deletePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 삭제된 게시글 복구
+     *
+     * @param postId - 복구할 게시글 pk
+     * @return - 복구 완료 시 200
+     */
+    @PutMapping("/post/undel/{postId}")
+    public ResponseEntity<Object> unDeletedPost(@PathVariable Long postId) {
+        postService.unDeleted(postId);
         return ResponseEntity.ok().build();
     }
 
