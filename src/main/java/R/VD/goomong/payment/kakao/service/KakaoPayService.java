@@ -4,6 +4,7 @@ import R.VD.goomong.order.exception.NotExistOrder;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.order.model.Status;
 import R.VD.goomong.order.repository.OrderRepository;
+import R.VD.goomong.payment.kakao.dto.RequestKakaoPay;
 import R.VD.goomong.payment.kakao.model.KakaoCancelResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayApproveResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayResponse;
@@ -30,13 +31,9 @@ public class KakaoPayService {
     private KakaoPayResponse kakaoPayResponse;
 
 
-    public KakaoPayResponse kakaoPayReady(Long id) {
-        Optional<Order> findOrder = orderRepository.findById(id);
-        if(findOrder.isEmpty()) {
-            throw new NotExistOrder();
-        }
+    public KakaoPayResponse kakaoPayReady(RequestKakaoPay requestKakaoPay) {
         // 카카오페이 요청 양식
-        MultiValueMap<String, String> parameters = setReadyParameter(findOrder.get());
+        MultiValueMap<String, String> parameters = setReadyParameter(requestKakaoPay);
 
         // 파라미터, 헤더
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
@@ -96,8 +93,12 @@ public class KakaoPayService {
      * 결제 요청 파라미터 세팅 함수
      * 각 파라미터에 대한 정보는 공식 문서를 참고해주세요.
      */
-    private MultiValueMap<String, String> setReadyParameter(Order order) {
-        System.out.println("order : "+order.toString());
+    private MultiValueMap<String, String> setReadyParameter(RequestKakaoPay requestKakaoPay) {
+        Optional<Order> findOrder = orderRepository.findById(requestKakaoPay.getId());
+        if(findOrder.isEmpty()) {
+            throw new NotExistOrder();
+        }
+        Order order = findOrder.get();
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("cid", cid);
         parameters.add("partner_order_id", "가맹점 주문 번호");
@@ -107,9 +108,9 @@ public class KakaoPayService {
         parameters.add("total_amount", String.valueOf(order.getPrice()));
         parameters.add("vat_amount", "0");//부가세
         parameters.add("tax_free_amount", "0");//비과세
-        parameters.add("approval_url", "http://localhost:8080/payment/success"); // 성공 시 redirect url
-        parameters.add("cancel_url", "http://localhost:8080/payment/cancel"); // 취소 시 redirect url
-        parameters.add("fail_url", "http://localhost:8080/payment/fail"); // 실패 시 redirect url
+        parameters.add("approval_url", requestKakaoPay.getSuccessURL()); // 성공 시 redirect url
+        parameters.add("cancel_url", requestKakaoPay.getCancelURL()); // 취소 시 redirect url
+        parameters.add("fail_url", requestKakaoPay.getFailURL()); // 실패 시 redirect url
         return parameters;
     }
 

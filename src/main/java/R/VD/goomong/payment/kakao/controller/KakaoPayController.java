@@ -1,6 +1,7 @@
 package R.VD.goomong.payment.kakao.controller;
 
 import R.VD.goomong.order.model.Order;
+import R.VD.goomong.payment.kakao.dto.RequestKakaoPay;
 import R.VD.goomong.payment.kakao.exception.ExceptionCode;
 import R.VD.goomong.payment.kakao.exception.KakaoPayLogicException;
 import R.VD.goomong.payment.kakao.model.KakaoCancelResponse;
@@ -22,8 +23,8 @@ public class KakaoPayController {
 
     // 결제 시작
     @PostMapping("/ready")
-    public ResponseEntity<KakaoPayResponse> ready(@RequestParam Long id) {
-        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(id));
+    public ResponseEntity<KakaoPayResponse> ready(@RequestBody RequestKakaoPay requestKakaoPay) {
+        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(requestKakaoPay));
     }
 
     // 결제 완료

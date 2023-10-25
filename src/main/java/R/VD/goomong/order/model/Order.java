@@ -34,7 +34,7 @@ public class Order {
 
     private int price;
 
-    @OneToOne
+    @Embedded
     private Address address;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +54,10 @@ public class Order {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public void setOrderItem(List<Item> itemList) {
+        this.orderItem = itemList;
     }
 
     // 재능 기부 작업 시작
