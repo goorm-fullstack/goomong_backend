@@ -1,5 +1,6 @@
 package R.VD.goomong.chat.controller;
 
+import R.VD.goomong.chat.dto.request.RequestChatSoftDelete;
 import R.VD.goomong.chat.dto.request.RequestChatUserDTO;
 import R.VD.goomong.chat.dto.response.ResponseChatRoomDTO;
 import R.VD.goomong.chat.service.ChatRoomService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/chat")
+@RequestMapping("/api/chat")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
@@ -22,8 +23,14 @@ public class ChatRoomController {
         return new ResponseEntity<>(chatRoomService.findByMemberId(memberId), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ResponseChatRoomDTO> createChatRoom(@RequestBody RequestChatUserDTO requestChatUserDTO) {
         return new ResponseEntity<>(chatRoomService.createChatRoom(requestChatUserDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity softDelete(@RequestBody RequestChatSoftDelete requestChatSoftDelete) {
+        chatRoomService.softDelete(requestChatSoftDelete);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -35,9 +35,10 @@ public class ChatMessageController {
         template.convertAndSend("/sub/chat/room/" + requestChatMessageDTO.getRoomUUID(), requestChatMessageDTO);
     }
 
-    @GetMapping("/api/v1/chat/room/{roomUUID}")
+    @GetMapping("/api/chat/room/{roomUUID}")
     public ResponseEntity<List<ResponseChatMessageDTO>> getMessages(@PathVariable String roomUUID) {
         List<ResponseChatMessageDTO> responseChatMessageDTOList = chatMessageService.getMessages(roomUUID);
         return new ResponseEntity<>(responseChatMessageDTOList, HttpStatus.OK);
     }
+
 }

@@ -1,5 +1,6 @@
 package R.VD.goomong.chat.service;
 
+import R.VD.goomong.chat.dto.request.RequestChatSoftDelete;
 import R.VD.goomong.chat.dto.request.RequestChatUserDTO;
 import R.VD.goomong.chat.dto.response.ResponseChatRoomDTO;
 import R.VD.goomong.chat.exception.NotFoundChatRoom;
@@ -60,5 +61,16 @@ public class ChatRoomService {
 
         chatRoomRepository.save(responseChatRoom);
         return new ResponseChatRoomDTO(chatRoomRepository.save(requestChatRoom));
+    }
+
+    public void softDelete(RequestChatSoftDelete requestChatSoftDelete) {
+
+        UUID uuid = UUID.fromString(requestChatSoftDelete.getRoomUUID());
+
+        Member member = memberRepository.findById(requestChatSoftDelete.getMemberId())
+                .orElseThrow(() -> new NotFoundMember("존재하지 않는 사용자입니다."));
+        ChatRoom chatRoom = chatRoomRepository.findByRoomUUIDAndMember(uuid, member)
+                .orElseThrow(() -> new NotFoundChatRoom("존재하지 않는 채팅방입니다."));
+        chatRoomRepository.delete(chatRoom);
     }
 }

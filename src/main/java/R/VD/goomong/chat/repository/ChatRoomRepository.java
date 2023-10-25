@@ -1,6 +1,7 @@
 package R.VD.goomong.chat.repository;
 
 import R.VD.goomong.chat.model.ChatRoom;
+import R.VD.goomong.member.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     Optional<ChatRoom> findByRoomUUID(UUID roomUUID);
 
-    List<ChatRoom> findByMember_Id(Long memberId);
+    Optional<ChatRoom> findByRoomUUIDAndMember(UUID roomUUID, Member member);
 
+    List<ChatRoom> findByMember_Id(Long memberId);
 }
