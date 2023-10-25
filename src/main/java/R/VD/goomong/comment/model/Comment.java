@@ -4,6 +4,8 @@ import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
+import R.VD.goomong.report.dto.response.ResponseReportDto;
+import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,7 +37,12 @@ public class Comment extends BaseTimeEntity {
     private Comment parentComment; // 부모 댓글, null인 경우 최상위 댓글
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Comment> childrenComment = new ArrayList<>(); // 대댓글
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Report> reportList = new ArrayList<>(); // 신고
 
     @Column(nullable = false, length = 50000)
     private String content; // 댓글 내용
@@ -53,14 +60,19 @@ public class Comment extends BaseTimeEntity {
             if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
         }
 
+        List<ResponseReportDto> reports = new ArrayList<>();
+        for (Report report : reportList) {
+            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+        }
+
         return ResponseCommentDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
                 .content(content)
                 .likeNo(likeNo)
                 .childrenComment(list)
+                .reportList(reports)
                 .regDate(this.getRegDate())
-                .chgDate(this.getChgDate())
                 .delDate(delDate)
                 .build();
     }

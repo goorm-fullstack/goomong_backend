@@ -38,7 +38,6 @@ public class PostCategory extends BaseTimeEntity {
                 .id(id)
                 .postCategoryName(postCategoryName)
                 .regDate(this.getRegDate())
-                .chgDate(this.getChgDate())
                 .delDate(delDate)
                 .build();
     }

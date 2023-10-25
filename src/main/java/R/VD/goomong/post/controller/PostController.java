@@ -99,6 +99,18 @@ public class PostController {
     }
 
     /**
+     * 삭제된 게시글 복구
+     *
+     * @param postId - 복구할 게시글 pk
+     * @return - 복구 완료 시 200
+     */
+    @PutMapping("/post/undel/{postId}")
+    public ResponseEntity<Object> unDeletedPost(@PathVariable Long postId) {
+        postService.unDeleted(postId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 클라이언트가 게시글 조회
      *
      * @param postId - 조회할 게시글 pk

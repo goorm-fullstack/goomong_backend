@@ -4,6 +4,7 @@ import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.post.dto.request.RequestPostCategoryDto;
 import R.VD.goomong.post.exception.AlreadyDeletePostCategoryException;
+import R.VD.goomong.post.exception.NotDeletedPostCategoryException;
 import R.VD.goomong.post.exception.NotExistPostCategoryException;
 import R.VD.goomong.post.exception.NotExistPostCategoryInfoException;
 import R.VD.goomong.post.model.PostCategory;
@@ -52,6 +53,8 @@ public class PostCategoryService {
         if (postCategoryImage.length > 1) throw new NotExistPostCategoryInfoException("카테고리 이미지는 대표 이미지 1장만 가능합니다.");
 
         PostCategory onePostCategory = findOnePostCategory(postCategoryId);
+        if (onePostCategory.getDelDate() != null)
+            throw new AlreadyDeletePostCategoryException("해당 id의 카테고리는 삭제된 카테고리입니다. id = " + postCategoryId);
 
         Image image = null;
         if (postCategoryImage.length != 0) {
@@ -61,17 +64,17 @@ public class PostCategoryService {
 
         PostCategory build = onePostCategory.toBuilder()
                 .postCategoryName(requestPostCategoryDto.getPostCategoryName())
+                .image(image)
                 .build();
-        if (image != null) build = build.toBuilder().image(image).build();
 
-        postCategoryRepository.save(build);
-        return build;
+        return postCategoryRepository.save(build);
     }
 
     // 게시글 카테고리 소프트딜리트
     public void softDeletePostCategory(Long postCategoryId) {
         PostCategory onePostCategory = findOnePostCategory(postCategoryId);
-        if (onePostCategory.getDelDate() != null) throw new AlreadyDeletePostCategoryException("이미 삭제된 카테고리입니다.");
+        if (onePostCategory.getDelDate() != null)
+            throw new AlreadyDeletePostCategoryException("해당 id의 카테고리는 이미 삭제된 카테고리입니다. id = " + postCategoryId);
 
         PostCategory build = onePostCategory.toBuilder()
                 .delDate(LocalDateTime.now())
@@ -82,12 +85,29 @@ public class PostCategoryService {
     // 게시글 카테고리 완전 삭제
     public void deletePostCategory(Long postCategoryId) {
         PostCategory onePostCategory = findOnePostCategory(postCategoryId);
+        if (onePostCategory.getDelDate() != null)
+            throw new AlreadyDeletePostCategoryException("해당 id의 카테고리는 삭제된 카테고리입니다. id = " + postCategoryId);
         postCategoryRepository.delete(onePostCategory);
+    }
+
+    // 삭제된 게시글 카테고리 복구
+    public void unDelete(Long postCategoryId) {
+        PostCategory origin = postCategoryRepository.findById(postCategoryId).orElseThrow(() -> new NotExistPostCategoryException("해당 id의 카테고리는 없습니다. id = " + postCategoryId));
+        if (origin.getDelDate() == null)
+            throw new NotDeletedPostCategoryException("해당 id의 카테고리는 삭제되지 않은 카테고리입니다. id = " + postCategoryId);
+
+        PostCategory build = origin.toBuilder()
+                .delDate(null)
+                .build();
+        postCategoryRepository.save(build);
     }
 
     // 하나의 게시글 카테고리 조회
     public PostCategory findOnePostCategory(Long postCategoryId) {
-        return postCategoryRepository.findById(postCategoryId).orElseThrow(() -> new NotExistPostCategoryException("해당 카테고리를 찾을 수 없습니다."));
+        PostCategory postCategory = postCategoryRepository.findById(postCategoryId).orElseThrow(() -> new NotExistPostCategoryException("해당 id의 카테고리를 찾을 수 없습니다. id = " + postCategoryId));
+        if (postCategory.getDelDate() != null)
+            throw new AlreadyDeletePostCategoryException("해당 id의 카테고리는 삭제된 카테고리입니다. id = " + postCategoryId);
+        return postCategory;
     }
 
     // 삭제되지 않은 게시글 카테고리 조회

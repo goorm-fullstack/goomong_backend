@@ -10,6 +10,8 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
+import R.VD.goomong.report.dto.response.ResponseReportDto;
+import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,14 +43,21 @@ public class Post extends BaseTimeEntity {
     private PostCategory postCategory; // 카테고리
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Comment> commentList = new ArrayList<>(); // 댓글
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Report> reportList = new ArrayList<>(); // 신고
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
+    @Builder.Default
     private List<Image> imageList = new ArrayList<>(); // 게시글 이미지
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
+    @Builder.Default
     private List<Files> fileList = new ArrayList<>(); // 게시글 파일
 
     @Column(nullable = false)
@@ -84,6 +93,11 @@ public class Post extends BaseTimeEntity {
             }
         }
 
+        List<ResponseReportDto> reports = new ArrayList<>();
+        for (Report report : reportList) {
+            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+        }
+
         return ResponsePostDto.builder()
                 .id(id)
                 .member(member.getMemberId())
@@ -97,8 +111,8 @@ public class Post extends BaseTimeEntity {
                 .imageList(imageList)
                 .fileList(fileList)
                 .commentList(comments)
+                .report(reports)
                 .regDate(this.getRegDate())
-                .chgDate(this.getChgDate())
                 .delDate(delDate)
                 .build();
     }
