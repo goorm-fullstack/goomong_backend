@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,13 +19,12 @@ public class RequestCommentDto {
 
     private Long parentCommentId;
 
-    @NotBlank
+    @NotBlank(message = "댓글 내용을 입력해주세요.")
     private String content;
 
     public Comment toEntity() {
         return Comment.builder()
                 .content(content)
-                .regDate(LocalDateTime.now())
                 .build();
     }
 }

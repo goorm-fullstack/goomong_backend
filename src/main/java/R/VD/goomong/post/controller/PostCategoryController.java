@@ -73,6 +73,18 @@ public class PostCategoryController {
     }
 
     /**
+     * 삭제된 카테고리 복구
+     *
+     * @param postCategoryId - 삭제할 카테고리 id
+     * @return - 복구 완료 시 200
+     */
+    @PutMapping("/postcategory/undel/{postCategoryId}")
+    public ResponseEntity<Object> unDelete(@PathVariable Long postCategoryId) {
+        postCategoryService.unDelete(postCategoryId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 카테고리 조회
      *
      * @param postCategoryId - 조회할 카테고리 pk

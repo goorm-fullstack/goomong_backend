@@ -4,18 +4,16 @@ import R.VD.goomong.post.model.PostCategory;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class RequestPostCategoryDto {
 
-    @NotBlank
+    @NotBlank(message = "카테고리 그룹을 입력해주세요.")
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
-    @NotBlank
+    @NotBlank(message = "카테고리 이름을 입력해주세요.")
     private String postCategoryName; // 카테고리 이름
 
     // RequestPostCategoryDto 엔티티화
@@ -23,7 +21,6 @@ public class RequestPostCategoryDto {
         return PostCategory.builder()
                 .postCategoryGroup(postCategoryGroup)
                 .postCategoryName(postCategoryName)
-                .regDate(LocalDateTime.now())
                 .build();
     }
 }

@@ -13,6 +13,5 @@ public class ResponsePostCategoryDto {
     private Long id;
     private String postCategoryName;
     private LocalDateTime regDate;
-    private LocalDateTime chgDate;
     private LocalDateTime delDate;
 }
