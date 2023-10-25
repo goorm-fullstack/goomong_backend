@@ -33,6 +33,7 @@ public class OrderController {
     // 생성할 때 페이 로직을 넣으면 될까나?
     @PostMapping("/create")
     public ResponseEntity<String> createNewOrder(@RequestBody RequestOrderDto orderDto) {
+        System.out.println(orderDto.toString());
         orderService.createNewOrder(orderDto);
         return ResponseEntity.ok("주문이 완료되었습니다");
     }

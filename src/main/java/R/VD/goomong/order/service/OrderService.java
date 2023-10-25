@@ -1,5 +1,7 @@
 package R.VD.goomong.order.service;
 
+import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     public List<ResponseOrderDto> getAllOrderList() {
         return orderRepository.findAll().stream().map(ResponseOrderDto::new).toList();
@@ -50,8 +54,18 @@ public class OrderService {
         if (customer.isEmpty()) {
             throw new NotFoundMember("존재하지 않는 사용자입니다");
         }
+        // 주문자 등록
         Member member = customer.get();
         order.setMember(member);
+
+        //주문할 아이템 등록
+        List<Item> itemList = new ArrayList<>();
+        for (Long itemId : orderDto.getOrderItem()) {
+            Optional<Item> item = itemRepository.findById(itemId);
+            item.ifPresent(itemList::add);
+        }
+        order.setOrderItem(itemList);
+
         order.calculatePrice();
         orderRepository.save(order);
         member.getOrderList().add(order);

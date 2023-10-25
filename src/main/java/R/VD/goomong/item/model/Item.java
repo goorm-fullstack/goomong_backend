@@ -29,6 +29,9 @@ public class Item {
 
     private int price;//가격
 
+    @Enumerated(EnumType.STRING)
+    private Status status;//상태값 -> RequestDto를 상황별로 만들고, 상태를 지정해야겠다.
+
     @OneToMany
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 

@@ -34,14 +34,30 @@ public class Order {
 
     private int price;
 
-    @OneToOne
+    @Embedded
     private Address address;
 
     @Enumerated(EnumType.STRING)
     private Status status;//배송 상태
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderItem=" + orderItem +
+                ", member=" + member +
+                ", price=" + price +
+                ", address=" + address +
+                ", status=" + status +
+                '}';
+    }
+
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public void setOrderItem(List<Item> itemList) {
+        this.orderItem = itemList;
     }
 
     // 재능 기부 작업 시작
