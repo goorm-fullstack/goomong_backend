@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class Item {
 
     private int price;//가격
 
+    @Enumerated(EnumType.STRING)
+    private Status status;//상태값 -> RequestDto를 상황별로 만들고, 상태를 지정해야겠다.
+
     @OneToMany
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
@@ -45,6 +49,8 @@ public class Item {
     private List<Ask> askList = new ArrayList<>();
 
     private Float rate;//평점
+
+    private LocalDateTime delDate;
 
     public void setThumbNailList(List<Image> thumbNailList) {
         this.thumbNailList = thumbNailList;

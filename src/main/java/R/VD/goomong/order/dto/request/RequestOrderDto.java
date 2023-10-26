@@ -1,25 +1,38 @@
 package R.VD.goomong.order.dto.request;
 
 import R.VD.goomong.global.model.Address;
-import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.order.model.Status;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class RequestOrderDto {
-    private List<Item> orderItem;
+    @NotEmpty
+    @NotNull
+    private List<Long> orderItem;
+
+    @NotEmpty
+    @Positive
     private Long memberId;
+
+    @NotEmpty
+    @Positive
     private int price;
+
+    @NotEmpty
+    @NotNull
     private Address address;
 
     public Order toEntity() {
         return Order.builder()
-                .orderItem(orderItem)
                 .address(address)
                 .status(Status.WAITING)
+                .price(price)
                 .build();
     }
 }
