@@ -51,4 +51,11 @@ public class Member {
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
 
+    public void update(String memberId, String memberPassword, String memberName, String memberEmail){
+        this.memberId = memberId;
+        this.memberEmail = memberEmail;
+        this.memberPassword = memberPassword;
+        this.memberName = memberName;
+    }
+
 }

@@ -1,6 +1,7 @@
 package R.VD.goomong.memberTest;
 
 import R.VD.goomong.member.dto.request.RequestMember;
+import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
 import jakarta.transaction.Transactional;
@@ -176,6 +177,36 @@ public class memberTest {
         Member member2 = memberService.findById(member.getId());
 
         System.out.println("member2.getMemberDeleteTime = " + member2.getMemberDeleteTime());
+    }
+
+    @Test
+    @Transactional
+    void 회원정보수정() {
+        RequestMember requestMember1 = RequestMember.builder()
+                .memberId("testId1")
+                .memberPassword("testPw1")
+                .memberName("test1")
+                .memberEmail("test1@test.com")
+                .build();
+
+        memberService.save(requestMember1);
+
+        Member member = memberService.findByMemberId("testId1");
+
+        RequestUpdateDto requestUpdate = RequestUpdateDto.builder()
+                .memberId(member.getMemberId())
+                .memberPassword("updatedPassword")
+                .memberName("updatedName")
+                .memberEmail("updated@test.com")
+                .build();
+
+
+        memberService.updateMemberByMemberId(member.getMemberId(), requestUpdate);
+
+        Member member1 = memberService.findByMemberId("testId1");
+
+        System.out.println(member);
+        System.out.println(member1);
     }
 
 }

@@ -1,6 +1,7 @@
 package R.VD.goomong.member.service;
 
 import R.VD.goomong.member.dto.request.RequestMember;
+import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
@@ -48,9 +49,32 @@ public class MemberService {
     }
 
 
-
-
     //UPDATE
+    //memberId로 회원 정보 변경
+    public Member updateMemberByMemberId(String memberId, RequestUpdateDto requestUpdate) {
+        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getMemberPassword());
+            return memberRepository.save(member);
+        } else {
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
+        }
+    }
+
+    //index로 회원 정보 변경
+    public Member updateMemberById(Long id, RequestUpdateDto requestUpdate) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getMemberPassword());
+            return memberRepository.save(member);
+        } else {
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);
+        }
+    }
 
     //DELETE
     //REALDELETE
@@ -81,7 +105,7 @@ public class MemberService {
 
             return memberRepository.save(member1);
         } else {
-            throw new NotFoundMember("Member not found with ID: " + id);
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. " + id);
         }
     }
 
@@ -102,7 +126,7 @@ public class MemberService {
 
             return memberRepository.save(member1);
         } else {
-            throw new NotFoundMember("Member not found with memberId: " + memberId);
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. " + memberId);
         }
     }
 }

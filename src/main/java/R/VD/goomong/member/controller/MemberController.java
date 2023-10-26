@@ -48,6 +48,7 @@ public class MemberController {
 
     //UPDATE
 
+
     //DELETE
     //회원 memberId로 삭제
     @DeleteMapping("/memberId/{memberId}")
