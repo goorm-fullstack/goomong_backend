@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -30,14 +31,18 @@ public class memberTest {
                 .memberPassword("testPw")
                 .memberName("test")
                 .memberEmail("test@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember);
 
+
         Member member = memberService.findByMemberId("testId");
 
         Assertions.assertThat("testId").isEqualTo(member.getMemberId());
-        System.out.println("memberSignupTime : " + member.getMemberSignupTime());
     }
 
     @Test
@@ -47,6 +52,10 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         RequestMember requestMember2 = RequestMember.builder()
@@ -54,6 +63,10 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12312L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("BUSAN")
                 .build();
 
         RequestMember requestMember3 = RequestMember.builder()
@@ -61,6 +74,10 @@ public class memberTest {
                 .memberPassword("testPw3")
                 .memberName("test3")
                 .memberEmail("test3@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(11111L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("DAEJEON")
                 .build();
 
         memberService.save(requestMember1);
@@ -84,6 +101,10 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         RequestMember requestMember2 = RequestMember.builder()
@@ -91,12 +112,17 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12312L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("BUSAN")
                 .build();
 
         memberService.save(requestMember1);
         memberService.save(requestMember2);
 
-        Member member = memberService.findById(1L);
+        Member member = memberService.findById(7L);
+//        Member member = memberService.findByMemberId("testId1");
 
         System.out.println("member.getMemberId() = " + member.getMemberId());
 
@@ -110,17 +136,22 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
 
-        Member member = memberService.findById(1L);
+//        Member member = memberService.findByMemberId("testId1");
+        Member member = memberService.findById(10L);
 
         System.out.println("memberId = " + member.getId());
 
-        memberService.deleteById(1L);
+        memberService.deleteById(10L);
 
-        Member member1 = memberService.findById(1L);
+        Member member1 = memberService.findById(10L);
         if(member1 == null){
             System.out.println("null");
         }
@@ -137,6 +168,10 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -162,6 +197,10 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -187,6 +226,10 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -198,6 +241,9 @@ public class memberTest {
                 .memberPassword("updatedPassword")
                 .memberName("updatedName")
                 .memberEmail("updated@test.com")
+                .zipCode(11111L)
+                .simpleAddress("SOUTHKKOREA")
+                .detailAddress("SSEOUL")
                 .build();
 
 
@@ -205,8 +251,15 @@ public class memberTest {
 
         Member member1 = memberService.findByMemberId("testId1");
 
-        System.out.println(member);
-        System.out.println(member1);
+        System.out.println("member1 = " + member1.getMemberId());
+        System.out.println("member1 = " + member1.getMemberPassword());
+        System.out.println("member1 = " + member1.getMemberName());
+        System.out.println("member1 = " + member1.getMemberEmail());
+        System.out.println("member1 = " + member1.getMemberSignupTime());
+        System.out.println("member1 = " + member1.getZipCode());
+        System.out.println("member1 = " + member1.getSimpleAddress());
+        System.out.println("member1 = " + member1.getDetailAddress());
+
     }
 
 }
