@@ -38,7 +38,7 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
-        log.debug("requestPostDto={}", requestPostDto.toString());
+        log.info("requestPostDto={}", requestPostDto.toString());
 
         if (bindingResult.hasErrors()) return ResponseEntity.badRequest().build();
 
@@ -60,7 +60,7 @@ public class PostController {
     public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
         log.info("postId={}", postId);
-        log.debug("requestPostDto={}", requestPostDto.toString());
+        log.info("requestPostDto={}", requestPostDto.toString());
 
         if (bindingResult.hasErrors()) return ResponseEntity.badRequest().build();
 
@@ -106,6 +106,7 @@ public class PostController {
      */
     @PutMapping("/post/undel/{postId}")
     public ResponseEntity<Object> unDeletedPost(@PathVariable Long postId) {
+        log.info("postId={}", postId);
         postService.unDeleted(postId);
         return ResponseEntity.ok().build();
     }
@@ -145,16 +146,15 @@ public class PostController {
      * 좋아요 버튼 클릭
      *
      * @param postId - 좋아요 클릭 할 게시글 pk
-     * @return - 해당 게시글의 좋아요 수
+     * @return - 정상 작동 시 200
      */
-    @GetMapping("/post/like/{postId}")
-    public ResponseEntity<Integer> likePost(@PathVariable Long postId) {
+    @PutMapping("/post/like/{postId}")
+    public ResponseEntity<Object> likePost(@PathVariable Long postId) {
 
         log.info("postId={}", postId);
 
         postService.increaseLikeCount(postId);
-        int postLikeNo = postService.findOnePost(postId).toResponsePostDto().getPostLikeNo();
-        return ResponseEntity.ok(postLikeNo);
+        return ResponseEntity.ok().build();
     }
 
     /**

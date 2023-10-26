@@ -8,6 +8,7 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString
 public class RequestPostCategoryDto {
 
     @NotBlank(message = "카테고리 그룹을 입력해주세요.")

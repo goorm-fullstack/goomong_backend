@@ -30,6 +30,7 @@ public class PostCategoryController {
      */
     @PostMapping("/postcategory")
     public ResponseEntity<Object> initPostCategory(@Validated @RequestPart RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
+        log.info("requestPostCategoryDto={}", requestPostCategoryDto);
         postCategoryService.savePostCategory(requestPostCategoryDto, postCategoryImages);
         return ResponseEntity.ok().build();
     }
@@ -44,6 +45,8 @@ public class PostCategoryController {
      */
     @PutMapping("/postcategory/{postCategoryId}")
     public ResponseEntity<ResponsePostCategoryDto> modifyPostCategory(@PathVariable Long postCategoryId, @Validated @RequestPart RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
+        log.info("postCategoryId={}", postCategoryId);
+        log.info("requestPostCategoryDto={}", requestPostCategoryDto);
         PostCategory postCategory = postCategoryService.updatePostCategory(postCategoryId, requestPostCategoryDto, postCategoryImages);
         return ResponseEntity.ok(postCategory.toResponsePostCategoryDto());
     }
@@ -56,6 +59,7 @@ public class PostCategoryController {
      */
     @PutMapping("/postcategory/softdel/{postCategoryId}")
     public ResponseEntity<Object> softDeletePostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.softDeletePostCategory(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -68,6 +72,7 @@ public class PostCategoryController {
      */
     @DeleteMapping("/postcategory/{postCategoryId}")
     public ResponseEntity<Object> deletePostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.deletePostCategory(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -80,6 +85,7 @@ public class PostCategoryController {
      */
     @PutMapping("/postcategory/undel/{postCategoryId}")
     public ResponseEntity<Object> unDelete(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.unDelete(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -92,6 +98,7 @@ public class PostCategoryController {
      */
     @GetMapping("/{postCategoryId}")
     public ResponseEntity<ResponsePostCategoryDto> viewPostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         PostCategory onePostCategory = postCategoryService.findOnePostCategory(postCategoryId);
         return ResponseEntity.ok(onePostCategory.toResponsePostCategoryDto());
     }

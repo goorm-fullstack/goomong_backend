@@ -41,6 +41,7 @@ public class CommentController {
      */
     @PostMapping("/comment")
     public ResponseEntity<Object> initComment(@Validated @RequestBody RequestCommentDto requestCommentDto) {
+        log.info("requestCommentDto={}", requestCommentDto);
         commentService.saveComment(requestCommentDto);
         return ResponseEntity.ok().build();
     }
@@ -54,6 +55,8 @@ public class CommentController {
      */
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> updateComment(@PathVariable Long commentId, @Validated @RequestBody RequestCommentDto requestCommentDto) {
+        log.info("commentId={}", commentId);
+        log.info("requestCommentDto={}", requestCommentDto);
         Comment comment = commentService.updateComment(commentId, requestCommentDto);
         return ResponseEntity.ok(comment.toResponseCommentDto());
     }
@@ -66,6 +69,7 @@ public class CommentController {
      */
     @PutMapping("/comment/softdel/{commentId}")
     public ResponseEntity<Object> softDeleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.softDeleteComment(commentId);
         return ResponseEntity.ok().build();
     }
@@ -78,6 +82,7 @@ public class CommentController {
      */
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<Object> deleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
@@ -90,6 +95,7 @@ public class CommentController {
      */
     @PutMapping("/comment/undel/{commentId}")
     public ResponseEntity<Object> unDeleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.unDelete(commentId);
         return ResponseEntity.ok().build();
     }
@@ -102,6 +108,7 @@ public class CommentController {
      */
     @GetMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> viewComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         Comment oneComment = commentService.findOneComment(commentId);
         return ResponseEntity.ok(oneComment.toResponseCommentDto());
     }
@@ -114,6 +121,7 @@ public class CommentController {
      */
     @GetMapping("/comment/like/{commentId}")
     public ResponseEntity<Integer> increaseLike(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.increaseCommentLike(commentId);
         Comment oneComment = commentService.findOneComment(commentId);
         return ResponseEntity.ok(oneComment.getLikeNo());
