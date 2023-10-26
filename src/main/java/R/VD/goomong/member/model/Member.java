@@ -2,9 +2,7 @@ package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.item.model.Item;
-import R.VD.goomong.member.dto.response.ResponseMemberDto;
 import R.VD.goomong.order.model.Order;
-import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -45,6 +43,15 @@ public class Member {
     @Setter
     private LocalDateTime memberDeleteTime;
 
+    @Column(nullable = false)
+    private Long zipCode;                                    //우편 번호
+
+    @Column(nullable = false)
+    private String simpleAddress;                            //간단 주소
+
+    @Column(nullable = false)
+    private String detailAddress;                            //상세 주소
+
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
 
@@ -61,12 +68,17 @@ public class Member {
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
 
-    public void update(String memberId, String memberPassword, String memberName, String memberEmail){
+
+    public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
-        this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
+        this.memberEmail = memberEmail;
+        this.zipCode = zipCode;
+        this.simpleAddress = simpleAddress;
+        this.detailAddress = detailAddress;
     }
+
 
     // private LocalDateTime delDate;
 

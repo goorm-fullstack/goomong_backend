@@ -59,7 +59,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getMemberPassword());
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
@@ -72,7 +72,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getMemberPassword());
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);

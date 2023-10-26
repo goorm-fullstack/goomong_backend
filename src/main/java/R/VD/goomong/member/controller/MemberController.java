@@ -1,6 +1,7 @@
 package R.VD.goomong.member.controller;
 
 import R.VD.goomong.member.dto.request.RequestMember;
+import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,19 @@ public class MemberController {
     }
 
     //UPDATE
+// 회원 memberId로 회원 정보 수정
+    @PutMapping("/update/memberId/{memberId}")
+    public ResponseEntity<Member> updateByMemberId(@PathVariable String memberId, @RequestBody RequestUpdateDto requestUpdateDto) {
+        Member updatedMember = memberService.updateMemberByMemberId(memberId, requestUpdateDto);
+        return ResponseEntity.ok(updatedMember);
+    }
 
+    // 회원 index로 회원 정보 수정
+    @PutMapping("/update/id/{id}")
+    public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto) {
+        Member updatedMember = memberService.updateMemberById(id, requestUpdateDto);
+        return ResponseEntity.ok(updatedMember);
+    }
 
     //DELETE
     //회원 memberId로 삭제
@@ -63,7 +76,7 @@ public class MemberController {
     }
 
     //회원 index로 softdelete
-    @PutMapping("/id/{id}")
+    @PutMapping("/softDelete/id/{id}")
     public ResponseEntity<Member> softDeleteById(@PathVariable Long id){
         Member member = memberService.softDeleteById(id);
 
@@ -71,7 +84,7 @@ public class MemberController {
     }
 
     //회원 memberId로 softdelete
-    @PutMapping("/memberId/{memberId}")
+    @PutMapping("/softDelete/memberId/{memberId}")
     public ResponseEntity<Member> softDeleteByMemberId(@PathVariable String memberId){
         Member member = memberService.softDeleteByMemberId(memberId);
 
