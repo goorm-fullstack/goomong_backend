@@ -27,6 +27,8 @@ public class Member {
 
     private String memberId;
 
+    private String name;
+
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
 
