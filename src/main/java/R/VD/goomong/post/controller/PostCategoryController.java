@@ -24,9 +24,9 @@ public class PostCategoryController {
     /**
      * 카테고리 생성
      *
-     * @param requestPostCategoryDto - 카테고리 생성 request
-     * @param postCategoryImages     - 카테고리 이미지
-     * @return - 생성 완료 시 200
+     * @param requestPostCategoryDto 카테고리 생성 request
+     * @param postCategoryImages     카테고리 이미지
+     * @return 생성 완료 시 200
      */
     @PostMapping("/postcategory")
     public ResponseEntity<Object> initPostCategory(@Validated @RequestPart RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
@@ -38,10 +38,10 @@ public class PostCategoryController {
     /**
      * 카테고리 수정
      *
-     * @param postCategoryId         - 수정할 카테고리 pk
-     * @param requestPostCategoryDto - 수정할 내용
-     * @param postCategoryImages     - 수정할 이미지
-     * @return - 수정된 카테고리
+     * @param postCategoryId         수정할 카테고리 pk
+     * @param requestPostCategoryDto 수정할 내용
+     * @param postCategoryImages     수정할 이미지
+     * @return 수정된 카테고리
      */
     @PutMapping("/postcategory/{postCategoryId}")
     public ResponseEntity<ResponsePostCategoryDto> modifyPostCategory(@PathVariable Long postCategoryId, @Validated @RequestPart RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
@@ -54,8 +54,8 @@ public class PostCategoryController {
     /**
      * 카테고리 소프트딜리트
      *
-     * @param postCategoryId - 삭제할 카테고리 pk
-     * @return - 삭제 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 pk
+     * @return 삭제 완료 시 200
      */
     @PutMapping("/postcategory/softdel/{postCategoryId}")
     public ResponseEntity<Object> softDeletePostCategory(@PathVariable Long postCategoryId) {
@@ -67,8 +67,8 @@ public class PostCategoryController {
     /**
      * 카테고리 완전 삭제
      *
-     * @param postCategoryId - 삭제할 카테고리 pk
-     * @return - 삭제 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 pk
+     * @return 삭제 완료 시 200
      */
     @DeleteMapping("/postcategory/{postCategoryId}")
     public ResponseEntity<Object> deletePostCategory(@PathVariable Long postCategoryId) {
@@ -80,8 +80,8 @@ public class PostCategoryController {
     /**
      * 삭제된 카테고리 복구
      *
-     * @param postCategoryId - 삭제할 카테고리 id
-     * @return - 복구 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 id
+     * @return 복구 완료 시 200
      */
     @PutMapping("/postcategory/undel/{postCategoryId}")
     public ResponseEntity<Object> unDelete(@PathVariable Long postCategoryId) {
@@ -93,8 +93,8 @@ public class PostCategoryController {
     /**
      * 카테고리 조회
      *
-     * @param postCategoryId - 조회할 카테고리 pk
-     * @return - 조회된 카테고리
+     * @param postCategoryId 조회할 카테고리 pk
+     * @return 조회된 카테고리
      */
     @GetMapping("/{postCategoryId}")
     public ResponseEntity<ResponsePostCategoryDto> viewPostCategory(@PathVariable Long postCategoryId) {
@@ -106,7 +106,7 @@ public class PostCategoryController {
     /**
      * 삭제되지 않은 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @GetMapping()
     public ResponseEntity<List<ResponsePostCategoryDto>> listOfNotDeleted() {
@@ -117,7 +117,7 @@ public class PostCategoryController {
     /**
      * 삭제된 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @GetMapping("/deleted")
     public ResponseEntity<List<ResponsePostCategoryDto>> listOfDeleted() {
@@ -128,7 +128,7 @@ public class PostCategoryController {
     /**
      * 모든 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @GetMapping("/all")
     public ResponseEntity<List<ResponsePostCategoryDto>> allList() {
