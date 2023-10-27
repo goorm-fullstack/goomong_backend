@@ -14,6 +14,9 @@ import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -118,5 +121,48 @@ public class AskService {
                 .delDate(LocalDateTime.now())
                 .build();
         askRepository.save(build);
+    }
+
+    // 완전 삭제
+    public void delete(Long askId) {
+        Ask ask = askRepository.findById(askId).orElseThrow(() -> new NotFoundAsk("해당 id의 글을 찾을 수 없습니다. id = " + askId));
+        if (ask.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 글은 이미 삭제된 글입니다. id = " + askId);
+
+        askRepository.delete(ask);
+    }
+
+    // 특정 문의글 조회
+    public Ask findOneAsk(Long askId) {
+        Ask ask = askRepository.findById(askId).orElseThrow(() -> new NotFoundAsk("해당 id의 글을 찾을 수 없습니다. id = " + askId));
+        if (ask.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 글은 이미 삭제된 글입니다. id = " + askId);
+
+        return ask;
+    }
+
+    // 삭제되지 않은 문의글 조회
+    public Page<Ask> listOfNotDeleted(Pageable pageable) {
+        Page<Ask> all = askRepository.findAll(pageable);
+        List<Ask> list = new ArrayList<>();
+
+        for (Ask ask : all) {
+            if (ask.getDelDate() == null) list.add(ask);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 삭제된 문의글 조회
+    public Page<Ask> listOfDeleted(Pageable pageable) {
+        Page<Ask> all = askRepository.findAll(pageable);
+        List<Ask> list = new ArrayList<>();
+
+        for (Ask ask : all) {
+            if (ask.getDelDate() != null) list.add(ask);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 전체 문의글 조회
+    public Page<Ask> allList(Pageable pageable) {
+        return askRepository.findAll(pageable);
     }
 }
