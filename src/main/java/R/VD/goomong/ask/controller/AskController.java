@@ -27,6 +27,16 @@ public class AskController {
 
     private final AskService askService;
 
+    private static ResponseEntity<List<ResponseAskDto>> getListResponseEntity(Page<Ask> asks) {
+        long totalElements = asks.getTotalElements();
+        int totalPages = asks.getTotalPages();
+
+        return ResponseEntity.ok()
+                .header("TotalPages", String.valueOf(totalPages))
+                .header("TotalData", String.valueOf(totalElements))
+                .body(asks.getContent().stream().map(Ask::toResponseAskDto).toList());
+    }
+
     /**
      * 문의글 생성
      *
@@ -144,13 +154,7 @@ public class AskController {
     public ResponseEntity<List<ResponseAskDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.listOfNotDeleted(pageable);
 
-        long totalElements = asks.getTotalElements();
-        int totalPages = asks.getTotalPages();
-
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(asks.getContent().stream().map(Ask::toResponseAskDto).toList());
+        return getListResponseEntity(asks);
     }
 
     /**
@@ -164,13 +168,7 @@ public class AskController {
     public ResponseEntity<List<ResponseAskDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.listOfDeleted(pageable);
 
-        long totalElements = asks.getTotalElements();
-        int totalPages = asks.getTotalPages();
-
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(asks.getContent().stream().map(Ask::toResponseAskDto).toList());
+        return getListResponseEntity(asks);
     }
 
     /**
@@ -184,12 +182,6 @@ public class AskController {
     public ResponseEntity<List<ResponseAskDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.allList(pageable);
 
-        long totalElements = asks.getTotalElements();
-        int totalPages = asks.getTotalPages();
-
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(asks.getContent().stream().map(Ask::toResponseAskDto).toList());
+        return getListResponseEntity(asks);
     }
 }
