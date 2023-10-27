@@ -38,9 +38,9 @@ public class ReportController {
     /**
      * 신고글 생성
      *
-     * @param requestReportDto - 신고글 생성 request
-     * @param filesList        - 신고글 파일 업로드
-     * @return - 생성 완료 시 200
+     * @param requestReportDto 신고글 생성 request
+     * @param filesList        신고글 파일 업로드
+     * @return 생성 완료 시 200
      */
     @PostMapping("/report")
     public ResponseEntity<Object> initReport(@Validated @ModelAttribute RequestReportDto requestReportDto, @RequestParam(required = false) MultipartFile[] filesList) {
@@ -52,10 +52,10 @@ public class ReportController {
     /**
      * 신고글 수정
      *
-     * @param reportId         - 수정할 신고글 pk
-     * @param requestReportDto - 수정할 내용
-     * @param filesList        - 수정할 업로드 파일
-     * @return - 수정된 신고글
+     * @param reportId         수정할 신고글 pk
+     * @param requestReportDto 수정할 내용
+     * @param filesList        수정할 업로드 파일
+     * @return 수정된 신고글
      */
     @PutMapping("/report/{reportId}")
     public ResponseEntity<ResponseReportDto> updateReport(@PathVariable Long reportId, @Validated @ModelAttribute RequestReportDto requestReportDto, @RequestParam(required = false) MultipartFile[] filesList) {
@@ -68,8 +68,8 @@ public class ReportController {
     /**
      * 신고글 소프트딜리트
      *
-     * @param reportId - 삭제할 신고글 pk
-     * @return - 삭제 완료 시 200
+     * @param reportId 삭제할 신고글 pk
+     * @return 삭제 완료 시 200
      */
     @PutMapping("/report/softdel/{reportId}")
     public ResponseEntity<Object> softDelete(@PathVariable Long reportId) {
@@ -81,8 +81,8 @@ public class ReportController {
     /**
      * 신고글 완전 삭제
      *
-     * @param reportId - 삭제할 신고글 pk
-     * @return - 삭제 완료 시 200
+     * @param reportId 삭제할 신고글 pk
+     * @return 삭제 완료 시 200
      */
     @DeleteMapping("/report/{reportId}")
     public ResponseEntity<Object> delete(@PathVariable Long reportId) {
@@ -94,8 +94,8 @@ public class ReportController {
     /**
      * 삭제된 신고글 복구
      *
-     * @param reportId - 복구할 신고글 pk
-     * @return - 복구 완료 시 200
+     * @param reportId 복구할 신고글 pk
+     * @return 복구 완료 시 200
      */
     @PutMapping("/report/undel/{reportId}")
     public ResponseEntity<Object> unDelete(@PathVariable Long reportId) {
@@ -107,8 +107,8 @@ public class ReportController {
     /**
      * 신고글 이상 없음 처리
      *
-     * @param reportId - 처리할 신고글 pk
-     * @return - 처리 완료 시 200
+     * @param reportId 처리할 신고글 pk
+     * @return 처리 완료 시 200
      */
     @PutMapping("/report/noproblem/{reportId}")
     public ResponseEntity<Object> checkNoProblem(@PathVariable Long reportId) {
@@ -120,8 +120,8 @@ public class ReportController {
     /**
      * 신고글 삭제 처리
      *
-     * @param reportId - 삭제 처리할 신고글 pk
-     * @return - 처리 완료 시 200
+     * @param reportId 삭제 처리할 신고글 pk
+     * @return 처리 완료 시 200
      */
     @PutMapping("/report/del/{reportId}")
     public ResponseEntity<Object> checkDel(@PathVariable Long reportId) {
@@ -133,8 +133,8 @@ public class ReportController {
     /**
      * 특정 신고글 조회
      *
-     * @param reportId - 조회할 신고글 pk
-     * @return - 조회된 신고글
+     * @param reportId 조회할 신고글 pk
+     * @return 조회된 신고글
      */
     @GetMapping("/report/{reportId}")
     public ResponseEntity<ResponseReportDto> viewReport(@PathVariable Long reportId) {
@@ -146,8 +146,8 @@ public class ReportController {
     /**
      * 삭제되지 않은 신고글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 신고글
+     * @param pageable 페이징
+     * @return 조회된 신고글
      */
     @GetMapping
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
@@ -160,8 +160,8 @@ public class ReportController {
     /**
      * 삭제된 신고글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 신고글
+     * @param pageable 페이징
+     * @return 조회된 신고글
      */
     @GetMapping("/del")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
@@ -174,8 +174,8 @@ public class ReportController {
     /**
      * 전체 신고글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 신고글
+     * @param pageable 페이징
+     * @return 조회된 신고글
      */
     @GetMapping("/all")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
