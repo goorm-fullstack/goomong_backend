@@ -30,9 +30,9 @@ public class AskController {
     /**
      * 문의글 생성
      *
-     * @param requestAskDto - 문의글 생성 request
-     * @param files         - 업로드 파일
-     * @return - 생성 완료 시 200
+     * @param requestAskDto 문의글 생성 request
+     * @param files         업로드 파일
+     * @return 생성 완료 시 200
      */
     @PostMapping("/ask")
     public ResponseEntity<Object> initAsk(@Validated @ModelAttribute RequestAskDto requestAskDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -45,9 +45,9 @@ public class AskController {
     /**
      * 답글 생성
      *
-     * @param requestAnswerDto - 답글 생성 request
-     * @param files            - 업로드 파일
-     * @return - 생성 완료 시 200
+     * @param requestAnswerDto 답글 생성 request
+     * @param files            업로드 파일
+     * @return 생성 완료 시 200
      */
     @PostMapping("/answer")
     public ResponseEntity<Object> initAnswer(@Validated @ModelAttribute RequestAnswerDto requestAnswerDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -60,10 +60,10 @@ public class AskController {
     /**
      * 문의글 수정
      *
-     * @param askId         - 수정할 문의글 pk
-     * @param requestAskDto - 수정 내용
-     * @param files         - 수정 업로드 파일
-     * @return - 수정된 문의글
+     * @param askId         수정할 문의글 pk
+     * @param requestAskDto 수정 내용
+     * @param files         수정 업로드 파일
+     * @return 수정된 문의글
      */
     @PutMapping("/ask/{askId}")
     public ResponseEntity<ResponseAskDto> updateAsk(@PathVariable Long askId, @Validated @ModelAttribute RequestAskDto requestAskDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -77,10 +77,10 @@ public class AskController {
     /**
      * 답글 수정
      *
-     * @param answerId         - 수정할 답글 pk
-     * @param requestAnswerDto - 수정 내용
-     * @param files            - 수정 업로드 파일
-     * @return - 수정된 답글
+     * @param answerId         수정할 답글 pk
+     * @param requestAnswerDto 수정 내용
+     * @param files            수정 업로드 파일
+     * @return 수정된 답글
      */
     @PutMapping("/answer/{answerId}")
     public ResponseEntity<ResponseAnswerDto> updateAnswer(@PathVariable Long answerId, @Validated @ModelAttribute RequestAnswerDto requestAnswerDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -94,8 +94,8 @@ public class AskController {
     /**
      * 소프트딜리트
      *
-     * @param askId - 삭제할 글 pk
-     * @return - 삭제 완료 시 200
+     * @param askId 삭제할 글 pk
+     * @return 삭제 완료 시 200
      */
     @PutMapping("/ask/softdel/{askId}")
     public ResponseEntity<Object> softDelete(@PathVariable Long askId) {
@@ -108,8 +108,8 @@ public class AskController {
     /**
      * 완전 삭제
      *
-     * @param askId - 삭제할 글 pk
-     * @return - 삭제 완료 시 200
+     * @param askId 삭제할 글 pk
+     * @return 삭제 완료 시 200
      */
     @DeleteMapping("/ask/del/{askId}")
     public ResponseEntity<Object> delete(@PathVariable Long askId) {
@@ -122,8 +122,8 @@ public class AskController {
     /**
      * 문의글 조회
      *
-     * @param askId - 조회할 문의글 pk
-     * @return - 조회된 문의글
+     * @param askId 조회할 문의글 pk
+     * @return 조회된 문의글
      */
     @GetMapping("/ask/{askId}")
     public ResponseEntity<ResponseAskDto> viewAsk(@PathVariable Long askId) {
@@ -136,8 +136,8 @@ public class AskController {
     /**
      * 삭제되지 않은 문의글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 문의글
+     * @param pageable 페이징
+     * @return 조회된 문의글
      */
     @GetMapping
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
@@ -156,8 +156,8 @@ public class AskController {
     /**
      * 삭제된 문의글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 문의글
+     * @param pageable 페이징
+     * @return 조회된 문의글
      */
     @GetMapping("/del")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
@@ -176,8 +176,8 @@ public class AskController {
     /**
      * 문의글 전체 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 문의글
+     * @param pageable 페이징
+     * @return 조회된 문의글
      */
     @GetMapping("all")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
