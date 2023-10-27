@@ -1,6 +1,8 @@
 package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.chat.model.ChatMessage;
+import R.VD.goomong.chat.model.ChatRoomMember;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.response.ResponseMemberDto;
 import R.VD.goomong.order.model.Order;
@@ -44,6 +46,12 @@ public class Member {
 
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<ChatMessage> messages;
+
+    @OneToMany(mappedBy = "member")
+    private List<ChatRoomMember> chatRoomMembers;
 
     private LocalDateTime delDate;
 

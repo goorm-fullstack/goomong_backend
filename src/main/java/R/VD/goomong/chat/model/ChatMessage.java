@@ -6,10 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,19 +15,17 @@ import java.util.UUID;
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id", nullable = false)
+    @Column(name = "message_id")
     private Long messageId;
-
-    @Column(name = "room_uuid", columnDefinition = "BINARY(16)", nullable = false)
-    private UUID roomUUID;
 
     @Column(name = "message", nullable = false)
     private String message;
 
-    @Column(name = "reg_date")
-    @CreationTimestamp
-    private LocalDateTime regDate;
-    
     @ManyToOne
-    private Member sender;
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
 }
