@@ -1,30 +1,25 @@
 package R.VD.goomong.ask.dto.response;
 
-import R.VD.goomong.ask.model.Ask;
-import R.VD.goomong.item.model.Item;
-import R.VD.goomong.member.model.Member;
-import lombok.Data;
+import R.VD.goomong.file.model.Files;
+import R.VD.goomong.item.dto.response.ResponseItemDto;
+import lombok.*;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ResponseAskDto {
-    private Long id;
-    private Member member;//작성자
-    private Item item;//작성할 아이템
-    private String title;//문의 제목
-    private String content;//문의 내용
-    private Ask parent;//부모 문의
-    private List<Ask> answer = new ArrayList<>();//답변 내용들
 
-    public ResponseAskDto(Ask ask) {
-        this.id = ask.getId();
-        this.member = ask.getMember();
-        this.item = ask.getItem();
-        this.title = ask.getTitle();
-        this.content = ask.getContent();
-        this.parent = ask.getAsk();
-        this.answer = ask.getAsks();
-    }
+    private Long id;
+    private String memberId; // 작성자
+    private ResponseItemDto item; // 작성할 아이템
+    private List<Files> filesList; // 업로드 파일
+    private String title; // 문의 제목
+    private String content; // 문의 내용
+    private List<ResponseAskDto> answerList; // 답변 내용들
+    private LocalDateTime regDate; // 생성 날짜
+    private LocalDateTime delDate; // 삭제 날짜
 }
