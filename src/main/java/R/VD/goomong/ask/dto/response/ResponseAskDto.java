@@ -4,7 +4,7 @@ import R.VD.goomong.file.model.Files;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -20,6 +20,6 @@ public class ResponseAskDto {
     private String title; // 문의 제목
     private String content; // 문의 내용
     private List<ResponseAskDto> answerList; // 답변 내용들
-    private LocalDateTime regDate; // 생성 날짜
-    private LocalDateTime delDate; // 삭제 날짜
+    private ZonedDateTime regDate; // 생성 날짜
+    private ZonedDateTime delDate; // 삭제 날짜
 }

@@ -3,7 +3,7 @@ package R.VD.goomong.post.model;
 import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
@@ -15,7 +15,6 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseTimeEntity {
+public class Post extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,9 +74,6 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private int postLikeNo; // 게시글 좋아요수
 
-    @Column
-    private LocalDateTime delDate; // 삭제일
-
     // response로 변환
     public ResponsePostDto toResponsePostDto() {
 
@@ -113,7 +109,7 @@ public class Post extends BaseTimeEntity {
                 .commentList(comments)
                 .report(reports)
                 .regDate(this.getRegDate())
-                .delDate(delDate)
+                .delDate(this.getDelDate())
                 .build();
     }
 }

@@ -3,14 +3,13 @@ package R.VD.goomong.ask.model;
 import R.VD.goomong.ask.dto.response.ResponseAnswerDto;
 import R.VD.goomong.ask.dto.response.ResponseAskDto;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Ask extends BaseTimeEntity {
+public class Ask extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,9 +51,6 @@ public class Ask extends BaseTimeEntity {
     @Builder.Default
     private List<Ask> answerList = new ArrayList<>(); // 답변 내용들
 
-    @Column
-    private LocalDateTime delDate;
-
     public ResponseAskDto toResponseAskDto() {
 
         List<ResponseAskDto> answers = new ArrayList<>();
@@ -71,7 +67,7 @@ public class Ask extends BaseTimeEntity {
                 .content(content)
                 .answerList(answers)
                 .regDate(this.getRegDate())
-                .delDate(delDate)
+                .delDate(this.getDelDate())
                 .build();
     }
 
@@ -84,7 +80,7 @@ public class Ask extends BaseTimeEntity {
                 .title(title)
                 .content(content)
                 .regDate(this.getRegDate())
-                .delDate(delDate)
+                .delDate(this.getDelDate())
                 .build();
     }
 }

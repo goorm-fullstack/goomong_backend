@@ -3,7 +3,7 @@ package R.VD.goomong.comment.dto.response;
 import R.VD.goomong.report.dto.response.ResponseReportDto;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -18,6 +18,6 @@ public class ResponseCommentDto {
     private List<ResponseReportDto> reportList;
     private String content;
     private int likeNo;
-    private LocalDateTime regDate;
-    private LocalDateTime delDate;
+    private ZonedDateTime regDate;
+    private ZonedDateTime delDate;
 }
