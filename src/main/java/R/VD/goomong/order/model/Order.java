@@ -34,24 +34,13 @@ public class Order extends BaseTimeEntity {
     private Member member;
 
     private int price;
+    private String orderNumber;
 
     @Embedded
     private Address address;
 
     @Enumerated(EnumType.STRING)
     private Status status;//배송 상태
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", orderItem=" + orderItem +
-                ", member=" + member +
-                ", price=" + price +
-                ", address=" + address +
-                ", status=" + status +
-                '}';
-    }
 
     public void setMember(Member member) {
         this.member = member;

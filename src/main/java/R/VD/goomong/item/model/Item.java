@@ -61,6 +61,10 @@ public class Item extends BaseTimeEntity {
         this.itemCategories = itemCategories;
     }
 
+    public void deleteItem() {
+        delDate = LocalDateTime.now();
+    }
+
     // 평점 계산
     public void calculateRate() {
         Float result = (float) 0;
