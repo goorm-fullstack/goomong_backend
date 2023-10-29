@@ -7,13 +7,14 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ResponseChatRoomDTO {
-    private String roomUUID;
+    private String roomId;
     private String roomName;
     private LocalDateTime regDate;
 
-    public ResponseChatRoomDTO(ChatRoom chatRoom) {
-        this.roomUUID = chatRoom.getRoomUUID().toString();
-        this.roomName = chatRoom.getRoomName();
+    public ResponseChatRoomDTO(ChatRoom chatRoom, String roomName) {
+        this.roomId = chatRoom.getRoomId().toString();
+        this.roomName = roomName;
         this.regDate = chatRoom.getRegDate();
     }
+
 }

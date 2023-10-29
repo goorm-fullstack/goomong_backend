@@ -1,33 +1,32 @@
 package R.VD.goomong.chat.model;
 
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomMember {
+@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_id = ? AND member_id = ?")
+public class ChatRoomMember extends BaseTimeEntity {
 
     @Id
-    private Long roomId;
-    @Id
-    private Long memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
 }

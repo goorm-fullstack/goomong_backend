@@ -1,11 +1,13 @@
 package R.VD.goomong.chat.model;
 
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.item.model.Item;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.List;
 
@@ -14,14 +16,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoom {
+@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_id = ?")
+public class ChatRoom extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
     private Long roomId;
-
-    @Column(name = "room_name", nullable = false)
-    private String roomName;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = true)
@@ -32,4 +33,5 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatRoomMember> members;
+
 }
