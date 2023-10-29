@@ -47,13 +47,16 @@ public class ChatRoomService {
             ChatRoomMember chatRoomMember = (ChatRoomMember) row[0];
             String opponentName = Objects.toString(row[1]);
 
-            ResponseChatRoomDTO responseChatRoomDTO = new ResponseChatRoomDTO(chatRoomMember.getChatRoom(), opponentName);
+            ChatRoom chatRoom = chatRoomMember.getChatRoom();
+            Item item = chatRoom.getItem(); // ChatRoom에서 Item 정보 가져오기
+
+            ResponseChatRoomDTO responseChatRoomDTO = new ResponseChatRoomDTO(chatRoom, item, opponentName);
+
             responseList.add(responseChatRoomDTO);
         }
 
         return responseList;
     }
-
 
     @Transactional
     public ResponseChatRoomDTO createItemChatRoom(RequestItemChatRoomDTO chatRoomDTO) {
@@ -82,7 +85,7 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(roomMember);
         chatRoomMemberRepository.save(build);
 
-        return new ResponseChatRoomDTO(chatRoom, seller.getName());
+        return new ResponseChatRoomDTO(chatRoom, item, seller.getName());
     }
 
     @Transactional
@@ -108,7 +111,7 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(roomMember);
         chatRoomMemberRepository.save(build);
 
-        return new ResponseChatRoomDTO(chatRoom, responseMember.getName());
+        return new ResponseChatRoomDTO(chatRoom, null, responseMember.getName());
     }
 
     public void softDelete(RequestChatSoftDelete requestChatSoftDelete) {
