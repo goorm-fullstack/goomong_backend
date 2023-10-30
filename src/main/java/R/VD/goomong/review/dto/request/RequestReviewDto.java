@@ -20,7 +20,7 @@ public class RequestReviewDto {
 
     @NotBlank
     private String title;
-    
+
     @NotBlank
     private String content;
 
@@ -29,7 +29,7 @@ public class RequestReviewDto {
 
     public Review toEntity() {
         return Review.builder()
-                .member(member)
+                .title(title)
                 .content(content)
                 .rate(rate)
                 .build();
