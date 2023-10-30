@@ -4,8 +4,6 @@ import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.review.dto.response.ResponseReviewDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,15 +34,11 @@ public class Review extends BaseDateEntity {
     private List<Image> imageList = new ArrayList<>();
 
     @Column(nullable = false)
-    private String title;
+    private String title; // 리뷰 제목
 
     @Column(nullable = false)
     private String content;//리뷰 내용
 
     @Column(nullable = false)
     private Float rate;//평점
-
-    public ResponseReviewDto toResponseReviewDto(){
-        return ResponseReviewDto
-    }
 }
