@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class CommentService {
             throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
 
         Comment build = comment.toBuilder()
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         commentRepository.save(build);
     }

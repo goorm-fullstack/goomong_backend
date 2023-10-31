@@ -4,9 +4,11 @@ import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
+import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,4 +43,20 @@ public class Review extends BaseDateEntity {
 
     @Column(nullable = false)
     private Float rate;//평점
+
+    @Column
+    private ZonedDateTime delDate;
+
+    public ResponseReviewDto toResponseReviewDto() {
+        return ResponseReviewDto.builder()
+                .id(id)
+                .memberId(member.getMemberId())
+                .imageList(imageList)
+                .title(title)
+                .content(content)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
+                .rate(rate)
+                .build();
+    }
 }

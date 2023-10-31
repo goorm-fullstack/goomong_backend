@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +114,7 @@ public class ReportService {
         if (origin.getDelDate() != null) throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 신고글입니다.");
 
         Report build = origin.toBuilder()
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         reportRepository.save(build);
     }
@@ -158,7 +158,7 @@ public class ReportService {
             if (comment.getDelDate() != null)
                 throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
             Comment build = comment.toBuilder()
-                    .delDate(LocalDateTime.now())
+                    .delDate(ZonedDateTime.now())
                     .build();
             commentRepository.save(build);
         }
@@ -168,7 +168,7 @@ public class ReportService {
             if (post.getDelDate() != null)
                 throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + post.getId());
             Post build = post.toBuilder()
-                    .delDate(LocalDateTime.now())
+                    .delDate(ZonedDateTime.now())
                     .build();
             postRepository.save(build);
         }
@@ -215,7 +215,7 @@ public class ReportService {
         Report build = origin.toBuilder()
                 .reportCheck("처리 완료")
                 .reportResult(result)
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         reportRepository.save(build);
     }

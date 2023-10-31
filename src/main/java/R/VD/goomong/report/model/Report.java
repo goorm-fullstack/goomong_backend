@@ -9,6 +9,7 @@ import R.VD.goomong.report.dto.response.ResponseReportDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class Report extends BaseDateEntity {
     @Column
     private String reportResult; // 신고 처리 결과 (삭제 처리, 이상 없음)
 
+    @Column
+    private ZonedDateTime delDate;
+
     public ResponseReportDto toResponseReportDto() {
         return ResponseReportDto.builder()
                 .id(id)
@@ -60,7 +64,7 @@ public class Report extends BaseDateEntity {
                 .reportCheck(reportCheck)
                 .reportResult(reportResult)
                 .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
+                .delDate(delDate)
                 .build();
     }
 }

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +118,7 @@ public class AskService {
         if (ask.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 글은 이미 삭제된 글입니다. id = " + askId);
 
         Ask build = ask.toBuilder()
-                .
+                .delDate(ZonedDateTime.now())
                 .build();
         askRepository.save(build);
     }

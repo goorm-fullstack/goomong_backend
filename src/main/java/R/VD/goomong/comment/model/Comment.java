@@ -9,6 +9,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class Comment extends BaseDateEntity {
     @Column(nullable = false)
     private int likeNo; // 댓글 좋아요 수
 
+    @Column
+    private ZonedDateTime delDate;
+
     public ResponseCommentDto toResponseCommentDto() {
 
         List<ResponseCommentDto> list = new ArrayList<>();
@@ -69,7 +73,7 @@ public class Comment extends BaseDateEntity {
                 .childrenComment(list)
                 .reportList(reports)
                 .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
+                .delDate(delDate)
                 .build();
     }
 }

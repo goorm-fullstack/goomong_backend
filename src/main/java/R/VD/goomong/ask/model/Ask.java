@@ -10,6 +10,7 @@ import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,9 @@ public class Ask extends BaseDateEntity {
     @Builder.Default
     private List<Ask> answerList = new ArrayList<>(); // 답변 내용들
 
+    @Column
+    private ZonedDateTime delDate;
+
     public ResponseAskDto toResponseAskDto() {
 
         List<ResponseAskDto> answers = new ArrayList<>();
@@ -67,7 +71,7 @@ public class Ask extends BaseDateEntity {
                 .content(content)
                 .answerList(answers)
                 .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
+                .delDate(delDate)
                 .build();
     }
 
@@ -80,7 +84,7 @@ public class Ask extends BaseDateEntity {
                 .title(title)
                 .content(content)
                 .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
+                .delDate(delDate)
                 .build();
     }
 }
