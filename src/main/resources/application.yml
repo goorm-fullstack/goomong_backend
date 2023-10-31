@@ -18,6 +18,10 @@ spring:
   session:
     jdbc:
       initialize-schema: always
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 
 File:
   upload:
@@ -27,3 +31,9 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
