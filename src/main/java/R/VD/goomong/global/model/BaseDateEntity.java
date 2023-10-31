@@ -21,7 +21,4 @@ public abstract class BaseDateEntity {
 
     @LastModifiedDate
     private ZonedDateTime chgDate;
-
-    @Column
-    private ZonedDateTime delDate;
 }

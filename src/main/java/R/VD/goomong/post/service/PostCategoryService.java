@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class PostCategoryService {
             throw new AlreadyDeletePostCategoryException("해당 id의 카테고리는 이미 삭제된 카테고리입니다. id = " + postCategoryId);
 
         PostCategory build = onePostCategory.toBuilder()
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         postCategoryRepository.save(build);
     }

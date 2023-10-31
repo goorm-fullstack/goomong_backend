@@ -118,7 +118,7 @@ public class AskService {
         if (ask.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 글은 이미 삭제된 글입니다. id = " + askId);
 
         Ask build = ask.toBuilder()
-                .delDate(LocalDateTime.now())
+                .
                 .build();
         askRepository.save(build);
     }

@@ -6,6 +6,8 @@ import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.ZonedDateTime;
+
 @Entity
 @Getter
 @Builder(toBuilder = true)
@@ -27,12 +29,15 @@ public class PostCategory extends BaseDateEntity {
     @Column(nullable = false)
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
+    @Column
+    private ZonedDateTime delDate;
+
     // response로 변환
     public ResponsePostCategoryDto toResponsePostCategoryDto() {
         return ResponsePostCategoryDto.builder()
                 .id(id)
                 .postCategoryName(postCategoryName)
-                .regDate(this.getRegDate())
+                .regDate(delDate)
                 .delDate(this.getDelDate())
                 .build();
     }
