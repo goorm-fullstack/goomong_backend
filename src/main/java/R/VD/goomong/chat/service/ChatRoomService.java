@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
@@ -68,6 +69,10 @@ public class ChatRoomService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("상품 " + itemId + "는 찾을 수 없습니다."));
         Member seller = item.getMember();
+
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByItemAndMembers_Member(item, buyer);
+        if (existingChatRoom.isPresent())
+            return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getName());
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .item(item)

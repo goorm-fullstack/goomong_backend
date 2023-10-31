@@ -31,20 +31,23 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public void saveMessage(RequestChatMessageDTO requestChatMessageDTO) {
+    public ResponseChatMessageDTO saveMessage(RequestChatMessageDTO requestChatMessageDTO) {
         Long roomId = requestChatMessageDTO.getRoomId();
         Long memberId = requestChatMessageDTO.getMemberId();
-        
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 채팅방입니다."));
-        Member sender = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다."));
 
+        log.info("roomId = {}, memberId = {}", roomId, memberId);
+
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new NotFoundException("채팅방 " + roomId + "는 존재하지 않습니다."));
+        Member sender = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
+        
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(requestChatMessageDTO.getMessage())
                 .member(sender)
                 .chatRoom(chatRoom)
                 .build();
         chatMessageRepository.save(chatMessage);
+        return new ResponseChatMessageDTO(chatMessage);
     }
 }

@@ -10,10 +10,12 @@ import lombok.*;
 public class RequestMemberDto {
 
     private String memberId;
+    private String name;
 
     public Member toEntity() {
         return Member.builder()
                 .memberId(memberId)
+                .name(name)
                 .build();
     }
 }
