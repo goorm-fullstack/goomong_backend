@@ -13,6 +13,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -79,17 +80,19 @@ public class Member {
         this.detailAddress = detailAddress;
     }
 
+    public ResponseMemberDto toResponseMemberDto() {
+        List<ResponsePostDto> posts = null;
+        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
 
-    // private LocalDateTime delDate;
+        return ResponseMemberDto.builder()
+                .id(id)
+                .memberId(memberId)
+                .posts(posts)
+                .build();
+    }
 
-    // public ResponseMemberDto toResponseMemberDto() {
-    //     List<ResponsePostDto> posts = null;
-    //     if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
-
-    //     return ResponseMemberDto.builder()
-    //             .id(id)
-    //             .memberId(memberId)
-    //             .posts(posts)
-    //             .build();
-    // }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, memberId, itemList, postList, orderList, reviewList, askList, delDate);
+    }
 }
