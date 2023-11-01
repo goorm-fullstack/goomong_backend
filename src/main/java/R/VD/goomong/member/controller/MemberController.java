@@ -1,5 +1,6 @@
 package R.VD.goomong.member.controller;
 
+import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
@@ -93,8 +94,10 @@ public class MemberController {
 
     //Test
     @PostMapping("/login")
-    public ResponseEntity<String> login() {
-        return ResponseEntity.ok().body("token");
+    public String login(RequestLogin requestLogin){
+        memberService.memberLogin(requestLogin);
+
+        return "login";
     }
 
 }

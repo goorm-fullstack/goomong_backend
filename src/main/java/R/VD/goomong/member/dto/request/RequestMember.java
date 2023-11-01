@@ -27,10 +27,12 @@ public class RequestMember {
 
     private String detailAddress;
 
+    private String memberRole;
+
 
 
     @Builder(toBuilder = true)
-    public RequestMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestMember(String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -39,6 +41,7 @@ public class RequestMember {
         this.zipCode = zipCode;
         this.simpleAddress = simpleAddress;
         this.detailAddress = detailAddress;
+        this.memberRole = memberRole;
     }
 
     public Member toEntity(){
@@ -51,6 +54,7 @@ public class RequestMember {
                 .zipCode(zipCode)
                 .simpleAddress(simpleAddress)
                 .detailAddress(detailAddress)
+                .memberRole(memberRole)
                 .build();
     }
 

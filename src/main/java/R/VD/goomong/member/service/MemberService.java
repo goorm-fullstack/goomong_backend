@@ -1,5 +1,7 @@
 package R.VD.goomong.member.service;
 
+import R.VD.goomong.member.config.BCryptPasswordConfig;
+import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.exception.NotFoundMember;
@@ -22,11 +24,16 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordConfig bCryptPasswordConfig;
 
     //CREATE
     //회원 가입
     public void save(RequestMember requestMember) {
         Member member = requestMember.toEntity();
+        member.setMemberRole("MEMBER");
+        String rawPassword = member.getMemberPassword();
+        String encodePassword = bCryptPasswordConfig.encodePassword().encode(rawPassword);
+        member.setMemberPassword(encodePassword);
 
         memberRepository.save(member);
     }
@@ -132,4 +139,18 @@ public class MemberService {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. " + memberId);
         }
     }
+
+    //로그인
+    public Member memberLogin(RequestLogin requestLogin){
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
+
+        Member member = byMemberId.get();
+
+        if(member.getMemberPassword().equals(requestLogin.getMemberPassword())) {
+            return member;
+        }
+
+        return null;
+    }
+
 }

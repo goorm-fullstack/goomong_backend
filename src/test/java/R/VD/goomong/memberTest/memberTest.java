@@ -39,8 +39,9 @@ public class memberTest {
 
         memberService.save(requestMember);
 
-
         Member member = memberService.findByMemberId("testId");
+        String memberPassword = member.getMemberPassword();
+        System.out.println("memberPassword : " + memberPassword);
 
         Assertions.assertThat("testId").isEqualTo(member.getMemberId());
     }

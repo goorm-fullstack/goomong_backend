@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -41,7 +42,6 @@ public class Member {
     @JsonFormat(timezone = "Asia/Seoul")
     private LocalDateTime memberSignupTime;
 
-    @Setter
     private LocalDateTime memberDeleteTime;
 
     @Column(nullable = false)
@@ -52,6 +52,9 @@ public class Member {
 
     @Column(nullable = false)
     private String detailAddress;                            //상세 주소
+
+    @Column(nullable = false)
+    private String memberRole;                                //권한
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -68,7 +71,6 @@ public class Member {
 
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
-
 
     public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
