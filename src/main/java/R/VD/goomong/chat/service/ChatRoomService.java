@@ -50,12 +50,12 @@ public class ChatRoomService {
 
         ChatRoom requestChatRoom = ChatRoom.builder() // 구매자 또는 일반 유저에게 보이는 채팅방
                 .roomUUID(uuid)
-                .roomName(responseUser.getName())
+                .roomName(responseUser.getMemberName())
                 .member(requestUser)
                 .build();
         ChatRoom responseChatRoom = ChatRoom.builder() // 판매자 또는 관리자에게 보이는 채팅방
                 .roomUUID(uuid)
-                .roomName(requestUser.getName())
+                .roomName(requestUser.getMemberName())
                 .member(responseUser)
                 .build();
 

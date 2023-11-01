@@ -21,7 +21,7 @@ public class ResponseChatMessageDTO {
     public ResponseChatMessageDTO(ChatMessage chatMessage) {
         this.roomUUID = chatMessage.getRoomUUID().toString();
         this.message = chatMessage.getMessage();
-        this.senderName = chatMessage.getSender().getName();
+        this.senderName = chatMessage.getSender().getMemberName();
         this.regDate = chatMessage.getRegDate();
     }
 }

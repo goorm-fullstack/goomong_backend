@@ -91,4 +91,10 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+    //Test
+    @PostMapping("/login")
+    public ResponseEntity<String> login() {
+        return ResponseEntity.ok().body("token");
+    }
+
 }
