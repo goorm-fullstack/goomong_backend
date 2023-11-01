@@ -4,19 +4,15 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.Status;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class RequestItemDto {
+public class RequestExchangeItemDto {
     @NotEmpty
     @NotNull
     private String title;//제목
-
-    @Positive
-    private int price;//가격
 
     @NotEmpty
     @NotNull
@@ -28,9 +24,8 @@ public class RequestItemDto {
     public Item toEntity() {
         return Item.builder()
                 .title(title)
-                .price(price)
                 .describe(describe)
-                .status(Status.SALE)
+                .status(Status.EXCHANGE)
                 .build();
     }
 }
