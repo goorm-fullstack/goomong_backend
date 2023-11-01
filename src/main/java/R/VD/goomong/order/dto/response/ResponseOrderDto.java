@@ -17,6 +17,7 @@ public class ResponseOrderDto {
     private int price;
     private Address address;
     private Status status;//배송 상태
+    private String orderNumber;
 
     public ResponseOrderDto(Order order) {
         this.id = order.getId();

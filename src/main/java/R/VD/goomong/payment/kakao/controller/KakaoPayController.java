@@ -1,6 +1,6 @@
 package R.VD.goomong.payment.kakao.controller;
 
-import R.VD.goomong.order.model.Order;
+import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.payment.kakao.dto.RequestKakaoPay;
 import R.VD.goomong.payment.kakao.exception.ExceptionCode;
 import R.VD.goomong.payment.kakao.exception.KakaoPayLogicException;
@@ -8,9 +8,12 @@ import R.VD.goomong.payment.kakao.model.KakaoCancelResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayApproveResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayResponse;
 import R.VD.goomong.payment.kakao.service.KakaoPayService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 /**
  * 카카오페이 결제 관련 컨트롤러
@@ -23,14 +26,20 @@ public class KakaoPayController {
 
     // 결제 시작
     @PostMapping("/ready")
-    public ResponseEntity<KakaoPayResponse> ready(@RequestBody RequestKakaoPay requestKakaoPay) {
-        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(requestKakaoPay));
+    public ResponseEntity<KakaoPayResponse> ready(@Valid @RequestBody RequestKakaoPay requestKakaoPay, Model model) {
+        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(requestKakaoPay, model));
     }
 
     // 결제 완료
     @GetMapping("/success")
-    public ResponseEntity<KakaoPayApproveResponse> afterPayRequest(@RequestParam("pg_token") String pgToken) {
-        return ResponseEntity.ok(kakaoPayService.approveResponse(pgToken));
+    public ResponseEntity<KakaoPayApproveResponse> afterPayRequest(
+            @RequestParam("pg_token") String pgToken,
+            @RequestParam("partner_order_id") String orderNumber,
+            @RequestParam("partner_user_id") String userId,
+            @ModelAttribute("order") RequestOrderDto orderDto,
+            SessionStatus status
+    ) {
+        return ResponseEntity.ok(kakaoPayService.approveResponse(pgToken, orderNumber, userId, orderDto, status));
     }
 
     // 결제 취소

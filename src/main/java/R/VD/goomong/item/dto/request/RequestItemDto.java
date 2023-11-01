@@ -13,8 +13,7 @@ public class RequestItemDto {
     @NotEmpty
     @NotNull
     private String title;//제목
-
-    @NotEmpty
+    
     @Positive
     private int price;//가격
 
