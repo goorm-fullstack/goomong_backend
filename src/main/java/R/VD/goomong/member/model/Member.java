@@ -80,19 +80,19 @@ public class Member {
         this.detailAddress = detailAddress;
     }
 
-    public ResponseMemberDto toResponseMemberDto() {
-        List<ResponsePostDto> posts = null;
-        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
-
-        return ResponseMemberDto.builder()
-                .id(id)
-                .memberId(memberId)
-                .posts(posts)
-                .build();
-    }
+//    public ResponseMemberDto toResponseMemberDto() {
+//        List<ResponsePostDto> posts = null;
+//        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
+//
+//        return ResponseMemberDto.builder()
+//                .id(id)
+//                .memberId(memberId)
+//                .posts(posts)
+//                .build();
+//    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, memberId, itemList, postList, orderList, reviewList, askList, delDate);
+        return Objects.hash(id, memberId, itemList, postList, orderList, reviewList, askList);
     }
 }
