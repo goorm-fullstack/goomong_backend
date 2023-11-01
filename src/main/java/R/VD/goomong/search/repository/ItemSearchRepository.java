@@ -1,6 +1,5 @@
 package R.VD.goomong.search.repository;
 
-import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,6 +10,7 @@ import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
 import static R.VD.goomong.item.model.QItemCategory.itemCategory;
+import static R.VD.goomong.order.model.QOrder.order;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class ItemSearchRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<ResponseItemDto> itemSearch(String keyword, String orderBy) {
+    public List<Item> itemSearch(String keyword, String orderBy) {
 
 //        BooleanBuilder builder = new BooleanBuilder();
 //
@@ -32,9 +32,13 @@ public class ItemSearchRepository {
 //                .leftJoin(item.itemCategories, itemCategory)
 //                .where(expr1.or(expr2).or(expr3).or(expr4));
 
+        // 정확도 계산
+//        .orderBy(Expressions.stringTemplate("MATCH({0}) AGAINST ({1})", item.title, keyword).desc());
+
         JPAQuery<Item> query = jpaQueryFactory
                 .selectFrom(item)
                 .leftJoin(item.itemCategories, itemCategory)
+                .leftJoin(order.orderItem, item)
                 .where(
                         item.title.contains(keyword)
                                 .or(item.describe.contains(keyword))
@@ -43,15 +47,21 @@ public class ItemSearchRepository {
                 );
 
         switch (orderBy) {
-            case "title":
-                query.orderBy(item.title.desc());
+            case "price":
+                query.orderBy(item.price.desc());
                 break;
+            case "orderCount":
+                query.orderBy(order.count().desc());
             case "time":
-                query.orderBy();
+                query.orderBy(item.regDate.desc());
+                break;
+            case "rate":
+                query.orderBy(item.rate.desc());
+                break;
+            default:
+                query.orderBy(item.title.desc());
         }
 
-        List<Item> findItem = query.fetch();
-
-        return findItem.stream().map(ResponseItemDto::new).toList();
+        return query.fetch();
     }
 }
