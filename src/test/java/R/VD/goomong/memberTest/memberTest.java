@@ -1,5 +1,6 @@
 package R.VD.goomong.memberTest;
 
+import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
@@ -260,6 +261,35 @@ public class memberTest {
         System.out.println("member1 = " + member1.getZipCode());
         System.out.println("member1 = " + member1.getSimpleAddress());
         System.out.println("member1 = " + member1.getDetailAddress());
+
+    }
+
+    @Test
+    void 로그인() {
+        RequestMember requestMember = RequestMember.builder()
+                .memberId("testId")
+                .memberPassword("testPw")
+                .memberName("test")
+                .memberEmail("test@test.com")
+                .memberSignupTime(LocalDateTime.now())
+                .zipCode(12345L)
+                .simpleAddress("SOUTHKOREA")
+                .detailAddress("SEOUL")
+                .build();
+
+        memberService.save(requestMember);
+
+        Member member1 = memberService.findByMemberId("testId");
+        System.out.println("member1 = " + member1.getMemberPassword());
+
+        RequestLogin requestLogin = RequestLogin.builder()
+                .memberId("testId")
+                .memberPassword("testPw")
+                .build();
+
+        Member member = memberService.memberLogin(requestLogin);
+
+        System.out.println("member = " + member.getMemberPassword());
 
     }
 

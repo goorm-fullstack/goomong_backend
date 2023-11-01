@@ -5,6 +5,8 @@ import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,12 +94,25 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    //Test
+    //로그인
     @PostMapping("/login")
-    public String login(RequestLogin requestLogin){
+    public String login(@RequestBody RequestLogin requestLogin, HttpServletResponse response){
         memberService.memberLogin(requestLogin);
+        Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
+        cookie.setMaxAge(60*30);
+        response.addCookie(cookie);
 
         return "login";
+    }
+
+    //로그아웃
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("memberId", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return "logout";
     }
 
 }

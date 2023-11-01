@@ -1,6 +1,5 @@
 package R.VD.goomong.member.service;
 
-import R.VD.goomong.member.config.BCryptPasswordConfig;
 import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
@@ -9,6 +8,7 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordConfig bCryptPasswordConfig;
+    private final BCryptPasswordEncoder encoder;
 
     //CREATE
     //회원 가입
@@ -32,7 +32,7 @@ public class MemberService {
         Member member = requestMember.toEntity();
         member.setMemberRole("MEMBER");
         String rawPassword = member.getMemberPassword();
-        String encodePassword = bCryptPasswordConfig.encodePassword().encode(rawPassword);
+        String encodePassword = encoder.encode(rawPassword);
         member.setMemberPassword(encodePassword);
 
         memberRepository.save(member);
@@ -144,13 +144,15 @@ public class MemberService {
     public Member memberLogin(RequestLogin requestLogin){
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
-        Member member = byMemberId.get();
-
-        if(member.getMemberPassword().equals(requestLogin.getMemberPassword())) {
-            return member;
+        if(byMemberId.isEmpty()){
+            throw new NotFoundMember("아이디 없음.");
         }
 
-        return null;
-    }
+        Member member = byMemberId.get();
+        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){
+            throw new NotFoundMember("비밀번호 불일치");
+        }
 
+        return member;
+    }
 }
