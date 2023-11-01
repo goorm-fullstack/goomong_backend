@@ -1,5 +1,6 @@
 package R.VD.goomong.payment.kakao.dto;
 
+import R.VD.goomong.order.dto.request.RequestOrderDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,7 +12,11 @@ import lombok.Data;
 @Data
 public class RequestKakaoPay {
     @Positive
-    private Long id;//주문 아이디
+    private int price;
+
+    @NotNull
+    @NotEmpty
+    private String orderName;
 
     @NotNull
     @NotEmpty
@@ -24,4 +29,8 @@ public class RequestKakaoPay {
     @NotNull
     @NotEmpty
     private String cancelURL;//취소시 리다이렉션할 주소
+
+    @NotNull
+    
+    private RequestOrderDto orderDto;
 }

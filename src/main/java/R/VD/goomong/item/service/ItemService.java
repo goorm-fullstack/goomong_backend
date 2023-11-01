@@ -52,4 +52,14 @@ public class ItemService {
         List<Item> items = itemRepository.findAll();
         return items.stream().map(ResponseItemDto::new).toList();
     }
+
+    public void deleteItem(Long id) {
+        Optional<Item> item = itemRepository.findById(id);
+        if (item.isEmpty()) {
+            throw new NotFoundItem();
+        }
+
+        Item delItem = item.get();
+        delItem.deleteItem();
+    }
 }

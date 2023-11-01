@@ -24,12 +24,15 @@ public class RequestOrderDto {
     @Positive
     private int price;
 
+    private String orderNumber;
+
     @NotEmpty
     @NotNull
     private Address address;
 
     public Order toEntity() {
         return Order.builder()
+                .orderNumber(orderNumber)
                 .address(address)
                 .status(Status.WAITING)
                 .price(price)
