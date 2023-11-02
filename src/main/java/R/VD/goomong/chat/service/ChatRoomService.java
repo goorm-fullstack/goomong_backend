@@ -72,7 +72,7 @@ public class ChatRoomService {
 
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByItemAndMembers_Member(item, buyer);
         if (existingChatRoom.isPresent())
-            return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getName());
+            return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getMemberName());
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .item(item)
@@ -90,7 +90,7 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(roomMember);
         chatRoomMemberRepository.save(build);
 
-        return new ResponseChatRoomDTO(chatRoom, item, seller.getName());
+        return new ResponseChatRoomDTO(chatRoom, item, seller.getMemberName());
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(roomMember);
         chatRoomMemberRepository.save(build);
 
-        return new ResponseChatRoomDTO(chatRoom, null, responseMember.getName());
+        return new ResponseChatRoomDTO(chatRoom, null, responseMember.getMemberName());
     }
 
     public void softDelete(RequestChatSoftDelete requestChatSoftDelete) {

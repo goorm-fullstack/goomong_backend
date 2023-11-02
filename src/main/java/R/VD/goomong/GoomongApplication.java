@@ -12,4 +12,6 @@ public class GoomongApplication {
         SpringApplication.run(GoomongApplication.class, args);
     }
 
+
+
 }

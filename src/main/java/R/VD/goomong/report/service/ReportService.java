@@ -49,7 +49,7 @@ public class ReportService {
         Member member = null;
         if (requestReportDto.getMemberId() != null) {
             member = memberRepository.findById(requestReportDto.getMemberId()).orElseThrow(() -> new RuntimeException("해당 id의 회원은 없습니다. id = " + requestReportDto.getMemberId()));
-            if (member.getDelDate() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + member.getId());
+            if (member.getMemberDeleteTime() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + member.getId());
         }
 
         Post post = null;

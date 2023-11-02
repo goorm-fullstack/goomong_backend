@@ -66,6 +66,6 @@ public class ItemSearchRepository {
                 query.orderBy(item.title.desc());
         }
 
-        return new PageImpl<>(query.fetch(), pageSize, offset)
+        return new PageImpl<>(query.fetch(), pageSize, offset);
     }
 }
