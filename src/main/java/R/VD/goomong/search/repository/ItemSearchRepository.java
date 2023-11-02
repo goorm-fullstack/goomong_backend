@@ -4,9 +4,10 @@ import R.VD.goomong.item.model.Item;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
 import static R.VD.goomong.item.model.QItemCategory.itemCategory;
@@ -18,7 +19,7 @@ public class ItemSearchRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Item> itemSearch(String keyword, String orderBy) {
+    public Page<Item> itemSearch(String keyword, String orderBy, String category, Pageable pageable) {
 
 //        BooleanBuilder builder = new BooleanBuilder();
 //
@@ -46,6 +47,9 @@ public class ItemSearchRepository {
                                 .or(item.member.name.contains(keyword))
                 );
 
+        if (category != null && !category.isEmpty())
+            query.where(itemCategory.title.eq(category));
+
         switch (orderBy) {
             case "price":
                 query.orderBy(item.price.desc());
@@ -62,6 +66,6 @@ public class ItemSearchRepository {
                 query.orderBy(item.title.desc());
         }
 
-        return query.fetch();
+        return new PageImpl<>(query.fetch(), pageSize, offset)
     }
 }
