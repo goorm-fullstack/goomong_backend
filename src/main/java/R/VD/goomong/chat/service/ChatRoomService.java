@@ -4,7 +4,7 @@ import R.VD.goomong.chat.dto.request.RequestChatRoomDTO;
 import R.VD.goomong.chat.dto.request.RequestChatSoftDelete;
 import R.VD.goomong.chat.dto.request.RequestItemChatRoomDTO;
 import R.VD.goomong.chat.dto.response.ResponseChatRoomDTO;
-import R.VD.goomong.chat.exception.NotFoundException;
+import R.VD.goomong.chat.exception.ChatNotFoundException;
 import R.VD.goomong.chat.model.ChatRoom;
 import R.VD.goomong.chat.model.ChatRoomMember;
 import R.VD.goomong.chat.repository.ChatMessageRepository;
@@ -63,11 +63,11 @@ public class ChatRoomService {
     public ResponseChatRoomDTO createItemChatRoom(RequestItemChatRoomDTO chatRoomDTO) {
         Long memberId = chatRoomDTO.getMemberId();
         Member buyer = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("멤버 " + memberId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + "는 찾을 수 없습니다."));
 
         Long itemId = chatRoomDTO.getItemId();
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("상품 " + itemId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("상품 " + itemId + "는 찾을 수 없습니다."));
         Member seller = item.getMember();
 
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByItemAndMembers_Member(item, buyer);
@@ -97,11 +97,11 @@ public class ChatRoomService {
     public ResponseChatRoomDTO createChatRoom(RequestChatRoomDTO chatRoomDTO) {
         Long requestMemberId = chatRoomDTO.getRequestMemberId();
         Member requestMember = memberRepository.findById(requestMemberId)
-                .orElseThrow(() -> new NotFoundException("멤버 " + requestMemberId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + requestMemberId + "는 찾을 수 없습니다."));
 
         Long responseMemberId = chatRoomDTO.getResponseMemberId();
         Member responseMember = memberRepository.findById(responseMemberId)
-                .orElseThrow(() -> new NotFoundException("멤버 " + responseMemberId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + responseMemberId + "는 찾을 수 없습니다."));
 
         ChatRoom chatRoom = new ChatRoom();
 
@@ -122,11 +122,11 @@ public class ChatRoomService {
     public void softDelete(RequestChatSoftDelete requestChatSoftDelete) {
         Long roomId = requestChatSoftDelete.getRoomId();
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new NotFoundException("채팅 " + roomId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("채팅 " + roomId + "는 찾을 수 없습니다."));
 
         Long memberId = requestChatSoftDelete.getMemberId();
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("멤버 " + memberId + "는 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + "는 찾을 수 없습니다."));
 
         chatRoomRepository.delete(chatRoom);
         chatMessageRepository.deleteByChatRoom(chatRoom);

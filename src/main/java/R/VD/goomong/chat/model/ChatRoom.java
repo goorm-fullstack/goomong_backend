@@ -28,10 +28,10 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "item_id", nullable = true)
     private Item item;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMessage> messages;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatRoomMember> members;
 
 }

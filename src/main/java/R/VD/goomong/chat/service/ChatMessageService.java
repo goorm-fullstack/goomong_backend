@@ -2,7 +2,7 @@ package R.VD.goomong.chat.service;
 
 import R.VD.goomong.chat.dto.request.RequestChatMessageDTO;
 import R.VD.goomong.chat.dto.response.ResponseChatMessageDTO;
-import R.VD.goomong.chat.exception.NotFoundException;
+import R.VD.goomong.chat.exception.ChatNotFoundException;
 import R.VD.goomong.chat.model.ChatMessage;
 import R.VD.goomong.chat.model.ChatRoom;
 import R.VD.goomong.chat.repository.ChatMessageRepository;
@@ -38,10 +38,10 @@ public class ChatMessageService {
         log.info("roomId = {}, memberId = {}", roomId, memberId);
 
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new NotFoundException("채팅방 " + roomId + "는 존재하지 않습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("채팅방 " + roomId + "는 존재하지 않습니다."));
         Member sender = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
-        
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
+
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(requestChatMessageDTO.getMessage())
                 .member(sender)
