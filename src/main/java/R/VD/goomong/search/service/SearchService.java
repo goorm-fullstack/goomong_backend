@@ -6,13 +6,18 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.search.Model.Search;
 import R.VD.goomong.search.Model.Word;
+import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
+import R.VD.goomong.search.dto.response.ResponseSearchDTO;
 import R.VD.goomong.search.exception.SearchNotFoundException;
 import R.VD.goomong.search.repository.ItemSearchRepository;
 import R.VD.goomong.search.repository.SearchRepository;
 import R.VD.goomong.search.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,9 +55,22 @@ public class SearchService {
         searchRepository.save(search);
     }
 
-    public List<ResponseItemDto> searchItem(RequestSearchDTO searchDTO) {
-        List<Item> items = itemSearchRepository.itemSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getCategory());
-        return items.stream().map(ResponseItemDto::new).toList();
+    public ResponseSearchDTO searchItem(RequestSearchDTO searchDTO) {
+        int page = searchDTO.getPage() - 1;
+        int pageSize = searchDTO.getPageSize();
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Item> itemPage = itemSearchRepository.itemSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getCategory(), pageable);
+
+        PageInfo pageinfo = PageInfo.builder()
+                .page(page)
+                .size(pageSize)
+                .totalElements((int) itemPage.getTotalElements())
+                .totalPage(itemPage.getTotalPages())
+                .build();
+
+        List<Item> itemList = itemPage.getContent();
+        List<ResponseItemDto> items = itemList.stream().map(ResponseItemDto::new).toList();
+        return new ResponseSearchDTO(items, pageinfo);
     }
 
 }
