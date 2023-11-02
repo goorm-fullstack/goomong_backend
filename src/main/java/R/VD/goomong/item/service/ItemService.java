@@ -2,14 +2,10 @@ package R.VD.goomong.item.service;
 
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
-import R.VD.goomong.item.dto.request.RequestExchangeItemDto;
-import R.VD.goomong.item.dto.request.RequestGiveItemDto;
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestWantedItemDto;
-import R.VD.goomong.item.dto.response.ResponseExchangeItemDto;
-import R.VD.goomong.item.dto.response.ResponseGiveItemDto;
+import R.VD.goomong.item.dto.request.RequestNonSaleItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
-import R.VD.goomong.item.dto.response.ResponseWantedItemDto;
+import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
@@ -38,62 +34,12 @@ public class ItemService {
 
     // 아이템 저장 - 판매
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
-        Item item = itemDto.toEntity();
-        List<Image> imageList = imageService.saveImage(multipartFiles);
-        List<ItemCategory> categories = new ArrayList<>();
-        for (Long categoryId : itemDto.getItemCategories()) {
-            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
-            findCategory.ifPresent(categories::add);
-        }
-
-        item.setItemCategories(categories);
-        item.setThumbNailList(imageList);
-        itemRepository.save(item);
+        saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
     }
 
-    // 아이템 저장 - 기부
-    public void save(RequestGiveItemDto itemDto, MultipartFile[] multipartFiles) {
-        Item item = itemDto.toEntity();
-        List<Image> imageList = imageService.saveImage(multipartFiles);
-        List<ItemCategory> categories = new ArrayList<>();
-        for (Long categoryId : itemDto.getItemCategories()) {
-            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
-            findCategory.ifPresent(categories::add);
-        }
-
-        item.setItemCategories(categories);
-        item.setThumbNailList(imageList);
-        itemRepository.save(item);
-    }
-
-    // 아이템 저장 - 교환
-    public void save(RequestExchangeItemDto itemDto, MultipartFile[] multipartFiles) {
-        Item item = itemDto.toEntity();
-        List<Image> imageList = imageService.saveImage(multipartFiles);
-        List<ItemCategory> categories = new ArrayList<>();
-        for (Long categoryId : itemDto.getItemCategories()) {
-            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
-            findCategory.ifPresent(categories::add);
-        }
-
-        item.setItemCategories(categories);
-        item.setThumbNailList(imageList);
-        itemRepository.save(item);
-    }
-
-    // 아이템 저장 - 구인
-    public void save(RequestWantedItemDto itemDto, MultipartFile[] multipartFiles) {
-        Item item = itemDto.toEntity();
-        List<Image> imageList = imageService.saveImage(multipartFiles);
-        List<ItemCategory> categories = new ArrayList<>();
-        for (Long categoryId : itemDto.getItemCategories()) {
-            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
-            findCategory.ifPresent(categories::add);
-        }
-
-        item.setItemCategories(categories);
-        item.setThumbNailList(imageList);
-        itemRepository.save(item);
+    // 아이템 저장 - 판매가 아닌 경우
+    public void save(RequestNonSaleItemDto itemDto, MultipartFile[] multipartFiles) {
+        saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
     }
 
     // 아이템 찾기
@@ -102,6 +48,7 @@ public class ItemService {
         return new ResponseItemDto(item);
     }
 
+    // 전체 아이템 찾기
     public List<ResponseItemDto> findAll() {
         List<Item> items = itemRepository.findAll();
         return items.stream().map(ResponseItemDto::new).toList();
@@ -119,32 +66,32 @@ public class ItemService {
     }
 
     // 재능 기부 조회
-    public List<ResponseGiveItemDto> findAllByGive(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE.toString(), pageable);
-        List<ResponseGiveItemDto> result = new ArrayList<>();
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
-            result.add(new ResponseGiveItemDto(item));
+            result.add(new ResponseNonSaleItemDto(item));
         }
 
         return result;
     }
 
     // 구인 조회
-    public List<ResponseExchangeItemDto> findAllByExchange(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE.toString(), pageable);
-        List<ResponseExchangeItemDto> result = new ArrayList<>();
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
-            result.add(new ResponseExchangeItemDto(item));
+            result.add(new ResponseNonSaleItemDto(item));
         }
         return result;
     }
 
     // 구인 조회
-    public List<ResponseWantedItemDto> findAllByWanted(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED.toString(), pageable);
-        List<ResponseWantedItemDto> result = new ArrayList<>();
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
-            result.add(new ResponseWantedItemDto(item));
+            result.add(new ResponseNonSaleItemDto(item));
         }
 
         return result;
@@ -158,5 +105,19 @@ public class ItemService {
 
         Item delItem = item.get();
         delItem.deleteItem();
+    }
+
+    // 공통 아이템 저장 함수
+    private void saveItem(MultipartFile[] multipartFiles, Item entity, List<Long> itemCategories) {
+        List<Image> imageList = imageService.saveImage(multipartFiles);
+        List<ItemCategory> categories = new ArrayList<>();
+        for (Long categoryId : itemCategories) {
+            Optional<ItemCategory> findCategory = categoryRepository.findById(categoryId);
+            findCategory.ifPresent(categories::add);
+        }
+
+        entity.setItemCategories(categories);
+        entity.setThumbNailList(imageList);
+        itemRepository.save(entity);
     }
 }

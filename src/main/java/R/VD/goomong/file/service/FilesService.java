@@ -38,34 +38,38 @@ public class FilesService {
             if (file.isEmpty()) {
                 return null;
             }
-            String fileName = file.getOriginalFilename();
-            String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String newPath = path + "\\file\\" + date;
-            File Folder = new File(newPath);
-            if (!Folder.exists()) {
-                try {
-                    Folder.mkdirs();
-                } catch (Exception e) {
-                    throw new RuntimeException("폴더를 생성할 수 없습니다.");
-                }
-            }
-
-            UUID uuid = UUID.randomUUID();
-            String saveFileName = uuid + "_" + fileName;
-            File saveFile = new File(newPath + "\\" + saveFileName);
-            try {
-                file.transferTo(saveFile);
-                Files saveImage = Files.builder()
-                        .fileName(fileName)
-                        .saveFileName(saveFileName)
-                        .path(newPath + "\\" + saveFileName)
-                        .build();
-                Files save = filesRepository.save(saveImage);
-                result.add(save);
-            } catch (Exception e) {
-                throw new RuntimeException("파일을 저장할 수 없습니다.");
-            }
+            uploadFile(result, file);
         }
         return result;
+    }
+
+    private void uploadFile(List<Files> result, MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String newPath = path + "\\file\\" + date;
+        File Folder = new File(newPath);
+        if (!Folder.exists()) {
+            try {
+                Folder.mkdirs();
+            } catch (Exception e) {
+                throw new RuntimeException("폴더를 생성할 수 없습니다.");
+            }
+        }
+
+        UUID uuid = UUID.randomUUID();
+        String saveFileName = uuid + "_" + fileName;
+        File saveFile = new File(newPath + "\\" + saveFileName);
+        try {
+            file.transferTo(saveFile);
+            Files saveImage = Files.builder()
+                    .fileName(fileName)
+                    .saveFileName(saveFileName)
+                    .path(newPath + "\\" + saveFileName)
+                    .build();
+            Files save = filesRepository.save(saveImage);
+            result.add(save);
+        } catch (Exception e) {
+            throw new RuntimeException("파일을 저장할 수 없습니다.");
+        }
     }
 }

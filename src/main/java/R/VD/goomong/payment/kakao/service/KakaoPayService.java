@@ -12,13 +12,15 @@ import R.VD.goomong.payment.kakao.dto.RequestKakaoPay;
 import R.VD.goomong.payment.kakao.model.KakaoCancelResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayApproveResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.support.SessionStatus;
@@ -42,7 +44,7 @@ public class KakaoPayService {
     private KakaoPayResponse kakaoPayResponse;
 
 
-    public KakaoPayResponse kakaoPayReady(RequestKakaoPay requestKakaoPay, Model model) {
+    public KakaoPayResponse kakaoPayReady(RequestKakaoPay requestKakaoPay, HttpServletRequest request, HttpServletResponse response) {
         // 카카오페이 요청 양식
         MultiValueMap<String, String> parameters = setReadyParameter(requestKakaoPay);
 
@@ -56,8 +58,8 @@ public class KakaoPayService {
                 "https://kapi.kakao.com/v1/payment/ready",
                 requestEntity,
                 KakaoPayResponse.class);
-
-        model.addAttribute("order", requestKakaoPay.getOrderDto());
+        HttpSession session = request.getSession();
+        session.setAttribute("order", requestKakaoPay.getOrderDto());
         return kakaoPayResponse;
     }
 
@@ -113,8 +115,7 @@ public class KakaoPayService {
         Member member = memberRepository.findById(requestKakaoPay.getOrderDto().getMemberId()).orElseThrow();
         String orderNumber = generateRandomNumberWithDate();
         requestKakaoPay.getOrderDto().setOrderNumber(orderNumber);
-        String memberHashCode = "123456";
-        System.out.println("hashCode : " + memberHashCode);
+        String memberHashCode = String.valueOf(member.hashCode());
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         requestKakaoPay.getOrderDto().setOrderNumber(generateRandomNumberWithDate());
         parameters.add("cid", cid);

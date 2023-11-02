@@ -8,10 +8,11 @@ import R.VD.goomong.payment.kakao.model.KakaoCancelResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayApproveResponse;
 import R.VD.goomong.payment.kakao.model.KakaoPayResponse;
 import R.VD.goomong.payment.kakao.service.KakaoPayService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -26,8 +27,11 @@ public class KakaoPayController {
 
     // 결제 시작
     @PostMapping("/ready")
-    public ResponseEntity<KakaoPayResponse> ready(@Valid @RequestBody RequestKakaoPay requestKakaoPay, Model model) {
-        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(requestKakaoPay, model));
+    public ResponseEntity<KakaoPayResponse> ready(
+            @Valid @RequestBody RequestKakaoPay requestKakaoPay,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        return ResponseEntity.ok(kakaoPayService.kakaoPayReady(requestKakaoPay, request, response));
     }
 
     // 결제 완료
@@ -36,9 +40,10 @@ public class KakaoPayController {
             @RequestParam("pg_token") String pgToken,
             @RequestParam("partner_order_id") String orderNumber,
             @RequestParam("partner_user_id") String userId,
-            @ModelAttribute("order") RequestOrderDto orderDto,
+            @SessionAttribute("order") RequestOrderDto orderDto,
             SessionStatus status
     ) {
+        System.out.println(orderDto.toString());
         return ResponseEntity.ok(kakaoPayService.approveResponse(pgToken, orderNumber, userId, orderDto, status));
     }
 

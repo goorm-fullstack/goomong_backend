@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RequestGiveItemDto {
+public class RequestNonSaleItemDto {
     @NotEmpty
     @NotNull
     private String title;//제목
@@ -19,13 +19,17 @@ public class RequestGiveItemDto {
     private String describe;//설명
 
     @NotEmpty
+    @NotNull
+    private Status status;//아이템 상태값
+
+    @NotEmpty
     private List<Long> itemCategories;//카테고리 목록
 
     public Item toEntity() {
         return Item.builder()
                 .title(title)
                 .describe(describe)
-                .status(Status.GIVE)
+                .status(status)
                 .build();
     }
 }

@@ -1,13 +1,9 @@
 package R.VD.goomong.item.controller;
 
-import R.VD.goomong.item.dto.request.RequestExchangeItemDto;
-import R.VD.goomong.item.dto.request.RequestGiveItemDto;
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestWantedItemDto;
-import R.VD.goomong.item.dto.response.ResponseExchangeItemDto;
-import R.VD.goomong.item.dto.response.ResponseGiveItemDto;
+import R.VD.goomong.item.dto.request.RequestNonSaleItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
-import R.VD.goomong.item.dto.response.ResponseWantedItemDto;
+import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,20 +37,8 @@ public class ItemController {
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
 
-    @PostMapping("/give/save")
-    public ResponseEntity<String> writeGiveItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestGiveItemDto itemDto) {
-        itemService.save(itemDto, multipartFiles);
-        return ResponseEntity.ok("작성이 완료되었습니다.");
-    }
-
-    @PostMapping("/wanted/save")
-    public ResponseEntity<String> writeWantedItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestWantedItemDto itemDto) {
-        itemService.save(itemDto, multipartFiles);
-        return ResponseEntity.ok("작성이 완료되었습니다.");
-    }
-
-    @PostMapping("/exchage/save")
-    public ResponseEntity<String> writeExchangeItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestExchangeItemDto itemDto) {
+    @PostMapping("/save")
+    public ResponseEntity<String> writeGiveItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestNonSaleItemDto itemDto) {
         itemService.save(itemDto, multipartFiles);
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
@@ -64,18 +48,24 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findAllBySale(pageable));
     }
 
-    @GetMapping("/list/give")
-    public ResponseEntity<List<ResponseGiveItemDto>> getItemListByGive(Pageable pageable) {
+    @GetMapping("/list/nonsale")
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(Pageable pageable) {
         return ResponseEntity.ok(itemService.findAllByGive(pageable));
     }
 
     @GetMapping("/list/wanted")
-    public ResponseEntity<List<ResponseWantedItemDto>> getItemListByWanted(Pageable pageable) {
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(Pageable pageable) {
         return ResponseEntity.ok(itemService.findAllByWanted(pageable));
     }
 
     @GetMapping("/list/exchange")
-    public ResponseEntity<List<ResponseExchangeItemDto>> getItemListByExchange(Pageable pageable) {
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(Pageable pageable) {
         return ResponseEntity.ok(itemService.findAllByExchange(pageable));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteItem(@PathVariable Long id) {
+        itemService.deleteItem(id);
+        return ResponseEntity.ok("삭제 완료");
     }
 }
