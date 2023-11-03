@@ -4,13 +4,17 @@ import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.post.dto.response.ResponsePostDto;
+import R.VD.goomong.post.model.Post;
 import R.VD.goomong.search.Model.Search;
 import R.VD.goomong.search.Model.Word;
 import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
+import R.VD.goomong.search.dto.request.RequestPostSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
 import R.VD.goomong.search.exception.SearchNotFoundException;
 import R.VD.goomong.search.repository.ItemSearchRepository;
+import R.VD.goomong.search.repository.PostSearchRepository;
 import R.VD.goomong.search.repository.SearchRepository;
 import R.VD.goomong.search.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,7 @@ import java.util.List;
 public class SearchService {
 
     private final ItemSearchRepository itemSearchRepository;
+    private final PostSearchRepository postSearchRepository;
     private final SearchRepository searchRepository;
     private final WordRepository wordRepository;
     private final MemberRepository memberRepository;
@@ -71,6 +76,24 @@ public class SearchService {
         List<Item> itemList = itemPage.getContent();
         List<ResponseItemDto> items = itemList.stream().map(ResponseItemDto::new).toList();
         return new ResponseSearchDTO(items, pageinfo);
+    }
+
+    public ResponseSearchDTO searchPost(RequestPostSearchDTO searchDTO) {
+        int page = searchDTO.getPage() - 1;
+        int pageSize = searchDTO.getPageSize();
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Post> postPage = postSearchRepository.postSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getOrder(), pageable);
+
+        PageInfo pageInfo = PageInfo.builder()
+                .page(page)
+                .size(pageSize)
+                .totalElements((int) postPage.getTotalElements())
+                .totalPage(postPage.getTotalPages())
+                .build();
+
+        List<Post> postList = postPage.getContent();
+        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
+        return new ResponseSearchDTO(posts, pageInfo);
     }
 
 }
