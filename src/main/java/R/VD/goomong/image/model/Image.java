@@ -1,7 +1,7 @@
 package R.VD.goomong.image.model;
 
+import R.VD.goomong.global.model.BaseDateEntity;
 import jakarta.persistence.*;
-import R.VD.goomong.global.model.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Image extends BaseTimeEntity {
+public class Image extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스 번호

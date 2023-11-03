@@ -7,6 +7,8 @@ import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
+import R.VD.goomong.report.dto.response.ResponseReportDto;
+import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +40,10 @@ public class Ask extends BaseDateEntity {
     @Builder.Default
     private List<Files> filesList = new ArrayList<>(); // 업로드 파일
 
+    @OneToMany(mappedBy = "ask", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Report> reportList = new ArrayList<>();
+
     @Column(nullable = false)
     private String title; // 문의 제목
 
@@ -62,11 +68,17 @@ public class Ask extends BaseDateEntity {
             if (ask1.getDelDate() == null) answers.add(ask1.toResponseAskDto());
         }
 
+        List<ResponseReportDto> reports = new ArrayList<>();
+        for (Report report : reportList) {
+            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+        }
+
         return ResponseAskDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
                 .item(new ResponseItemDto(item))
                 .filesList(filesList)
+                .reportList(reports)
                 .title(title)
                 .content(content)
                 .answerList(answers)

@@ -2,6 +2,7 @@ package R.VD.goomong.ask.dto.response;
 
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
+import R.VD.goomong.report.dto.response.ResponseReportDto;
 import lombok.*;
 
 import java.time.ZonedDateTime;
@@ -17,6 +18,7 @@ public class ResponseAskDto {
     private String memberId; // 작성자
     private ResponseItemDto item; // 작성할 아이템
     private List<Files> filesList; // 업로드 파일
+    private List<ResponseReportDto> reportList; // 신고
     private String title; // 문의 제목
     private String content; // 문의 내용
     private List<ResponseAskDto> answerList; // 답변 내용들

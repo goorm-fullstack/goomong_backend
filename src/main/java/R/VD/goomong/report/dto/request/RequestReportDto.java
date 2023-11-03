@@ -19,6 +19,10 @@ public class RequestReportDto {
 
     private Long commentId;
 
+    private Long reviewId;
+
+    private Long askId;
+
     @NotBlank(message = "신고 이유를 적어주세요.")
     private String reportReason;
 

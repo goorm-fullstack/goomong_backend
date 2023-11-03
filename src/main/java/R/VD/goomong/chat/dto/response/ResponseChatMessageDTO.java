@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ public class ResponseChatMessageDTO {
     private Long roomId;
     private String message;
     private String senderName;
-    private LocalDateTime regDate;
+    private ZonedDateTime regDate;
 
     public ResponseChatMessageDTO(ChatMessage chatMessage) {
         this.roomId = chatMessage.getChatRoom().getRoomId();

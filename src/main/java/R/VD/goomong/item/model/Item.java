@@ -1,7 +1,7 @@
 package R.VD.goomong.item.model;
 
 import R.VD.goomong.ask.model.Ask;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Item extends BaseTimeEntity {
+public class Item extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스

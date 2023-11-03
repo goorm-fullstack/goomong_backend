@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -45,14 +46,14 @@ public class MemberService {
     }
 
     //index로 회원 정보 찾기
-    public Member findById(Long id){
+    public Member findById(Long id) {
         Optional<Member> member = memberRepository.findById(id);
 
         return member.orElse(null);
     }
 
     //회원 아이디로 정보 찾기
-    public Member findByMemberId(String memberId){
+    public Member findByMemberId(String memberId) {
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
         return member.orElse(null);
@@ -89,18 +90,18 @@ public class MemberService {
     //DELETE
     //REALDELETE
     //회원 index로 삭제
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         memberRepository.deleteById(id);
     }
 
     //회원 memberId로 삭제
-    public void deleteByMemberId(String memberId){
+    public void deleteByMemberId(String memberId) {
         memberRepository.deleteByMemberId(memberId);
     }
 
     //SOFTDELETE
     //회원 index로 softdelete
-    public Member softDeleteById(Long id){
+    public Member softDeleteById(Long id) {
         Optional<Member> member = memberRepository.findById(id);
 
         if (member.isPresent()) {
@@ -109,9 +110,9 @@ public class MemberService {
             String datePattern = "yyyy-MM-dd'T'HH:mm:ss";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
             String now = LocalDateTime.now().format(formatter);
-            LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
+            ZonedDateTime softDeleteTime = ZonedDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {
@@ -121,7 +122,7 @@ public class MemberService {
 
 
     //회원 memberId로 softdelete
-    public Member softDeleteByMemberId(String memberId){
+    public Member softDeleteByMemberId(String memberId) {
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
         if (member.isPresent()) {
@@ -130,9 +131,9 @@ public class MemberService {
             String datePattern = "yyyy-MM-dd'T'HH:mm:ss";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
             String now = LocalDateTime.now().format(formatter);
-            LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
+            ZonedDateTime softDeleteTime = ZonedDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {
@@ -141,15 +142,15 @@ public class MemberService {
     }
 
     //로그인
-    public Member memberLogin(RequestLogin requestLogin){
+    public Member memberLogin(RequestLogin requestLogin) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
-        if(byMemberId.isEmpty()){
+        if (byMemberId.isEmpty()) {
             throw new NotFoundMember("아이디 없음.");
         }
 
         Member member = byMemberId.get();
-        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){
+        if (!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())) {
             throw new NotFoundMember("비밀번호 불일치");
         }
 

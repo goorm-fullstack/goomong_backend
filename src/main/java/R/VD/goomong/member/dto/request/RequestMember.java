@@ -30,7 +30,6 @@ public class RequestMember {
     private String memberRole;
 
 
-
     @Builder(toBuilder = true)
     public RequestMember(String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
@@ -44,13 +43,13 @@ public class RequestMember {
         this.memberRole = memberRole;
     }
 
-    public Member toEntity(){
+    public Member toEntity() {
         return Member.builder()
                 .memberId(memberId)
                 .memberPassword(memberPassword)
                 .memberEmail(memberEmail)
                 .memberName(memberName)
-                .memberSignupTime(memberSignupTime)
+//                .memberSignupTime(memberSignupTime)
                 .zipCode(zipCode)
                 .simpleAddress(simpleAddress)
                 .detailAddress(detailAddress)

@@ -1,16 +1,16 @@
 package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseDateEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -38,11 +38,11 @@ public class Member {
     @Column(nullable = false)
     private String memberEmail;
 
-    @Column(nullable = false)
-    @JsonFormat(timezone = "Asia/Seoul")
-    private LocalDateTime memberSignupTime;
-
-    private LocalDateTime memberDeleteTime;
+//    @Column(nullable = false)
+//    @JsonFormat(timezone = "Asia/Seoul")
+//    private LocalDateTime memberSignupTime;
+//
+//    private LocalDateTime memberDeleteTime;
 
     @Column(nullable = false)
     private Long zipCode;                                    //우편 번호
@@ -71,6 +71,9 @@ public class Member {
 
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
+
+    @Column
+    private ZonedDateTime delDate; // 삭제 날짜
 
     public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;

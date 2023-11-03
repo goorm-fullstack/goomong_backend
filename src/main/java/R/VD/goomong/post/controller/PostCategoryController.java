@@ -29,7 +29,7 @@ public class PostCategoryController {
      * @return 생성 완료 시 200
      */
     @PostMapping("/postcategory")
-    public ResponseEntity<Object> initPostCategory(@Validated @RequestPart RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
+    public ResponseEntity<Object> initPostCategory(@Validated @ModelAttribute RequestPostCategoryDto requestPostCategoryDto, @RequestParam(required = false) MultipartFile[] postCategoryImages) {
         log.info("requestPostCategoryDto={}", requestPostCategoryDto);
         postCategoryService.savePostCategory(requestPostCategoryDto, postCategoryImages);
         return ResponseEntity.ok().build();

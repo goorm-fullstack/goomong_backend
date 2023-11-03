@@ -1,11 +1,13 @@
 package R.VD.goomong.report.model;
 
+import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.report.dto.response.ResponseReportDto;
+import R.VD.goomong.review.model.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +38,14 @@ public class Report extends BaseDateEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment; // 신고 대상 댓글
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review; // 신고 대상 리뷰글
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ask_id")
+    private Ask ask;
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id")
     @Builder.Default
@@ -59,6 +69,8 @@ public class Report extends BaseDateEntity {
                 .memberId(member.getMemberId())
                 .post(post.toResponsePostDto())
                 .comment(comment.toResponseCommentDto())
+                .review(review.toResponseReviewDto())
+                .ask(ask.toResponseAskDto())
                 .filesList(filesList)
                 .reportReason(reportReason)
                 .reportCheck(reportCheck)

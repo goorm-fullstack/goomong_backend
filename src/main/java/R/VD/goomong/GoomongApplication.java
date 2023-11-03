@@ -1,10 +1,7 @@
 package R.VD.goomong;
 
-import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.repository.PostRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,22 +19,22 @@ public class GoomongApplication {
         SpringApplication.run(GoomongApplication.class, args);
     }
 
-    @PostConstruct
-    void init() {
-        Member member = Member.builder()
-                .memberId("test")
-                .build();
-        Post post = Post.builder()
-                .member(member)
-                .item(null)
-                .postCategory(null)
-                .postType("QnA")
-                .postTitle("title")
-                .postContent("content")
-                .build();
-
-        memberRepository.save(member);
-        postRepository.save(post);
-    }
+//    @PostConstruct
+//    void init() {
+//        Member member = Member.builder()
+//                .memberId("test")
+//                .build();
+//        Post post = Post.builder()
+//                .member(member)
+//                .item(null)
+//                .postCategory(null)
+//                .postType("QnA")
+//                .postTitle("title")
+//                .postContent("content")
+//                .build();
+//
+//        memberRepository.save(member);
+//        postRepository.save(post);
+//    }
 
 }
