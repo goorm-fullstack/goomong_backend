@@ -1,6 +1,6 @@
 package R.VD.goomong.search.controller;
 
-import R.VD.goomong.search.dto.request.RequestSearchDTO;
+import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
 import R.VD.goomong.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,16 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @PostMapping
-    public ResponseEntity<ResponseSearchDTO> searchItem(RequestSearchDTO requestSearchDTO) {
-        searchService.saveKeyword(requestSearchDTO);
-        ResponseSearchDTO responseSearchDTO = searchService.searchItem(requestSearchDTO);
+    @PostMapping("/item")
+    public ResponseEntity<ResponseSearchDTO> searchItem(RequestItemSearchDTO requestItemSearchDTO) {
+        searchService.saveKeyword(requestItemSearchDTO);
+        ResponseSearchDTO responseSearchDTO = searchService.searchItem(requestItemSearchDTO);
         return new ResponseEntity<>(responseSearchDTO, HttpStatus.OK);
     }
 
+//    @PostMapping("/post")
+//    public ResponseEntity<ResponseSearchDTO> searchPost(RequestPostSearchDTO requestPostSearchDTO) {
+//
+//        return new ResponseEntity<>(new ResponseSearchDTO<>(), HttpStatus.OK);
+//    }
 }

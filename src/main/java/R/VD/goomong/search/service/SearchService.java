@@ -7,7 +7,7 @@ import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.search.Model.Search;
 import R.VD.goomong.search.Model.Word;
 import R.VD.goomong.search.dto.PageInfo;
-import R.VD.goomong.search.dto.request.RequestSearchDTO;
+import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
 import R.VD.goomong.search.exception.SearchNotFoundException;
 import R.VD.goomong.search.repository.ItemSearchRepository;
@@ -34,12 +34,12 @@ public class SearchService {
     private final WordRepository wordRepository;
     private final MemberRepository memberRepository;
 
-    public void saveKeyword(RequestSearchDTO requestSearchDTO) {
-        Long memberId = requestSearchDTO.getMemberId();
+    public void saveKeyword(RequestItemSearchDTO requestItemSearchDTO) {
+        Long memberId = requestItemSearchDTO.getMemberId();
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new SearchNotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
 
-        String keyword = requestSearchDTO.getKeyword();
+        String keyword = requestItemSearchDTO.getKeyword();
         Word word = wordRepository.findByKeyword(keyword).orElseGet(() -> new Word(keyword));
 
         if (word.getWordId() == null)
@@ -55,7 +55,7 @@ public class SearchService {
         searchRepository.save(search);
     }
 
-    public ResponseSearchDTO searchItem(RequestSearchDTO searchDTO) {
+    public ResponseSearchDTO searchItem(RequestItemSearchDTO searchDTO) {
         int page = searchDTO.getPage() - 1;
         int pageSize = searchDTO.getPageSize();
         Pageable pageable = PageRequest.of(page, pageSize);
