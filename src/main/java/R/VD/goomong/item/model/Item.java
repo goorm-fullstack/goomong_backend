@@ -1,6 +1,7 @@
 package R.VD.goomong.item.model;
 
 import R.VD.goomong.ask.model.Ask;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Item {
+public class Item extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스
@@ -29,6 +30,9 @@ public class Item {
     private Member member;//작성자
 
     private int price;//가격
+
+    @Enumerated(EnumType.STRING)
+    private Status status;//상태값 -> RequestDto를 상황별로 만들고, 상태를 지정해야겠다.
 
     @OneToMany
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
@@ -55,6 +59,10 @@ public class Item {
 
     public void setItemCategories(List<ItemCategory> itemCategories) {
         this.itemCategories = itemCategories;
+    }
+
+    public void deleteItem() {
+        delDate = LocalDateTime.now();
     }
 
     // 평점 계산

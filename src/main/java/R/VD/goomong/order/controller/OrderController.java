@@ -1,6 +1,5 @@
 package R.VD.goomong.order.controller;
 
-import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.order.dto.response.ResponseOrderDto;
 import R.VD.goomong.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +27,6 @@ public class OrderController {
     @GetMapping("/find/{id}")
     public ResponseEntity<ResponseOrderDto> findByOrderId(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.findByOrderId(id));
-    }
-
-    // 생성할 때 페이 로직을 넣으면 될까나?
-    @PostMapping("/create")
-    public ResponseEntity<String> createNewOrder(@RequestBody RequestOrderDto orderDto) {
-        orderService.createNewOrder(orderDto);
-        return ResponseEntity.ok("주문이 완료되었습니다");
     }
 
     @PostMapping("/refund/{id}")

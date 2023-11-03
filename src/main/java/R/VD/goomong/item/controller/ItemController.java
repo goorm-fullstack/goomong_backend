@@ -3,6 +3,7 @@ package R.VD.goomong.item.controller;
 import R.VD.goomong.item.dto.request.RequestItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class ItemController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> writeItem(MultipartFile[] multipartFiles, @RequestPart RequestItemDto itemDto) {
+    public ResponseEntity<String> writeItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestItemDto itemDto) {
         itemService.save(itemDto, multipartFiles);
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
