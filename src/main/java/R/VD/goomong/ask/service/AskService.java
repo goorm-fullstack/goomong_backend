@@ -68,11 +68,14 @@ public class AskService {
         if (parent.getDelDate() != null)
             throw new AlreadyDeletedAskException("해당 id의 문의글은 삭제된 문의글입니다. id = " + parent.getId());
 
+        Item item = parent.getItem();
+
         List<Files> filesList = new ArrayList<>();
         if (files.length != 0) filesList = filesService.saveFiles(files);
 
         Ask build = ask.toBuilder()
                 .member(member)
+                .item(item)
                 .ask(parent)
                 .filesList(filesList)
                 .build();

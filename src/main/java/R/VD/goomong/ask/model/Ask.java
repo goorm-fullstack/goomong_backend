@@ -7,7 +7,6 @@ import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,14 +62,18 @@ public class Ask extends BaseDateEntity {
 
     public ResponseAskDto toResponseAskDto() {
 
-        List<ResponseAskDto> answers = new ArrayList<>();
-        for (Ask ask1 : answerList) {
-            if (ask1.getDelDate() == null) answers.add(ask1.toResponseAskDto());
+        List<ResponseAnswerDto> answers = new ArrayList<>();
+        if (!answerList.isEmpty()) {
+            for (Ask ask1 : answerList) {
+                if (ask1.getDelDate() == null && ask1.getAsk() != null) answers.add(ask1.toResponseAnswerDto());
+            }
         }
 
-        List<ResponseReportDto> reports = new ArrayList<>();
-        for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+        List<Long> reports = new ArrayList<>();
+        if (!reportList.isEmpty()) {
+            for (Report report : reportList) {
+                if (report.getDelDate() == null) reports.add(report.getId());
+            }
         }
 
         return ResponseAskDto.builder()
