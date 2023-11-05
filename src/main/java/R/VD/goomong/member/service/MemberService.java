@@ -194,15 +194,26 @@ public class MemberService {
     public Member memberLogin(RequestLogin requestLogin){
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
-        if(byMemberId.isEmpty()){
+        if(byMemberId.isEmpty()){                                               //아이디 없음
             throw new NotFoundMember("아이디 없음.");
         }
 
         Member member = byMemberId.get();
-        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){
+        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){                 //비밀번호 틀림
+            member.setMemberLoginFailed(member.getMemberLoginFailed() + 1L);
+            memberRepository.save(member);
+
             throw new NotFoundMember("비밀번호 불일치");
         }
-
+        else{                                                                       //로그인 성공
+            if(member.getMemberLoginFailed() == 5L){
+                throw new NotFoundMember("회원 잠김");
+            }
+            else{
+                member.setMemberLoginFailed(0L);
+                memberRepository.save(member);
+            }
+        }
         return member;
     }
 }
