@@ -205,12 +205,13 @@ public class MemberService {
 
             throw new NotFoundMember("비밀번호 불일치");
         }
-        else{                                                                       //로그인 성공
-            if(member.getMemberLoginFailed() == 5L){
+
+        else{                                                                       //아이디, 비밀번호 모두 맞췄을 때
+            if(member.getMemberLoginFailed() == 5L){                                //이미 로그인 5회 실패일 때
                 throw new NotFoundMember("회원 잠김");
             }
             else{
-                member.setMemberLoginFailed(0L);
+                member.setMemberLoginFailed(0L);                                    //로그인 성공
                 memberRepository.save(member);
             }
         }
