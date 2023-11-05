@@ -11,24 +11,22 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE ChatMessage SET del_date = CURRENT_TIMESTAMP WHERE room_id = ?")
-public class ChatMessage extends BaseTimeEntity {
+@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_id = ? AND member_id = ?")
+public class ChatRoomMember extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
-    private Long messageId;
+    private Long Id;
 
-    @Column(name = "message", nullable = false)
-    private String message;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private ChatRoom chatRoom;
 }

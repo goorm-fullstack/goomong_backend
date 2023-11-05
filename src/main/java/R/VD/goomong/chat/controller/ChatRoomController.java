@@ -1,7 +1,8 @@
 package R.VD.goomong.chat.controller;
 
+import R.VD.goomong.chat.dto.request.RequestChatRoomDTO;
 import R.VD.goomong.chat.dto.request.RequestChatSoftDelete;
-import R.VD.goomong.chat.dto.request.RequestChatUserDTO;
+import R.VD.goomong.chat.dto.request.RequestItemChatRoomDTO;
 import R.VD.goomong.chat.dto.response.ResponseChatRoomDTO;
 import R.VD.goomong.chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,13 @@ public class ChatRoomController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseChatRoomDTO> createChatRoom(@RequestBody RequestChatUserDTO requestChatUserDTO) {
-        return new ResponseEntity<>(chatRoomService.createChatRoom(requestChatUserDTO), HttpStatus.OK);
+    public ResponseEntity<ResponseChatRoomDTO> createItemChatRoom(@RequestBody RequestItemChatRoomDTO chatRoomDTO) {
+        return new ResponseEntity<>(chatRoomService.createItemChatRoom(chatRoomDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/customer-center")
+    public ResponseEntity<ResponseChatRoomDTO> createChatRoom(@RequestBody RequestChatRoomDTO chatRoomDTO) {
+        return new ResponseEntity<>(chatRoomService.createChatRoom(chatRoomDTO), HttpStatus.OK);
     }
 
     @DeleteMapping

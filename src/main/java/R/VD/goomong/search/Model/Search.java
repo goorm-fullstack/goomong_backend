@@ -1,4 +1,4 @@
-package R.VD.goomong.chat.model;
+package R.VD.goomong.search.Model;
 
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
@@ -14,21 +14,18 @@ import org.hibernate.annotations.SQLDelete;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE ChatMessage SET del_date = CURRENT_TIMESTAMP WHERE room_id = ?")
-public class ChatMessage extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
-    private Long messageId;
+@SQLDelete(sql = "UPDATE Search SET del_date = CURRENT_TIMESTAMP WHERE search_id = ?")
+public class Search extends BaseTimeEntity {
 
-    @Column(name = "message", nullable = false)
-    private String message;
+    @Id
+    private Long searchId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private ChatRoom chatRoom;
+    @JoinColumn(name = "word_id")
+    private Word word;
+
 }

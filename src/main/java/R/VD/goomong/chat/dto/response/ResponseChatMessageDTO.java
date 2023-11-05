@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseChatMessageDTO {
-    private String roomUUID;
+    private Long roomId;
     private String message;
     private String senderName;
     private LocalDateTime regDate;
 
     public ResponseChatMessageDTO(ChatMessage chatMessage) {
-        this.roomUUID = chatMessage.getRoomUUID().toString();
+        this.roomId = chatMessage.getChatRoom().getRoomId();
         this.message = chatMessage.getMessage();
-        this.senderName = chatMessage.getSender().getMemberName();
+        this.senderName = chatMessage.getMember().getMemberName();
         this.regDate = chatMessage.getRegDate();
     }
 }
