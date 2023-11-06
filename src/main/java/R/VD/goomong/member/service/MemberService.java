@@ -46,7 +46,7 @@ public class MemberService {
         Matcher matcher = specialCharPattern.matcher(memberPassword);
 
         if(memberPassword.length() < minLength || memberPassword.length() >= maxLength) {               //비밀번호 9자 이상 20자 미만
-            throw new NotFoundMember("비밀번호는 9자 이상 20자 이하이어야 합니다.");
+            throw new NotFoundMember("비밀번호는 9자 이상 20자 미만이어야 합니다.");
         }
 
         if(memberPassword.contains(memberId)){
@@ -191,6 +191,7 @@ public class MemberService {
     }
 
     //로그인
+    @Transactional(noRollbackFor = NotFoundMember.class)
     public Member memberLogin(RequestLogin requestLogin){
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
@@ -200,10 +201,16 @@ public class MemberService {
 
         Member member = byMemberId.get();
         if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){                 //비밀번호 틀림
-            member.setMemberLoginFailed(member.getMemberLoginFailed() + 1L);
-            memberRepository.save(member);
+            try{
+                LoginFail fail = new LoginFail(memberRepository);
+                fail.extracted(member);
+            }
+            catch (Exception e){
+                throw new NotFoundMember("비밀번호 불일치");
 
-            throw new NotFoundMember("비밀번호 불일치");
+            }
+
+
         }
 
         else{                                                                       //아이디, 비밀번호 모두 맞췄을 때
@@ -216,5 +223,26 @@ public class MemberService {
             }
         }
         return member;
+    }
+
+
+
+}
+
+
+class LoginFail{
+
+    private final MemberRepository memberRepository;
+
+    public LoginFail(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Transactional(noRollbackFor = Exception.class)
+    public void extracted(Member member) throws Exception {
+        member.setMemberLoginFailed(member.getMemberLoginFailed() + 1L);
+        memberRepository.save(member);
+
+        throw new Exception("비밀번호 불일치");
     }
 }
