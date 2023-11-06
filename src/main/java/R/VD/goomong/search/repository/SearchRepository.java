@@ -1,6 +1,6 @@
 package R.VD.goomong.search.repository;
 
-import R.VD.goomong.search.Model.Search;
+import R.VD.goomong.search.model.Search;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

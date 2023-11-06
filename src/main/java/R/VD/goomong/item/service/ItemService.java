@@ -55,7 +55,7 @@ public class ItemService {
         Page<Item> all = itemRepository.findAll(pageable);
         List<Item> itemList = all.getContent();
         List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
-        new PageImpl<>(list, pageable, list.size());
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     public void deleteItem(Long id) {
