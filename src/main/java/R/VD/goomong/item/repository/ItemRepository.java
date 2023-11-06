@@ -12,4 +12,5 @@ import java.time.LocalDateTime;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Page<Item> findAllByDelDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+
 }

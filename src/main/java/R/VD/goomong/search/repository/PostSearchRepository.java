@@ -29,16 +29,19 @@ public class PostSearchRepository {
         switch (orderBy) {
             case "title":
                 query.orderBy(post.postTitle.asc());
-            case "views":
-                query.orderBy(post.postViews.desc());
-            case "likes":
-                query.orderBy(post.postLikeNo.desc());
-            case "comment":
-                query.orderBy(post.commentList.size().desc());
+                break;
             case "time":
                 query.orderBy(post.regDate.desc());
+                break;
+            case "views":
+                query.orderBy(post.postViews.desc());
+                break;
+            case "likes":
+                query.orderBy(post.postLikeNo.desc());
+                break;
             default:
                 query.orderBy(post.regDate.desc());
+                break;
         }
 
         List<Post> posts = query.offset(pageable.getOffset())
@@ -62,8 +65,9 @@ public class PostSearchRepository {
                                 .or(post.postContent.contains(keyword))
                                 .or(post.member.memberName.contains(keyword))
                 );
+
         if (category != null && !category.isEmpty()) {
-            query.where(post.postTitle.eq(category));
+            query.where(post.postCategory.postCategoryName.eq(category));
         }
 
         return query;

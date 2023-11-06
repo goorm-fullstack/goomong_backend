@@ -10,6 +10,9 @@ import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.item.repository.ItemCategoryRepository;
 import R.VD.goomong.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,9 +51,11 @@ public class ItemService {
         return new ResponseItemDto(item);
     }
 
-    public List<ResponseItemDto> findAll() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream().map(ResponseItemDto::new).toList();
+    public Page<ResponseItemDto> findAll(Pageable pageable) {
+        Page<Item> all = itemRepository.findAll(pageable);
+        List<Item> itemList = all.getContent();
+        List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
+        new PageImpl<>(list, pageable, list.size());
     }
 
     public void deleteItem(Long id) {

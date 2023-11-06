@@ -7,6 +7,7 @@ import R.VD.goomong.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -160,12 +162,24 @@ public class PostController {
     /**
      * 삭제되지 않은 게시글 조회
      *
-     * @param pageable - 페이징
+     * @param orderBy   - 정렬 옵션 | postViews, postLikeNo, regDate
+     * @param direction - asc, desc
+     * @param pageable  - 페이징
      * @return - 조회된 게시글
      */
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy,
+                                                                  @RequestParam Optional<String> direction,
+                                                                  Pageable pageable) {
+        Sort sort = Sort.unsorted();
+
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            sort = Sort.by(dir, orderBy.get());
+        }
+        
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return getListResponseEntity(postService.listOfNotDeleted(pageable));
     }
 
