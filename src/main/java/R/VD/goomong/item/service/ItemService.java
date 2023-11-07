@@ -4,6 +4,7 @@ import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.item.dto.request.RequestItemDto;
 import R.VD.goomong.item.dto.request.RequestNonSaleItemDto;
+import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
@@ -97,6 +98,7 @@ public class ItemService {
         return result;
     }
 
+    // 아이템 삭제
     public void deleteItem(Long id) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
@@ -105,6 +107,16 @@ public class ItemService {
 
         Item delItem = item.get();
         delItem.deleteItem();
+    }
+
+    // 아이템 업데이트
+    public void updateItem(UpdateItemDto itemDto) {
+        Optional<Item> findItem = itemRepository.findById(itemDto.getId());
+        if (findItem.isEmpty())
+            throw new NotFoundItem();
+
+        Item item = findItem.get();
+        propertyUpdate(item, itemDto);
     }
 
     // 공통 아이템 저장 함수
@@ -119,5 +131,23 @@ public class ItemService {
         entity.setItemCategories(categories);
         entity.setThumbNailList(imageList);
         itemRepository.save(entity);
+    }
+
+    //수정된 데이터로 DB 업데이트
+    private void propertyUpdate(Item item, UpdateItemDto itemDto) {
+        String title = item.getTitle();
+        String describe = item.getDescribe();
+        int price = item.getPrice();
+
+        if (!itemDto.getDescribe().isEmpty())
+            describe = itemDto.getDescribe();
+
+        if (!itemDto.getTitle().isEmpty())
+            title = itemDto.getTitle();
+
+        if (itemDto.getPrice() > 0)
+            price = itemDto.getPrice();
+
+        item.update(price, title, describe);
     }
 }

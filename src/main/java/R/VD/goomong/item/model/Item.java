@@ -53,6 +53,21 @@ public class Item extends BaseTimeEntity {
 
     private LocalDateTime delDate;
 
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void update(int price, String title, String describe) {
+        this.price = price;
+        this.title = title;
+        this.describe = describe;
+    }
+
+    public void update(String title, String describe) {
+        this.title = title;
+        this.describe = describe;
+    }
+
     public void setThumbNailList(List<Image> thumbNailList) {
         this.thumbNailList = thumbNailList;
     }
