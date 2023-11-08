@@ -1,6 +1,6 @@
 package R.VD.goomong.search.model;
 
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import org.hibernate.annotations.SQLDelete;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE Search SET del_date = CURRENT_TIMESTAMP WHERE search_id = ?")
-public class Search extends BaseTimeEntity {
+public class Search extends BaseDateEntity {
 
     @Id
     private Long searchId;

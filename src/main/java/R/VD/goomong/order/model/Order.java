@@ -1,7 +1,7 @@
 package R.VD.goomong.order.model;
 
 import R.VD.goomong.global.model.Address;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.order.exception.AlreadyCompleteOrder;
@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Order extends BaseTimeEntity {
+public class Order extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

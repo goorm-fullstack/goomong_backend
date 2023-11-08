@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,9 +40,9 @@ public class Member {
 
     @Column(nullable = false)
     @JsonFormat(timezone = "Asia/Seoul")
-    private LocalDateTime memberSignupTime;
+    private ZonedDateTime memberSignupTime;
 
-    private LocalDateTime memberDeleteTime;
+    private ZonedDateTime memberDeleteTime;
 
     @Column(nullable = false)
     private Long zipCode;                                    //우편 번호

@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class ResponseChatRoomDTO {
     private String roomId;
     private String roomName;
     private ResponseChatItem itemDto;
-    private LocalDateTime regDate;
+    private ZonedDateTime regDate;
 
     public ResponseChatRoomDTO(ChatRoom chatRoom, Item item, String roomName) {
         this.roomId = chatRoom.getRoomId().toString();

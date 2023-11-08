@@ -1,19 +1,19 @@
 package R.VD.goomong.post.model;
 
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostCategory extends BaseTimeEntity {
+public class PostCategory extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class PostCategory extends BaseTimeEntity {
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
     @Column
-    private LocalDateTime delDate; // 삭제일
+    private ZonedDateTime delDate; // 삭제일
 
     // response로 변환
     public ResponsePostCategoryDto toResponsePostCategoryDto() {

@@ -2,14 +2,14 @@ package R.VD.goomong.report.model;
 
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.report.dto.response.ResponseReportDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Report extends BaseTimeEntity {
+public class Report extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class Report extends BaseTimeEntity {
     private String reportResult; // 신고 처리 결과 (삭제 처리, 이상 없음)
 
     @Column
-    private LocalDateTime delDate; // 삭제 날짜
+    private ZonedDateTime delDate; // 삭제 날짜
 
     public ResponseReportDto toResponseReportDto() {
         return ResponseReportDto.builder()

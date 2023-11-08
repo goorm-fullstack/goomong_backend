@@ -2,7 +2,7 @@ package R.VD.goomong.payment.kakao.model;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * 카카오페이 결제 취소 응답 모델
@@ -24,9 +24,9 @@ public class KakaoCancelResponse {
     private String item_name;
     private String item_code;
     private int quantity;
-    private LocalDateTime created_at;
-    private LocalDateTime approved_at;
-    private LocalDateTime canceled_at;
+    private ZonedDateTime created_at;
+    private ZonedDateTime approved_at;
+    private ZonedDateTime canceled_at;
     private String payload;
 
     @Data

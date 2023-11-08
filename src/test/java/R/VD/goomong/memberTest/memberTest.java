@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -32,7 +32,7 @@ public class memberTest {
                 .memberPassword("testPw")
                 .memberName("test")
                 .memberEmail("test@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -54,7 +54,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -65,7 +65,7 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12312L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("BUSAN")
@@ -76,7 +76,7 @@ public class memberTest {
                 .memberPassword("testPw3")
                 .memberName("test3")
                 .memberEmail("test3@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(11111L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("DAEJEON")
@@ -103,7 +103,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -114,7 +114,7 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12312L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("BUSAN")
@@ -138,7 +138,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -154,10 +154,9 @@ public class memberTest {
         memberService.deleteById(10L);
 
         Member member1 = memberService.findById(10L);
-        if(member1 == null){
+        if (member1 == null) {
             System.out.println("null");
-        }
-        else {
+        } else {
             System.out.println("member1 = " + member1);
         }
 
@@ -170,7 +169,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -184,10 +183,9 @@ public class memberTest {
         memberService.deleteByMemberId("testId1");
 
         Member member1 = memberService.findByMemberId("testId1");
-        if(member1 == null){
+        if (member1 == null) {
             System.out.println("null");
-        }
-        else {
+        } else {
             System.out.println("member1 = " + member1);
         }
     }
@@ -199,7 +197,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -228,7 +226,7 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")
@@ -271,7 +269,7 @@ public class memberTest {
                 .memberPassword("testPw")
                 .memberName("test")
                 .memberEmail("test@test.com")
-                .memberSignupTime(LocalDateTime.now())
+                .memberSignupTime(ZonedDateTime.now())
                 .zipCode(12345L)
                 .simpleAddress("SOUTHKOREA")
                 .detailAddress("SEOUL")

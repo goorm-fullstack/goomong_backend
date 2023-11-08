@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    Page<Item> findAllByDelDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<Item> findAllByDelDateBetween(ZonedDateTime start, ZonedDateTime end, Pageable pageable);
 
 }

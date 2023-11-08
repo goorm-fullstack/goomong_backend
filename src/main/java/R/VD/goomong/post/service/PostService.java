@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +46,8 @@ public class PostService {
         Post entity = requestPostDto.toEntity();
 
         Member writer = memberRepository.findById(requestPostDto.getMemberId()).orElseThrow(() -> new RuntimeException("해당 id의 회원은 없습니다. id = " + requestPostDto.getMemberId()));
-        if (writer.getMemberDeleteTime() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + writer.getId());
+        if (writer.getMemberDeleteTime() != null)
+            throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + writer.getId());
 
         String postType = entity.getPostType();
         if ((postType.equals("커뮤니티") || postType.equals("FAQ")) && requestPostDto.getPostCategoryId() == null)
@@ -109,7 +110,7 @@ public class PostService {
             throw new AlreadyDeletePostException("해당 id의 게시글은 이미 삭제된 게시글입니다. id = " + postId);
 
         Post build = onePost.toBuilder()
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         postRepository.save(build);
     }

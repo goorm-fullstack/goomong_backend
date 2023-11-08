@@ -1,7 +1,7 @@
 package R.VD.goomong.item.model;
 
 import R.VD.goomong.ask.model.Ask;
-import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Item extends BaseTimeEntity {
+public class Item extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스
@@ -51,7 +51,7 @@ public class Item extends BaseTimeEntity {
 
     private Float rate;//평점
 
-    private LocalDateTime delDate;
+    private ZonedDateTime delDate;
 
     public void setThumbNailList(List<Image> thumbNailList) {
         this.thumbNailList = thumbNailList;
@@ -62,7 +62,7 @@ public class Item extends BaseTimeEntity {
     }
 
     public void deleteItem() {
-        delDate = LocalDateTime.now();
+        delDate = ZonedDateTime.now();
     }
 
     // 평점 계산
