@@ -64,6 +64,7 @@ public class PostSearchRepository {
                         post.postTitle.contains(keyword)
                                 .or(post.postContent.contains(keyword))
                                 .or(post.member.memberName.contains(keyword))
+                                .and(post.delDate.isNull())
                 );
 
         if (category != null && !category.isEmpty()) {

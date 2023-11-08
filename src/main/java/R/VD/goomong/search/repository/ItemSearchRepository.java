@@ -63,6 +63,7 @@ public class ItemSearchRepository {
                                 .or(item.describe.contains(keyword))
                                 .or(itemCategory.title.contains(keyword))
                                 .or(item.member.memberName.contains(keyword))
+                                .and(item.regDate.isNull())
                 );
         if (category != null && !category.isEmpty())
             query.where(itemCategory.title.eq(category));
