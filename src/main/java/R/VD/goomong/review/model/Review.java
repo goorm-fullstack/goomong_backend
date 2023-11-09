@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class Review {
 
     private String content;//리뷰 내용
     private Float rate;//평점
+
+    private ZonedDateTime delDate;
 
     public void setItem(Item item) {
         this.item = item;
