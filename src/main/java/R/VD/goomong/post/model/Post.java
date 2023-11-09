@@ -8,9 +8,8 @@ import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
-import R.VD.goomong.post.dto.response.ResponsePostDto;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
+import R.VD.goomong.post.dto.response.ResponseFaqCommunityPostDto;
+import R.VD.goomong.post.dto.response.ResponseItemPostDto;
 import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,10 +37,6 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item; // 상품
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postCategory_id")
-    private PostCategory postCategory; // 카테고리
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Comment> commentList = new ArrayList<>(); // 댓글
@@ -59,6 +54,9 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     @Builder.Default
     private List<Files> fileList = new ArrayList<>(); // 게시글 파일
+
+    @Column
+    private String postCategory;
 
     @Column(nullable = false)
     private String postType; // 게시글 종류(ex. 커뮤니티/QnA 등등)
@@ -78,13 +76,11 @@ public class Post extends BaseTimeEntity {
     @Column
     private ZonedDateTime delDate; // 삭제 날짜
 
-    // response로 변환
-    public ResponsePostDto toResponsePostDto() {
+    // ResponseItemPostDto로 변환
+    public ResponseItemPostDto toResponseItemPostDto() {
 
         ResponseItemDto item1 = null;
         if (item != null) item1 = new ResponseItemDto(item);
-        ResponsePostCategoryDto postCategory1 = null;
-        if (postCategory != null) postCategory1 = postCategory.toResponsePostCategoryDto();
 
         List<ResponseCommentDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
@@ -93,16 +89,15 @@ public class Post extends BaseTimeEntity {
             }
         }
 
-        List<ResponseReportDto> reports = new ArrayList<>();
+        List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+            if (report.getDelDate() == null) reports.add(report.getId());
         }
 
-        return ResponsePostDto.builder()
+        return ResponseItemPostDto.builder()
                 .id(id)
-                .member(member.getMemberId())
+                .memberId(member.getMemberId())
                 .item(item1)
-                .postCategory(postCategory1)
                 .postType(postType)
                 .postTitle(postTitle)
                 .postContent(postContent)
@@ -111,9 +106,40 @@ public class Post extends BaseTimeEntity {
                 .imageList(imageList)
                 .fileList(fileList)
                 .commentList(comments)
-                .report(reports)
+                .reportIdList(reports)
                 .regDate(delDate)
                 .delDate(this.getDelDate())
+                .build();
+    }
+
+    public ResponseFaqCommunityPostDto toResponseFaqCoummunityDto() {
+        List<ResponseCommentDto> comments = new ArrayList<>();
+        for (Comment comment : commentList) {
+            if (comment.getParentComment() == null && comment.getDelDate() == null) {
+                comments.add(comment.toResponseCommentDto());
+            }
+        }
+
+        List<Long> reports = new ArrayList<>();
+        for (Report report : reportList) {
+            if (report.getDelDate() == null) reports.add(report.getId());
+        }
+
+        return ResponseFaqCommunityPostDto.builder()
+                .id(id)
+                .memberId(member.getMemberId())
+                .postCategory(postCategory)
+                .postLikeNo(postLikeNo)
+                .imageList(imageList)
+                .postContent(postContent)
+                .postViews(postViews)
+                .postTitle(postTitle)
+                .regDate(this.getRegDate())
+                .reportIdList(reports)
+                .postType(postType)
+                .commentList(comments)
+                .delDate(delDate)
+                .filesList(fileList)
                 .build();
     }
 }

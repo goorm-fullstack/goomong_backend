@@ -67,7 +67,7 @@ public class Report extends BaseTimeEntity {
         return ResponseReportDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .post(post != null ? post.toResponsePostDto() : null)
+                .postId(post != null ? post.getId() : null)
                 .comment(comment != null ? comment.toResponseCommentDto() : null)
                 .review(review != null ? review.toResponseReviewDto() : null)
                 .ask(ask != null ? ask.toResponseAskDto() : null)

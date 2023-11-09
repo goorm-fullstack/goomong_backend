@@ -161,6 +161,12 @@ public class AskController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 삭제된 문의글 복구
+     *
+     * @param askId 복구할 글 pk
+     * @return 복구 완료 시 200
+     */
     @Operation(description = "삭제된 문의글 복구")
     @Parameter(name = "askId", description = "복구할 문의글 id", schema = @Schema(type = "Long"))
     @ApiResponse(responseCode = "200", description = "성공")

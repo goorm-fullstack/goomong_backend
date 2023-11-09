@@ -3,7 +3,6 @@ package R.VD.goomong.report.dto.response;
 import R.VD.goomong.ask.dto.response.ResponseAskDto;
 import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import lombok.*;
 
@@ -18,7 +17,7 @@ public class ResponseReportDto {
 
     private Long id;
     private String memberId;
-    private ResponsePostDto post;
+    private Long postId;
     private ResponseCommentDto comment;
     private ResponseReviewDto review;
     private ResponseAskDto ask;

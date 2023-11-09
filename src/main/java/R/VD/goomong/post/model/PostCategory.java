@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,10 +23,6 @@ public class PostCategory extends BaseTimeEntity {
     @JoinColumn(name = "image_id")
     private Image image; // 카테고리 썸네일(커뮤니티 카테고리의 경우)
 
-    @OneToMany(mappedBy = "postCategory")
-    @Builder.Default
-    private List<Post> postList = new ArrayList<>(); // 게시글
-
     @Column(nullable = false)
     private String postCategoryName; // 카테고리 이름
 
@@ -42,6 +36,7 @@ public class PostCategory extends BaseTimeEntity {
     public ResponsePostCategoryDto toResponsePostCategoryDto() {
         return ResponsePostCategoryDto.builder()
                 .id(id)
+                .image(image)
                 .postCategoryName(postCategoryName)
                 .regDate(this.getRegDate())
                 .delDate(delDate)
