@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RequestSearchDTO {
+public class RequestItemSearchDTO {
     private int page;
     private int pageSize;
     private Long memberId;

@@ -9,12 +9,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.ZonedDateTime;
+
 @Entity
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_id = ? AND member_id = ?")
+@SQLDelete(sql = "UPDATE ChatRoomMember SET del_date = CURRENT_TIMESTAMP WHERE room_id = ? AND member_id = ?")
 public class ChatRoomMember extends BaseTimeEntity {
 
     @Id
@@ -28,5 +30,7 @@ public class ChatRoomMember extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    private ZonedDateTime delDate;
 
 }

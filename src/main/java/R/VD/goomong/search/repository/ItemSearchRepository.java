@@ -26,11 +26,13 @@ public class ItemSearchRepository {
         JPAQuery<Item> query = getItemQuery(keyword, category);
 
         switch (orderBy) {
+            case "title":
+                query.orderBy(item.title.asc());
             case "price":
                 query.orderBy(item.price.desc());
                 break;
-            case "orderCount":
-                query.orderBy(order.count().desc());
+            case "orderNumber":
+                query.orderBy(order.orderNumber.desc());
             case "time":
                 query.orderBy(item.regDate.desc());
                 break;
@@ -38,7 +40,7 @@ public class ItemSearchRepository {
                 query.orderBy(item.rate.desc());
                 break;
             default:
-                query.orderBy(item.title.desc());
+                query.orderBy(item.regDate.desc());
         }
 
         List<Item> items = query.offset(pageable.getOffset())
@@ -61,6 +63,7 @@ public class ItemSearchRepository {
                                 .or(item.describe.contains(keyword))
                                 .or(itemCategory.title.contains(keyword))
                                 .or(item.member.memberName.contains(keyword))
+                                .and(item.regDate.isNull())
                 );
         if (category != null && !category.isEmpty())
             query.where(itemCategory.title.eq(category));

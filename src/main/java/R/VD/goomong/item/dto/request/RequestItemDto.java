@@ -1,9 +1,11 @@
 package R.VD.goomong.item.dto.request;
 
 import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.model.Status;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.List;
@@ -13,13 +15,16 @@ public class RequestItemDto {
     @NotEmpty
     @NotNull
     private String title;//제목
-    
-    @Positive
-    private int price;//가격
 
     @NotEmpty
     @NotNull
     private String describe;//설명
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Status status;//아이템 상태값
+
+    private int price;
 
     @NotEmpty
     private List<Long> itemCategories;//카테고리 목록
@@ -29,6 +34,7 @@ public class RequestItemDto {
                 .title(title)
                 .price(price)
                 .describe(describe)
+                .status(status)
                 .build();
     }
 }

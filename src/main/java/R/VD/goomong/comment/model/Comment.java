@@ -49,7 +49,6 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private int likeNo; // 댓글 좋아요 수
 
-    @Column
     private ZonedDateTime delDate;
 
     public ResponseCommentDto toResponseCommentDto() {

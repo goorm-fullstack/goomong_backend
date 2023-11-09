@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -210,8 +212,10 @@ public class PostController {
     /**
      * 삭제되지 않은 게시글 조회
      *
-     * @param pageable 페이징
-     * @return 조회된 게시글
+     * @param orderBy   - 정렬 옵션 | postViews, postLikeNo, regDate
+     * @param direction - asc, desc
+     * @param pageable  - 페이징
+     * @return - 조회된 게시글
      */
     @Operation(summary = "삭제되지 않은 게시글 리스트 조회")
     @Parameters(value = {
@@ -225,7 +229,15 @@ public class PostController {
     })
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping
-    public ResponseEntity<List<Object>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<Object>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction, Pageable pageable) {
+
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        } else {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        }
+
         Page<Post> posts = postService.listOfNotDeleted(pageable);
         return getListResponseEntity(posts);
     }

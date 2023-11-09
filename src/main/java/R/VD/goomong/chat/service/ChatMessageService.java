@@ -26,7 +26,8 @@ public class ChatMessageService {
     private final MemberRepository memberRepository;
 
     public List<ResponseChatMessageDTO> getMessages(Long roomId) {
-        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoom_RoomId(roomId);
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(() -> new ChatNotFoundException("채팅방 " + roomId + " 은 존재하지 않습니다."));
+        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoom(chatRoom);
         return chatMessages.stream().map(ResponseChatMessageDTO::new).toList();
     }
 
@@ -38,9 +39,9 @@ public class ChatMessageService {
         log.info("roomId = {}, memberId = {}", roomId, memberId);
 
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new ChatNotFoundException("채팅방 " + roomId + "는 존재하지 않습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("채팅방 " + roomId + " 은 존재하지 않습니다."));
         Member sender = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
+                .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + " 은 존재하지 않습니다."));
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(requestChatMessageDTO.getMessage())
