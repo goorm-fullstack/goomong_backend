@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-
+    Page<Item> findAllByStatus(String status, Pageable pageable);
     Page<Item> findAllByDelDateBetween(ZonedDateTime start, ZonedDateTime end, Pageable pageable);
 
 }

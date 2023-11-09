@@ -31,41 +31,45 @@ public class ImageService {
     // 이미지 저장 로직 및 DB에 관련 내용 반영
     public List<Image> saveImage(MultipartFile[] fileList) {
         List<Image> result = new ArrayList<>();
-        if(fileList == null) {
+        if (fileList == null) {
             return null;
         }
         for (MultipartFile file : fileList) {
             if (file.isEmpty()) {
                 return null;
             }
-            String fileName = file.getOriginalFilename();
-            String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String newPath = path + "\\image\\" + date;
-            File Folder = new File(newPath);
-            if (!Folder.exists()) {
-                try {
-                    Folder.mkdirs();
-                } catch (Exception e) {
-                    throw new RuntimeException("폴더를 생성할 수 없습니다.");
-                }
-            }
-
-            UUID uuid = UUID.randomUUID();
-            String saveFileName = uuid + "_" + fileName;
-            File saveFile = new File(newPath + "\\" + saveFileName);
-            try {
-                file.transferTo(saveFile);
-                Image saveImage = Image.builder()
-                        .fileName(fileName)
-                        .saveFileName(saveFileName)
-                        .path(newPath + "\\" + saveFileName)
-                        .build();
-                Image save = imageRepository.save(saveImage);
-                result.add(save);
-            } catch (Exception e) {
-                throw new RuntimeException("파일을 저장할 수 없습니다.");
-            }
+            uploadImage(result, file);
         }
         return result;
+    }
+
+    private void uploadImage(List<Image> result, MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String newPath = path + "\\image\\" + date;
+        File Folder = new File(newPath);
+        if (!Folder.exists()) {
+            try {
+                Folder.mkdirs();
+            } catch (Exception e) {
+                throw new RuntimeException("폴더를 생성할 수 없습니다.");
+            }
+        }
+
+        UUID uuid = UUID.randomUUID();
+        String saveFileName = uuid + "_" + fileName;
+        File saveFile = new File(newPath + "\\" + saveFileName);
+        try {
+            file.transferTo(saveFile);
+            Image saveImage = Image.builder()
+                    .fileName(fileName)
+                    .saveFileName(saveFileName)
+                    .path(newPath + "\\" + saveFileName)
+                    .build();
+            Image save = imageRepository.save(saveImage);
+            result.add(save);
+        } catch (Exception e) {
+            throw new RuntimeException("파일을 저장할 수 없습니다.");
+        }
     }
 }

@@ -21,6 +21,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   mail: # smtp
     host: smtp.google.com
     port: 587

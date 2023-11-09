@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +45,55 @@ public class ItemCategoryService {
 
     public List<ResponseItemCategoryDto> findAllByLevelOne() {
         return itemCategoryRepository.findAllByLevel(1).stream().map(ResponseItemCategoryDto::new).toList();
+    }
+
+    public void deleteCategory(Long id) {
+        Optional<ItemCategory> opt_category = itemCategoryRepository.findById(id);
+        if (opt_category.isEmpty())
+            throw new NotFoundItemCategory();
+
+        ItemCategory category = opt_category.get();
+
+        if (category.getLevel() == 1)//부모 카테고리인 경우
+            deleteParentCategory(category);
+        else //자식 카테고리인 경우
+            deleteChildCategory(category);
+    }
+
+    // 부모 카테고리로부터 자식 카테고리 리스트를 받아옵니다.
+    public List<ResponseItemCategoryDto> findLevelTwoByParentId(long id) {
+        Optional<ItemCategory> category = itemCategoryRepository.findById(id);
+        if (category.isEmpty())
+            throw new NotFoundItemCategory();
+
+        ItemCategory parentCategory = category.get();
+        if (parentCategory.getLevel() != 1)
+            throw new RuntimeException();
+
+        List<ResponseItemCategoryDto> result = new ArrayList<>();
+        for (ItemCategory categoryLv2 : parentCategory.getChildCategory()) {
+            result.add(new ResponseItemCategoryDto(categoryLv2));
+        }
+
+        return result;
+    }
+
+    /**
+     * 부모 카테고리 삭제
+     * 먼저 자식 요소를 삭제한 후에 부모 요소를 삭제한다.
+     */
+    private void deleteParentCategory(ItemCategory itemCategory) {
+        List<ItemCategory> childCategories = itemCategory.getChildCategory();
+        for (ItemCategory category : childCategories) {
+            itemCategoryRepository.deleteById(category.getId());
+        }
+        itemCategoryRepository.deleteById(itemCategory.getId());
+    }
+
+    /**
+     * 자식 카테고리 삭제
+     */
+    private void deleteChildCategory(ItemCategory itemCategory) {
+        itemCategoryRepository.deleteById(itemCategory.getId());
     }
 }
