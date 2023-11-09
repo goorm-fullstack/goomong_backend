@@ -81,7 +81,7 @@ public class Ask extends BaseDateEntity {
                 .memberId(member.getMemberId())
                 .item(new ResponseItemDto(item))
                 .filesList(filesList)
-                .reportList(reports)
+                .reportListId(reports)
                 .title(title)
                 .content(content)
                 .answerList(answers)

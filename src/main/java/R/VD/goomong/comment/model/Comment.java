@@ -4,7 +4,6 @@ import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.global.model.BaseDateEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
@@ -60,9 +59,9 @@ public class Comment extends BaseDateEntity {
             if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
         }
 
-        List<ResponseReportDto> reports = new ArrayList<>();
+        List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+            if (report.getDelDate() == null) reports.add(report.getId());
         }
 
         return ResponseCommentDto.builder()
@@ -71,7 +70,7 @@ public class Comment extends BaseDateEntity {
                 .content(content)
                 .likeNo(likeNo)
                 .childrenComment(list)
-                .reportList(reports)
+                .reportIdList(reports)
                 .regDate(this.getRegDate())
                 .delDate(delDate)
                 .build();

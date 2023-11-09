@@ -2,7 +2,6 @@ package R.VD.goomong.ask.dto.response;
 
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -25,11 +24,11 @@ public class ResponseAskDto {
     @Schema(description = "문의하고자 하는 상품", implementation = ResponseItemDto.class)
     private ResponseItemDto item; // 작성할 아이템
 
-    @Schema(description = "업로드한 파일 리스트", implementation = Files.class)
+    @Schema(description = "업로드한 파일 리스트")
     private List<Files> filesList; // 업로드 파일
 
-    @Schema(description = "신고 리스트", implementation = ResponseReportDto.class)
-    private List<Long> reportList; // 신고
+    @Schema(description = "신고 id 리스트", type = "List", example = "[1, 2]")
+    private List<Long> reportListId; // 신고
 
     @Schema(description = "문의글 제목", example = "제목입니다.")
     private String title; // 문의 제목

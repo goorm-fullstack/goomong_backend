@@ -134,6 +134,17 @@ public class AskService {
         askRepository.delete(ask);
     }
 
+    // 삭제된 문의글 복구
+    public void undelete(Long askId) {
+        Ask ask = askRepository.findById(askId).orElseThrow(() -> new NotFoundAsk("해당 id의 글을 찾을 수 없습니다. id = " + askId));
+        if (ask.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 글은 이미 삭제된 글입니다. id = " + askId);
+
+        Ask build = ask.toBuilder()
+                .delDate(null)
+                .build();
+        askRepository.save(build);
+    }
+
     // 특정 문의글 조회
     public Ask findOneAsk(Long askId) {
         Ask ask = askRepository.findById(askId).orElseThrow(() -> new NotFoundAsk("해당 id의 글을 찾을 수 없습니다. id = " + askId));
