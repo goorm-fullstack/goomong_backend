@@ -2,7 +2,7 @@ package R.VD.goomong.post.dto.response;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Builder(toBuilder = true)
@@ -12,6 +12,6 @@ public class ResponsePostCategoryDto {
 
     private Long id;
     private String postCategoryName;
-    private LocalDateTime regDate;
-    private LocalDateTime delDate;
+    private ZonedDateTime regDate;
+    private ZonedDateTime delDate;
 }

@@ -1,4 +1,4 @@
-package R.VD.goomong.search.Model;
+package R.VD.goomong.search.model;
 
 import R.VD.goomong.global.model.BaseTimeEntity;
 import jakarta.persistence.*;

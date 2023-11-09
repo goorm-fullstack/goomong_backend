@@ -95,14 +95,14 @@ public class MemberService {
     }
 
     //index로 회원 정보 찾기
-    public Member findById(Long id){
+    public Member findById(Long id) {
         Optional<Member> member = memberRepository.findById(id);
 
         return member.orElse(null);
     }
 
     //회원 아이디로 정보 찾기
-    public Member findByMemberId(String memberId){
+    public Member findByMemberId(String memberId) {
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
         return member.orElse(null);
@@ -139,18 +139,18 @@ public class MemberService {
     //DELETE
     //REALDELETE
     //회원 index로 삭제
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         memberRepository.deleteById(id);
     }
 
     //회원 memberId로 삭제
-    public void deleteByMemberId(String memberId){
+    public void deleteByMemberId(String memberId) {
         memberRepository.deleteByMemberId(memberId);
     }
 
     //SOFTDELETE
     //회원 index로 softdelete
-    public Member softDeleteById(Long id){
+    public Member softDeleteById(Long id) {
         Optional<Member> member = memberRepository.findById(id);
 
         if (member.isPresent()) {
@@ -161,7 +161,7 @@ public class MemberService {
             String now = LocalDateTime.now().format(formatter);
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {
@@ -171,7 +171,7 @@ public class MemberService {
 
 
     //회원 memberId로 softdelete
-    public Member softDeleteByMemberId(String memberId){
+    public Member softDeleteByMemberId(String memberId) {
         Optional<Member> member = memberRepository.findByMemberId(memberId);
 
         if (member.isPresent()) {
@@ -182,7 +182,7 @@ public class MemberService {
             String now = LocalDateTime.now().format(formatter);
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {

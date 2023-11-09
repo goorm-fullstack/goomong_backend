@@ -1,6 +1,6 @@
 package R.VD.goomong.search.repository;
 
-import R.VD.goomong.search.Model.Word;
+import R.VD.goomong.search.model.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

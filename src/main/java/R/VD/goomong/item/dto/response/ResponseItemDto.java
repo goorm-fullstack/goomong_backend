@@ -4,6 +4,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.Status;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class ResponseItemDto {
     private List<Review> reviewList;//리뷰 목록
     private List<Ask> askList;
     private Float rate;//평점
+    private Status status;
 
     public ResponseItemDto(Item item) {
         this.id = item.getId();
@@ -34,5 +36,6 @@ public class ResponseItemDto {
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();
         this.rate = item.getRate();
+        this.status = item.getStatus();
     }
 }

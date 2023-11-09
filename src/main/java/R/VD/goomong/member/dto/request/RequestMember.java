@@ -51,7 +51,7 @@ public class RequestMember {
                 .memberPassword(memberPassword)
                 .memberEmail(memberEmail)
                 .memberName(memberName)
-                .memberSignupTime(memberSignupTime)
+//                .memberSignupTime(memberSignupTime)
                 .zipCode(zipCode)
                 .simpleAddress(simpleAddress)
                 .detailAddress(detailAddress)

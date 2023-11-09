@@ -4,12 +4,11 @@ import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +49,7 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private int likeNo; // 댓글 좋아요 수
 
-    @Column
-    private LocalDateTime delDate; // 댓글 삭제 날짜
+    private ZonedDateTime delDate;
 
     public ResponseCommentDto toResponseCommentDto() {
 
@@ -60,9 +58,9 @@ public class Comment extends BaseTimeEntity {
             if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
         }
 
-        List<ResponseReportDto> reports = new ArrayList<>();
+        List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+            if (report.getDelDate() == null) reports.add(report.getId());
         }
 
         return ResponseCommentDto.builder()
@@ -71,7 +69,7 @@ public class Comment extends BaseTimeEntity {
                 .content(content)
                 .likeNo(likeNo)
                 .childrenComment(list)
-                .reportList(reports)
+                .reportIdList(reports)
                 .regDate(this.getRegDate())
                 .delDate(delDate)
                 .build();

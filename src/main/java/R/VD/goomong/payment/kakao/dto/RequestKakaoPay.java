@@ -31,6 +31,5 @@ public class RequestKakaoPay {
     private String cancelURL;//취소시 리다이렉션할 주소
 
     @NotNull
-    
     private RequestOrderDto orderDto;
 }

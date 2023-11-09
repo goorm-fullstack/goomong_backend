@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class CommentService {
         Comment entity = requestCommentDto.toEntity();
 
         Member member = memberRepository.findById(requestCommentDto.getMemberId()).orElseThrow(() -> new RuntimeException("해당 id의 회원을 찾을 수 없습니다. id = " + requestCommentDto.getMemberId()));
-        if (member.getMemberDeleteTime() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + member.getId());
+        if (member.getDelDate() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + member.getId());
 
         Post post = postRepository.findById(requestCommentDto.getPostId()).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + requestCommentDto.getPostId()));
         if (post.getDelDate() != null)
@@ -77,7 +77,7 @@ public class CommentService {
             throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
 
         Comment build = comment.toBuilder()
-                .delDate(LocalDateTime.now())
+                .delDate(ZonedDateTime.now())
                 .build();
         commentRepository.save(build);
     }

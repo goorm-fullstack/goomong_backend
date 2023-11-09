@@ -9,6 +9,7 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString
 public class RequestReportDto {
 
     @Positive
@@ -17,6 +18,10 @@ public class RequestReportDto {
     private Long postId;
 
     private Long commentId;
+
+    private Long reviewId;
+
+    private Long askId;
 
     @NotBlank(message = "신고 이유를 적어주세요.")
     private String reportReason;
