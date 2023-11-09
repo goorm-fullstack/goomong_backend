@@ -1,6 +1,6 @@
 package R.VD.goomong.item.model;
 
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemCategory extends BaseDateEntity {
+public class ItemCategory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스

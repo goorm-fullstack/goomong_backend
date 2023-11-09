@@ -30,14 +30,10 @@ public class ResponseCommentDto {
 
     @Schema(description = "좋아요 수", example = "1")
     private int likeNo;
-<<<<<<< HEAD
-    private ZonedDateTime regDate;
-=======
 
     @Schema(description = "생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private ZonedDateTime regDate;
 
     @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
->>>>>>> develop
     private ZonedDateTime delDate;
 }

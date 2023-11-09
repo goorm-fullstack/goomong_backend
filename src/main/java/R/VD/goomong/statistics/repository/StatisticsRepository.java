@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static R.VD.goomong.order.model.QOrder.order;
 import static R.VD.goomong.review.model.QReview.review;
 
+
 @Repository
 @RequiredArgsConstructor
 public class StatisticsRepository {

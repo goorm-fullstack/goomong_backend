@@ -1,6 +1,6 @@
 package R.VD.goomong.chat.model;
 
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE ChatRoomMember SET del_date = CURRENT_TIMESTAMP WHERE room_id = ? AND member_id = ?")
-public class ChatRoomMember extends BaseDateEntity {
+public class ChatRoomMember extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
