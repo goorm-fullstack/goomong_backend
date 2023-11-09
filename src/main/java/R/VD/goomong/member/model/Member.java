@@ -6,11 +6,12 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,11 +39,11 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String memberEmail;
 
-//    @Column(nullable = false)
-//    @JsonFormat(timezone = "Asia/Seoul")
-//    private LocalDateTime memberSignupTime;
-//
-//    private LocalDateTime memberDeleteTime;
+    @Column(nullable = false)
+    @JsonFormat(timezone = "Asia/Seoul")
+    private LocalDateTime memberSignupTime;
+
+    private LocalDateTime memberDeleteTime;
 
     @Column(nullable = false)
     private Long zipCode;                                    //우편 번호
@@ -73,7 +74,7 @@ public class Member extends BaseTimeEntity {
     private List<Ask> askList = new ArrayList<>();
 
     @Column
-    private ZonedDateTime delDate; // 삭제 날짜
+    private LocalDateTime delDate; // 삭제 날짜
 
     public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
