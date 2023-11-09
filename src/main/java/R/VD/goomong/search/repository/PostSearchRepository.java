@@ -14,7 +14,6 @@ import java.util.List;
 
 import static R.VD.goomong.comment.model.QComment.comment;
 import static R.VD.goomong.post.model.QPost.post;
-import static R.VD.goomong.post.model.QPostCategory.postCategory;
 
 @Slf4j
 @Repository
@@ -56,9 +55,10 @@ public class PostSearchRepository {
 
     public JPAQuery<Post> getPostQuery(String keyword, String category) {
 
+        // todo: 정우님께 확인부탁
         JPAQuery<Post> query = jpaQueryFactory
                 .selectFrom(post)
-                .leftJoin(post.postCategory, postCategory)
+//                .leftJoin(post.postCategory, postCategory)
                 .leftJoin(post.commentList, comment)
                 .where(
                         post.postTitle.contains(keyword)
@@ -68,7 +68,7 @@ public class PostSearchRepository {
                 );
 
         if (category != null && !category.isEmpty()) {
-            query.where(post.postCategory.postCategoryName.eq(category));
+            query.where(post.postCategory.eq(category));
         }
 
         return query;
