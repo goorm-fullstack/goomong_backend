@@ -3,7 +3,7 @@ package R.VD.goomong.post.model;
 import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
@@ -24,7 +24,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseDateEntity {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,7 @@
 package R.VD.goomong.comment.model;
 
 import R.VD.goomong.comment.dto.response.ResponseCommentDto;
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.report.model.Report;
@@ -17,7 +17,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Comment extends BaseDateEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,7 +3,7 @@ package R.VD.goomong.ask.model;
 import R.VD.goomong.ask.dto.response.ResponseAnswerDto;
 import R.VD.goomong.ask.dto.response.ResponseAskDto;
 import R.VD.goomong.file.model.Files;
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Ask extends BaseDateEntity {
+public class Ask extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

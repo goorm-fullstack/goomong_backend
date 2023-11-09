@@ -1,7 +1,7 @@
 package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
@@ -21,7 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member extends BaseDateEntity {
+public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue
     private Long id;

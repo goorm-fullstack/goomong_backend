@@ -1,6 +1,6 @@
 package R.VD.goomong.post.model;
 
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostCategory extends BaseDateEntity {
+public class PostCategory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

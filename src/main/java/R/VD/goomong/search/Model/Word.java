@@ -1,6 +1,6 @@
 package R.VD.goomong.search.Model;
 
-import R.VD.goomong.global.model.BaseDateEntity;
+import R.VD.goomong.global.model.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import org.hibernate.annotations.SQLDelete;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE Word SET del_date = CURRENT_TIMESTAMP WHERE word_id = ?")
-public class Word extends BaseDateEntity {
+public class Word extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
