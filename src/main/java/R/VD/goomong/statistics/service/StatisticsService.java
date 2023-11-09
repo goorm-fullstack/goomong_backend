@@ -16,9 +16,12 @@ public class StatisticsService {
         Tuple reviewStats = statisticsRepository.getReviewStatistics();
         Tuple orderStats = statisticsRepository.getOrderStatistics();
 
+        Double averageRating = reviewStats.get(0, Double.class);
+
         return ReviewStatisDTO.builder()
-                .allReviewAvg(reviewStats.get(0, Double.class))
+                .allReviewAvg(averageRating)
                 .allReviewCnt(reviewStats.get(1, Long.class))
+                .customerSatisfaction(averageRating)
                 .allOrderCnt(orderStats.get(0, Long.class))
                 .allOrderPriceSum(orderStats.get(1, Long.class))
                 .build();
