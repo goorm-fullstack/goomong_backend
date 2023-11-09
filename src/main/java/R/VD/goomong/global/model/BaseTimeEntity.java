@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseDateEntity {
+public abstract class BaseTimeEntity {
 
     @Column
     private ZonedDateTime regDate;

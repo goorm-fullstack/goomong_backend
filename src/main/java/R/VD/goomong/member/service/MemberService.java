@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -108,10 +108,10 @@ public class MemberService {
 
             String datePattern = "yyyy-MM-dd'T'HH:mm:ss";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
-            String now = ZonedDateTime.now().format(formatter);
-            ZonedDateTime softDeleteTime = ZonedDateTime.parse(now, formatter);
+            String now = LocalDateTime.now().format(formatter);
+            LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {
@@ -129,10 +129,10 @@ public class MemberService {
 
             String datePattern = "yyyy-MM-dd'T'HH:mm:ss";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
-            String now = ZonedDateTime.now().format(formatter);
-            ZonedDateTime softDeleteTime = ZonedDateTime.parse(now, formatter);
+            String now = LocalDateTime.now().format(formatter);
+            LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
-            member1.setMemberDeleteTime(softDeleteTime);
+            member1.setDelDate(softDeleteTime);
 
             return memberRepository.save(member1);
         } else {

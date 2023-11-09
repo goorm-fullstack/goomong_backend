@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class RequestMember {
 
     private String memberEmail;
 
-    private ZonedDateTime memberSignupTime = ZonedDateTime.now();
+    private LocalDateTime memberSignupTime = LocalDateTime.now();
 
     private Long zipCode;
 
@@ -31,7 +31,7 @@ public class RequestMember {
 
 
     @Builder(toBuilder = true)
-    public RequestMember(String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, ZonedDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestMember(String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -49,7 +49,7 @@ public class RequestMember {
                 .memberPassword(memberPassword)
                 .memberEmail(memberEmail)
                 .memberName(memberName)
-                .memberSignupTime(memberSignupTime)
+//                .memberSignupTime(memberSignupTime)
                 .zipCode(zipCode)
                 .simpleAddress(simpleAddress)
                 .detailAddress(detailAddress)
