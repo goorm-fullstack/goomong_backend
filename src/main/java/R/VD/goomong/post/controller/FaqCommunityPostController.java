@@ -41,7 +41,8 @@ public class FaqCommunityPostController {
     @Operation(summary = "FAQ/커뮤니티 게시글 생성")
     @Parameters(value = {
             @Parameter(name = "images", description = "업로드한 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "bindingResult", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/faqcommunitypost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -68,7 +69,8 @@ public class FaqCommunityPostController {
     @Parameters(value = {
             @Parameter(name = "postId", description = "수정할 게시글 id"),
             @Parameter(name = "images", description = "수정할 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "bindingResult", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class)))
     @PutMapping(value = "/faqcommunitypost/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

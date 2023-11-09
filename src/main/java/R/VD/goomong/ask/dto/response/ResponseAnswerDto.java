@@ -1,6 +1,7 @@
 package R.VD.goomong.ask.dto.response;
 
 import R.VD.goomong.file.model.Files;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -21,7 +22,7 @@ public class ResponseAnswerDto {
     @Schema(description = "작성자 id", example = "test")
     private String memberId;
 
-    @Schema(description = "업로드된 파일 리스트", implementation = Files.class)
+    @ArraySchema(schema = @Schema(description = "업로드된 파일 리스트", implementation = Files.class))
     private List<Files> filesList;
 
     @Schema(description = "답변글 제목", example = "제목입니다.")

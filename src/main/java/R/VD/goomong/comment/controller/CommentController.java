@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -65,7 +67,7 @@ public class CommentController {
      * @return 수정된 댓글
      */
     @Operation(summary = "댓글 수정")
-    @Parameter(name = "commentId", description = "수정할 댓글 id", schema = @Schema(type = "Long"))
+    @Parameter(name = "commentId", description = "수정할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> updateComment(@PathVariable Long commentId, @Validated @RequestBody RequestCommentDto requestCommentDto) {
@@ -81,8 +83,8 @@ public class CommentController {
      * @param commentId 삭제할 댓글 pk
      * @return 삭제 완료 시 200
      */
-    @Operation(description = "댓글 삭제")
-    @Parameter(name = "commentId", description = "삭제할 댓글 id", schema = @Schema(type = "Long"))
+    @Operation(summary = "댓글 삭제")
+    @Parameter(name = "commentId", description = "삭제할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/comment/softdel/{commentId}")
     public ResponseEntity<Object> softDeleteComment(@PathVariable Long commentId) {
@@ -111,8 +113,8 @@ public class CommentController {
      * @param commentId 복구할 댓글 pk
      * @return 복구 완료 시 200
      */
-    @Operation(description = "삭제된 댓글 복구")
-    @Parameter(name = "commentId", description = "복구할 댓글 id", schema = @Schema(type = "Long"))
+    @Operation(summary = "삭제된 댓글 복구")
+    @Parameter(name = "commentId", description = "복구할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @PutMapping("/comment/undel/{commentId}")
     public ResponseEntity<Object> unDeleteComment(@PathVariable Long commentId) {
@@ -127,8 +129,8 @@ public class CommentController {
      * @param commentId 조회할 댓글 pk
      * @return 조회된 댓글
      */
-    @Operation(description = "특정 댓글 조회")
-    @Parameter(name = "commentId", description = "조회할 댓글 id", schema = @Schema(type = "Long"))
+    @Operation(summary = "특정 댓글 조회")
+    @Parameter(name = "commentId", description = "조회할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
     @GetMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> viewComment(@PathVariable Long commentId) {
@@ -143,8 +145,8 @@ public class CommentController {
      * @param commentId 좋아요 클릭할 댓글 pk
      * @return 댓글의 좋아요 수
      */
-    @Operation(description = "댓글 좋아요 클릭")
-    @Parameter(name = "commentId", description = "좋아요 클릭할 댓글 id", schema = @Schema(type = "Long"))
+    @Operation(summary = "댓글 좋아요 클릭")
+    @Parameter(name = "commentId", description = "좋아요 클릭할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @GetMapping("/comment/like/{commentId}")
     public ResponseEntity<Object> increaseLike(@PathVariable Long commentId) {
@@ -159,12 +161,16 @@ public class CommentController {
      * @param pageable 페이징
      * @return 조회된 댓글
      */
-    @Operation(description = "삭제되지 않은 댓글 리스트 조회")
+    @Operation(summary = "삭제되지 않은 댓글 리스트 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -178,12 +184,16 @@ public class CommentController {
      * @param pageable 페이징
      * @return 조회된 댓글
      */
-    @Operation(description = "삭제된 댓글 리스트 조회")
+    @Operation(summary = "삭제된 댓글 리스트 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("/deleted")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -197,12 +207,16 @@ public class CommentController {
      * @param pageable 페이징
      * @return 조회된 댓글
      */
-    @Operation(description = "전체 댓글 리스트 조회")
+    @Operation(summary = "전체 댓글 리스트 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("/all")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {

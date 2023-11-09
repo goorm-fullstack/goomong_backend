@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -165,9 +166,13 @@ public class PostController {
     @Parameters(value = {
             @Parameter(name = "type", description = "종류(판매/기부/교환/FAQ/커뮤니티)"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(schema = @Schema(implementation = ResponseItemPostDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<Object>> listOfType(@PathVariable String type, Pageable pageable) {
@@ -187,11 +192,15 @@ public class PostController {
     @Parameters(value = {
             @Parameter(name = "category", description = "카테고리"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, FAQ/커뮤니티인 경우", content = @Content(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공, FAQ/커뮤니티인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("/{category}")
-    @CrossOrigin(exposedHeaders = {"Totalpages", "TotalData"})
+    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<Object>> listOfCategory(@PathVariable String category, Pageable pageable) {
         log.info("category={}", category);
         Page<Post> posts = postService.listOfCategory(category, pageable);
@@ -207,9 +216,13 @@ public class PostController {
     @Operation(summary = "삭제되지 않은 게시글 리스트 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))))
+    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping
     public ResponseEntity<List<Object>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -226,9 +239,13 @@ public class PostController {
     @Operation(summary = "삭제된 게시글 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))))
+    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping("/deleted")
     public ResponseEntity<List<Object>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -245,9 +262,13 @@ public class PostController {
     @Operation(summary = "모든 게시글 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))))
+    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping("/all")
     public ResponseEntity<List<Object>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {

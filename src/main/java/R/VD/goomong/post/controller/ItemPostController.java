@@ -41,7 +41,8 @@ public class ItemPostController {
     @Operation(summary = "판매/기부/교환 게시글 생성")
     @Parameters(value = {
             @Parameter(name = "images", description = "상품 정보에 있는 이미지 이외의 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "bindingResult", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/itempost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -69,7 +70,8 @@ public class ItemPostController {
     @Parameters(value = {
             @Parameter(name = "postId", description = "수정할 게시글 id"),
             @Parameter(name = "images", description = "수정할 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "bindingResult", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseItemPostDto.class)))
     @PutMapping(value = "/itempost/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
