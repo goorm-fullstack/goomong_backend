@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +49,9 @@ public class Item extends BaseTimeEntity {
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
 
-    private Float rate;//평점
+    private Float rate = 0F;//평점
 
-    private LocalDateTime delDate;
+    private ZonedDateTime delDate;
 
     public void setMember(Member member) {
         this.member = member;
@@ -77,7 +77,7 @@ public class Item extends BaseTimeEntity {
     }
 
     public void deleteItem() {
-        delDate = LocalDateTime.now();
+        delDate = ZonedDateTime.now();
     }
 
     // 평점 계산

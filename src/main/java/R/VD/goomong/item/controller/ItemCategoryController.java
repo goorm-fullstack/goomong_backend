@@ -75,4 +75,19 @@ public class ItemCategoryController {
     public ResponseEntity<List<ResponseItemCategoryDto>> getCategoryLv1List() {
         return ResponseEntity.ok(itemCategoryService.findAllByLevelOne());
     }
+
+    @Operation(
+            summary = "소분로 카테고리 리스트 출력",
+            description = "대분류 카테고리 아이디로 소분류 카테고리 리스트를 출력합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "리스트 조회 성공",
+                            content = @Content(schema = @Schema(implementation = ResponseItemCategoryDto.class)))
+            }
+    )
+    @GetMapping("/list/lv2")
+    public ResponseEntity<List<ResponseItemCategoryDto>> getCategoryLv2ByParentCategory(@RequestParam long id) {
+        return ResponseEntity.ok(itemCategoryService.findLevelTwoByParentId(id));
+    }
 }

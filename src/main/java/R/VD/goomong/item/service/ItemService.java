@@ -3,7 +3,6 @@ package R.VD.goomong.item.service;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestNonSaleItemDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
@@ -33,13 +32,9 @@ public class ItemService {
     private final ImageService imageService;
     private final ItemCategoryRepository categoryRepository;
 
-    // 아이템 저장 - 판매
-    public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
-        saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
-    }
 
-    // 아이템 저장 - 판매가 아닌 경우
-    public void save(RequestNonSaleItemDto itemDto, MultipartFile[] multipartFiles) {
+    // 아이템 저장
+    public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
         saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
     }
 

@@ -1,7 +1,6 @@
 package R.VD.goomong.item.controller;
 
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestNonSaleItemDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
@@ -57,22 +56,13 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findById(id));
     }
 
-    @Operation(
-            summary = "판매 아이템 등록",
-            description = "판매 상태를 가지는 아이템을 등록합니다."
-    )
-    @PostMapping("/sale/save")
-    public ResponseEntity<String> writeSaleItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestItemDto itemDto) {
-        itemService.save(itemDto, multipartFiles);
-        return ResponseEntity.ok("작성이 완료되었습니다.");
-    }
 
     @Operation(
-            summary = "기부, 교환, 구인 아이템 등록",
-            description = "판매가 아닌 구인, 기부, 교환 상태를 가지는 아이템을 등록합니다."
+            summary = "아이템 등록",
+            description = "아이템을 등록합니다."
     )
     @PostMapping("/save")
-    public ResponseEntity<String> writeGiveItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestNonSaleItemDto itemDto) {
+    public ResponseEntity<String> writeGiveItem(MultipartFile[] multipartFiles, @Valid @RequestPart RequestItemDto itemDto) {
         itemService.save(itemDto, multipartFiles);
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
