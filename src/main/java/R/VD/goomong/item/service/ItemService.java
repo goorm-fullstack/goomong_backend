@@ -14,6 +14,7 @@ import R.VD.goomong.item.repository.ItemCategoryRepository;
 import R.VD.goomong.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +45,11 @@ public class ItemService {
         return new ResponseItemDto(item);
     }
 
-    // 전체 아이템 찾기
-    public List<ResponseItemDto> findAll() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream().map(ResponseItemDto::new).toList();
+    public Page<ResponseItemDto> findAll(Pageable pageable) {
+        Page<Item> all = itemRepository.findAll(pageable);
+        List<Item> itemList = all.getContent();
+        List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 판매 조회

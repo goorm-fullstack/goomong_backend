@@ -1,44 +1,40 @@
 package R.VD.goomong.chat.model;
 
-import R.VD.goomong.member.model.Member;
+import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.item.model.Item;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_uuid = ?")
-@Where(clause = "del_date = null")
-public class ChatRoom {
+@SQLDelete(sql = "UPDATE ChatRoom SET del_date = CURRENT_TIMESTAMP WHERE room_id = ?")
+public class ChatRoom extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
     private Long roomId;
 
-    @Column(name = "room_uuid", columnDefinition = "BINARY(16)", nullable = false)
-    private UUID roomUUID;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = true)
+    private Item item;
 
-    @Column(name = "room_name", nullable = false)
-    private String roomName;
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<ChatMessage> messages;
 
-    @Column(name = "reg_date")
-    @CreationTimestamp
-    private LocalDateTime regDate;
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<ChatRoomMember> members;
 
-    @Column(name = "del_date")
-    private LocalDateTime delDate;
+    private ZonedDateTime delDate;
 
-    @ManyToOne
-    private Member member;
 }

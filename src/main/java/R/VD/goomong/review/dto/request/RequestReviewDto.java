@@ -1,18 +1,36 @@
 package R.VD.goomong.review.dto.request;
 
-import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.*;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@ToString
 public class RequestReviewDto {
-    private Member member;//작성자
-    private String content;//리뷰 내용
-    private Float rate;//평점
+
+    @Positive
+    private Long memberId;
+
+    @Positive
+    private Long itemId;
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String content;
+
+    @PositiveOrZero
+    private Float rate;
 
     public Review toEntity() {
         return Review.builder()
-                .member(member)
+                .title(title)
                 .content(content)
                 .rate(rate)
                 .build();

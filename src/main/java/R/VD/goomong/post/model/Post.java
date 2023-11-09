@@ -15,7 +15,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,24 +38,24 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item; // 상품
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postCategory_id")
     private PostCategory postCategory; // 카테고리
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Comment> commentList = new ArrayList<>(); // 댓글
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Report> reportList = new ArrayList<>(); // 신고
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     @JoinColumn(name = "post_id")
     @Builder.Default
     private List<Image> imageList = new ArrayList<>(); // 게시글 이미지
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     @JoinColumn(name = "post_id")
     @Builder.Default
     private List<Files> fileList = new ArrayList<>(); // 게시글 파일
@@ -76,7 +76,7 @@ public class Post extends BaseTimeEntity {
     private int postLikeNo; // 게시글 좋아요수
 
     @Column
-    private LocalDateTime delDate; // 삭제일
+    private ZonedDateTime delDate; // 삭제 날짜
 
     // response로 변환
     public ResponsePostDto toResponsePostDto() {
@@ -112,8 +112,8 @@ public class Post extends BaseTimeEntity {
                 .fileList(fileList)
                 .commentList(comments)
                 .report(reports)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(delDate)
+                .delDate(this.getDelDate())
                 .build();
     }
 }

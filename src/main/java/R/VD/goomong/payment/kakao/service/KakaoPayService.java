@@ -39,7 +39,7 @@ public class KakaoPayService {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final MemberRepository memberRepository;
-    @Value("${adminKey}")
+//    @Value("${adminKey}")
     private String adminKey;
     private KakaoPayResponse kakaoPayResponse;
 
