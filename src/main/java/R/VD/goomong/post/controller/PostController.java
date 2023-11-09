@@ -172,14 +172,14 @@ public class PostController {
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy,
                                                                   @RequestParam Optional<String> direction,
                                                                   Pageable pageable) {
-        Sort sort = Sort.unsorted();
 
         if (orderBy.isPresent() && direction.isPresent()) {
             Sort.Direction dir = Sort.Direction.fromString(direction.get());
-            sort = Sort.by(dir, orderBy.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        } else {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         }
 
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return getListResponseEntity(postService.listOfNotDeleted(pageable));
     }
 
