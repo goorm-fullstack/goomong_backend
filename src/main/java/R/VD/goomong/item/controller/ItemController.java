@@ -30,6 +30,7 @@ import java.util.Optional;
 public class ItemController {
     private final ItemService itemService;
 
+    // 페이지네이션 수정 - (송정우);
     @Operation(
             summary = "아이템 리스트 출력",
             description = "아이템 리스트 출력.",
@@ -44,21 +45,11 @@ public class ItemController {
     public ResponseEntity<List<ResponseItemDto>> getItemList(@RequestParam Optional<String> orderBy,
                                                              @RequestParam Optional<String> direction,
                                                              Pageable pageable) {
-        Sort sort = Sort.unsorted();
+        pageable = getPageable(orderBy, direction, pageable);
 
-        if (orderBy.isPresent() && direction.isPresent()) {
-            Sort.Direction dir = Sort.Direction.fromString(direction.get());
-            sort = Sort.by(dir, orderBy.get());
-        }
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<ResponseItemDto> all = itemService.findAll(pageable);
 
-        long totalElements = all.getTotalElements();
-        int totalPages = all.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(all.getContent());
+        return getListResponseEntity(all);
     }
 
     @Operation(
@@ -76,7 +67,6 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findById(id));
     }
 
-
     @Operation(
             summary = "아이템 등록",
             description = "아이템을 등록합니다."
@@ -87,6 +77,7 @@ public class ItemController {
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
 
+    // 페이지네이션 수정 - (송정우);
     @Operation(
             summary = "판매 아이템 리스트 출력",
             description = "판매 아이템 리스트 출력.",
@@ -98,10 +89,19 @@ public class ItemController {
             }
     )
     @GetMapping("/list/sale")
-    public ResponseEntity<List<ResponseItemDto>> getItemListBySale(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllBySale(pageable));
+    public ResponseEntity<List<ResponseItemDto>> getItemListBySale(@RequestParam Optional<String> orderBy,
+                                                                   @RequestParam Optional<String> direction,
+                                                                   Pageable pageable) {
+
+        pageable = getPageable(orderBy, direction, pageable);
+
+        Page<ResponseItemDto> allBySale = itemService.findAllBySale(pageable);
+
+        return getListResponseEntity(allBySale);
+
     }
 
+    // 페이지네이션 수정 - (송정우);
     @Operation(
             summary = "판매 상태가 아닌 아이템 리스트 출력",
             description = "기부, 교환, 구인 아이템 리스트를 출력합니다.",
@@ -113,10 +113,17 @@ public class ItemController {
             }
     )
     @GetMapping("/list/non-sale")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByGive(pageable));
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(@RequestParam Optional<String> orderBy,
+                                                                          @RequestParam Optional<String> direction,
+                                                                          Pageable pageable) {
+        pageable = getPageable(orderBy, direction, pageable);
+
+        Page<ResponseNonSaleItemDto> allByGive = itemService.findAllByGive(pageable);
+
+        return getListResponseEntity(allByGive);
     }
 
+    // 페이지네이션 수정 - (송정우);
     @Operation(
             summary = "구인 아이템 리스트 출력",
             description = "구인 아이템을 조회해서 리스트 출력.",
@@ -128,10 +135,18 @@ public class ItemController {
             }
     )
     @GetMapping("/list/wanted")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByWanted(pageable));
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(@RequestParam Optional<String> orderBy,
+                                                                            @RequestParam Optional<String> direction,
+                                                                            Pageable pageable) {
+
+        pageable = getPageable(orderBy, direction, pageable);
+
+        Page<ResponseNonSaleItemDto> allByWanted = itemService.findAllByWanted(pageable);
+
+        return getListResponseEntity(allByWanted);
     }
 
+    // 페이지네이션 수정 - (송정우);
     @Operation(
             summary = "교환 아이템 리스트 출력",
             description = "교환 아이템을 조회해서 리스트 출력.",
@@ -143,8 +158,15 @@ public class ItemController {
             }
     )
     @GetMapping("/list/exchange")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByExchange(pageable));
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(@RequestParam Optional<String> orderBy,
+                                                                              @RequestParam Optional<String> direction,
+                                                                              Pageable pageable) {
+
+        pageable = getPageable(orderBy, direction, pageable);
+
+        Page<ResponseNonSaleItemDto> allByExchange = itemService.findAllByExchange(pageable);
+
+        return getListResponseEntity(allByExchange);
     }
 
     @Operation(
@@ -165,5 +187,27 @@ public class ItemController {
     public ResponseEntity<String> updateItem(@RequestBody UpdateItemDto itemDto) {
         itemService.updateItem(itemDto);
         return ResponseEntity.ok("업데이트 완료");
+    }
+
+    // 조건에 맞게 페이지네이션 설정
+    // 기본은 최신 시간순으로 정렬
+    private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        } else {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "regDate"));
+        }
+        return pageable;
+    }
+
+    // header에 PageNation 정보 추가
+    private <T> ResponseEntity<List<T>> getListResponseEntity(Page<T> all) {
+        long totalElements = all.getTotalElements();
+        int totalPages = all.getTotalPages();
+        return ResponseEntity.ok()
+                .header("TotalPages", String.valueOf(totalPages))
+                .header("TotalData", String.valueOf(totalElements))
+                .body(all.getContent());
     }
 }

@@ -46,53 +46,46 @@ public class ItemService {
     }
 
     public Page<ResponseItemDto> findAll(Pageable pageable) {
-        Page<Item> all = itemRepository.findAll(pageable);
-        List<Item> itemList = all.getContent();
+        Page<Item> items = itemRepository.findAll(pageable);
+        List<Item> itemList = items.getContent();
         List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
         return new PageImpl<>(list, pageable, list.size());
     }
 
     // 판매 조회
-    public List<ResponseItemDto> findAllBySale(Pageable pageable) {
+    // 11/09 PageNation 수정 (송정우)
+    public Page<ResponseItemDto> findAllBySale(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE.toString(), pageable);
-        List<ResponseItemDto> result = new ArrayList<>();
-        for (Item item : items) {
-            result.add(new ResponseItemDto(item));
-        }
-
-        return result;
+        List<Item> itemList = items.getContent();
+        List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 재능 기부 조회
-    public List<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
+    // 11/09 PageNation 수정 (송정우)
+    public Page<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE.toString(), pageable);
-        List<ResponseNonSaleItemDto> result = new ArrayList<>();
-        for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
-        }
-
-        return result;
+        List<Item> itemList = items.getContent();
+        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 구인 조회
-    public List<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
+    // 11/09 PageNation 수정 (송정우)
+    public Page<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE.toString(), pageable);
-        List<ResponseNonSaleItemDto> result = new ArrayList<>();
-        for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
-        }
-        return result;
+        List<Item> itemList = items.getContent();
+        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 구인 조회
-    public List<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
+    // 11/09 PageNation 수정 (송정우)
+    public Page<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED.toString(), pageable);
-        List<ResponseNonSaleItemDto> result = new ArrayList<>();
-        for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
-        }
-
-        return result;
+        List<Item> itemList = items.getContent();
+        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 아이템 삭제
