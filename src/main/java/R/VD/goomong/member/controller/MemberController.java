@@ -8,8 +8,14 @@ import R.VD.goomong.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -113,6 +119,27 @@ public class MemberController {
         response.addCookie(cookie);
 
         return "logout";
+    }
+
+    //카카오톡 로그인
+    @GetMapping("/kakao/callback")
+    public String kakaoCallBack(@RequestParam String code) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "116cb3fda2149f8eaddf828c4f308179");
+        params.add("redirect_uri", "http://localhost:8080/api/member/kakao/callback");
+        params.add("code", code);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
+
+        return "카카오 토큰 요청 완료 : 토큰 요청 응답 : " + response.getBody();
     }
 
 }
