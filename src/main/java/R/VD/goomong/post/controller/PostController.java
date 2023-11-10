@@ -104,24 +104,6 @@ public class PostController {
     }
 
     /**
-     * 좋아요 버튼 클릭
-     *
-     * @param postId 좋아요 클릭 할 게시글 pk
-     * @return 정상 작동 시 200
-     */
-    @Operation(summary = "좋아요 버튼 클릭")
-    @Parameter(name = "postId", description = "좋아요 클릭할 게시글 id")
-    @ApiResponse(responseCode = "200", description = "성공")
-    @PutMapping("/post/like/{postId}")
-    public ResponseEntity<Object> likePost(@PathVariable Long postId) {
-
-        log.info("postId={}", postId);
-
-        postService.increaseLikeCount(postId);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
      * 클라이언트가 게시글 조회
      *
      * @param postId 조회할 게시글 pk

@@ -50,6 +50,9 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false)
     private Float rate;//평점
 
+    @Column(nullable = false)
+    private int likeNo; // 좋아요
+
     @Column
     private ZonedDateTime delDate;
 
@@ -72,6 +75,7 @@ public class Review extends BaseTimeEntity {
                 .regDate(this.getRegDate().format(dateTimeFormatter))
                 .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .rate(rate)
+                .likeNo(likeNo)
                 .build();
     }
 }

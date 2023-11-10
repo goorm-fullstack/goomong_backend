@@ -35,6 +35,9 @@ public class ResponseReviewDto {
     @Schema(description = "리뷰 평점", example = "5.0")
     private Float rate;//평점
 
+    @Schema(description = "좋아요 수", example = "0")
+    private int likeNo; // 좋아요
+
     @Schema(description = "리뷰 생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private String regDate; // 작성 날짜
 

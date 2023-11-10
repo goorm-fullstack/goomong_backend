@@ -24,6 +24,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+// todo: 아이템 분리 작업 필요
 public class Post extends BaseTimeEntity {
 
     @Id

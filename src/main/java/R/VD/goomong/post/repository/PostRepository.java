@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
 
     @Modifying
     @Query("UPDATE Post p SET p.postViews = p.postViews + 1 WHERE p.id = :postId")

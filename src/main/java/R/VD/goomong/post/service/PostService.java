@@ -61,13 +61,6 @@ public class PostService {
         postRepository.increaseViewCount(postId);
     }
 
-    // 좋아요 증가
-    public void increaseLikeCount(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
-        if (post.getDelDate() != null) throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + postId);
-        postRepository.increaseLikeCount(postId);
-    }
-
     // 하나의 게시글 조회
     public Post findOnePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
