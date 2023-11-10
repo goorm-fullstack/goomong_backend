@@ -13,8 +13,4 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @Modifying
     @Query("UPDATE Post p SET p.postViews = p.postViews + 1 WHERE p.id = :postId")
     void increaseViewCount(@Param("postId") Long postId);
-
-    @Modifying
-    @Query("UPDATE Post p SET p.postLikeNo = p.postLikeNo + 1 WHERE p.id = :postId")
-    void increaseLikeCount(@Param("postId") Long postId);
 }
