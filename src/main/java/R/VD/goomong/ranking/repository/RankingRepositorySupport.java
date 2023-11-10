@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
@@ -19,7 +19,7 @@ public class RankingRepositorySupport {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Tuple> calculateSellerSalesCount(ZonedDateTime start, ZonedDateTime end) {
+    public List<Tuple> calculateSellerSalesCount(LocalDateTime start, LocalDateTime end) {
         return jpaQueryFactory
                 .select(item.member, itemCategory, item.countDistinct())
                 .from(order)

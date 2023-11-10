@@ -3,7 +3,7 @@ package R.VD.goomong.comment.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -32,8 +32,8 @@ public class ResponseCommentDto {
     private int likeNo;
 
     @Schema(description = "생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private ZonedDateTime regDate;
+    private LocalDateTime regDate;
 
     @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 }

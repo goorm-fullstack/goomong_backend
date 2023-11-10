@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
@@ -42,10 +42,10 @@ public class RankingService {
     @Transactional
     @Scheduled(cron = "1 0 0 * * *")
     public void updateDailyRankings() {
-        ZonedDateTime startOfYesterday = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        LocalDateTime startOfYesterday = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 .minusDays(1)
                 .truncatedTo(ChronoUnit.DAYS);
-        ZonedDateTime endOfYesterday = startOfYesterday.plusDays(1);
+        LocalDateTime endOfYesterday = startOfYesterday.plusDays(1);
 
         updateRankings(startOfYesterday, endOfYesterday, RankingPeriod.DAY);
     }
@@ -53,11 +53,11 @@ public class RankingService {
     @Transactional
     @Scheduled(cron = "1 0 0 * * MON")
     public void updateWeeklyRankings() {
-        ZonedDateTime startOfLastWeek = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        LocalDateTime startOfLastWeek = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .minusWeeks(1)
                 .truncatedTo(ChronoUnit.DAYS);
-        ZonedDateTime endOfLastWeek = startOfLastWeek.plusWeeks(1).minusNanos(1);
+        LocalDateTime endOfLastWeek = startOfLastWeek.plusWeeks(1).minusNanos(1);
 
         updateRankings(startOfLastWeek, endOfLastWeek, RankingPeriod.WEEK);
     }
@@ -65,16 +65,16 @@ public class RankingService {
     @Transactional
     @Scheduled(cron = "1 0 0 1 * *")
     public void updateMonthlyRankings() {
-        ZonedDateTime startOfLastMonth = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        LocalDateTime startOfLastMonth = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 .with(TemporalAdjusters.firstDayOfMonth())
                 .minusMonths(1)
                 .truncatedTo(ChronoUnit.DAYS);
-        ZonedDateTime endOfLastMonth = startOfLastMonth.plusMonths(1).minusNanos(1);
+        LocalDateTime endOfLastMonth = startOfLastMonth.plusMonths(1).minusNanos(1);
 
         updateRankings(startOfLastMonth, endOfLastMonth, RankingPeriod.MONTH);
     }
 
-    private void updateRankings(ZonedDateTime startOfYesterday, ZonedDateTime endOfYesterday, RankingPeriod period) {
+    private void updateRankings(LocalDateTime startOfYesterday, LocalDateTime endOfYesterday, RankingPeriod period) {
         List<Tuple> tuples = rankingRepositorySupport
                 .calculateSellerSalesCount(startOfYesterday, endOfYesterday);
 

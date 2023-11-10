@@ -8,7 +8,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private int likeNo; // 댓글 좋아요 수
 
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseCommentDto toResponseCommentDto() {
 

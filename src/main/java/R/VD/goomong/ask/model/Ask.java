@@ -11,7 +11,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class Ask extends BaseTimeEntity {
     private List<Ask> answerList = new ArrayList<>(); // 답변 내용들
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseAskDto toResponseAskDto() {
 

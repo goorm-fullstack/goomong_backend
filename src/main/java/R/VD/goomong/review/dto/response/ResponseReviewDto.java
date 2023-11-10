@@ -4,7 +4,7 @@ import R.VD.goomong.image.model.Image;
 import R.VD.goomong.report.dto.response.ResponseReportDto;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,6 +19,6 @@ public class ResponseReviewDto {
     private String title; // 제목
     private String content;//리뷰 내용
     private Float rate;//평점
-    private ZonedDateTime regDate; // 작성 날짜
-    private ZonedDateTime delDate; // 삭제 날짜
+    private LocalDateTime regDate; // 작성 날짜
+    private LocalDateTime delDate; // 삭제 날짜
 }

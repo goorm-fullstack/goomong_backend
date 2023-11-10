@@ -10,7 +10,7 @@ import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class Review extends BaseTimeEntity {
     private Float rate;//평점
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseReviewDto toResponseReviewDto() {
 

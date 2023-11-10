@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -33,5 +33,5 @@ public class Ranking extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private RankingPeriod period;
 
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 }

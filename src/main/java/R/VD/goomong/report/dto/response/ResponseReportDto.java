@@ -7,7 +7,7 @@ import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -26,6 +26,6 @@ public class ResponseReportDto {
     private String reportReason;
     private String reportCheck;
     private String reportResult;
-    private ZonedDateTime regDate;
-    private ZonedDateTime delDate;
+    private LocalDateTime regDate;
+    private LocalDateTime delDate;
 }

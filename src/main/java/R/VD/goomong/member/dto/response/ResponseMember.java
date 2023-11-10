@@ -2,7 +2,7 @@ package R.VD.goomong.member.dto.response;
 
 import lombok.Data;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 public class ResponseMember {
@@ -15,9 +15,9 @@ public class ResponseMember {
 
     private String memberEmail;
 
-    private ZonedDateTime memberSignupTime;
+    private LocalDateTime memberSignupTime;
 
-    public ResponseMember(String memberId, String memberPassword, String memberName, String memberEmail, ZonedDateTime memberSignupTime) {
+    public ResponseMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;

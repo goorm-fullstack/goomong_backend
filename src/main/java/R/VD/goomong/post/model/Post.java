@@ -15,7 +15,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +76,7 @@ public class Post extends BaseTimeEntity {
     private int postLikeNo; // 게시글 좋아요수
 
     @Column
-    private ZonedDateTime delDate; // 삭제 날짜
+    private LocalDateTime delDate; // 삭제 날짜
 
     // response로 변환
     public ResponsePostDto toResponsePostDto() {

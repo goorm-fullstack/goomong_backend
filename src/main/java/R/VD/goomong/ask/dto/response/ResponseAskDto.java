@@ -5,7 +5,7 @@ import R.VD.goomong.item.dto.response.ResponseItemDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -40,8 +40,8 @@ public class ResponseAskDto {
     private List<ResponseAnswerDto> answerList; // 답변 내용들
 
     @Schema(description = "작성 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private ZonedDateTime regDate; // 생성 날짜
+    private LocalDateTime regDate; // 생성 날짜
 
     @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private ZonedDateTime delDate; // 삭제 날짜
+    private LocalDateTime delDate; // 삭제 날짜
 }

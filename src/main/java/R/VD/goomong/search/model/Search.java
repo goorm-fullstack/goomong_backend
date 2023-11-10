@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -27,5 +29,7 @@ public class Search extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "word_id")
     private Word word;
+
+    private LocalDateTime delDate;
 
 }

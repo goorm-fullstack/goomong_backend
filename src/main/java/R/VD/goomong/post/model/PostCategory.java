@@ -6,7 +6,7 @@ import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class PostCategory extends BaseTimeEntity {
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     // response로 변환
     public ResponsePostCategoryDto toResponsePostCategoryDto() {
