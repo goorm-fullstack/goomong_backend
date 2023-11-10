@@ -9,9 +9,9 @@ import lombok.Setter;
 @Builder
 public class PageInfo {
 
-    private int page;
-    private int size;
-    private int totalElements;
-    private int totalPage;
+    private Integer page;
+    private Integer size;
+    private Long totalElements;
+    private Integer totalPage;
 
 }

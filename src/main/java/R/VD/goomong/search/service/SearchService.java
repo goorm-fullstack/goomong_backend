@@ -60,7 +60,7 @@ public class SearchService {
         searchRepository.save(search);
     }
 
-    public ResponseSearchDTO searchItem(RequestItemSearchDTO searchDTO) {
+    public ResponseSearchDTO<List<ResponseItemDto>> searchItem(RequestItemSearchDTO searchDTO) {
         int page = searchDTO.getPage() - 1;
         int pageSize = searchDTO.getPageSize();
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -69,16 +69,16 @@ public class SearchService {
         PageInfo pageinfo = PageInfo.builder()
                 .page(page)
                 .size(pageSize)
-                .totalElements((int) itemPage.getTotalElements())
+                .totalElements(itemPage.getTotalElements())
                 .totalPage(itemPage.getTotalPages())
                 .build();
 
         List<Item> itemList = itemPage.getContent();
         List<ResponseItemDto> items = itemList.stream().map(ResponseItemDto::new).toList();
-        return new ResponseSearchDTO(items, pageinfo);
+        return new ResponseSearchDTO<>(items, pageinfo);
     }
 
-    public ResponseSearchDTO searchPost(RequestPostSearchDTO searchDTO) {
+    public ResponseSearchDTO<List<ResponsePostDto>> searchPost(RequestPostSearchDTO searchDTO) {
         int page = searchDTO.getPage() - 1;
         int pageSize = searchDTO.getPageSize();
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -87,13 +87,13 @@ public class SearchService {
         PageInfo pageInfo = PageInfo.builder()
                 .page(page)
                 .size(pageSize)
-                .totalElements((int) postPage.getTotalElements())
+                .totalElements(postPage.getTotalElements())
                 .totalPage(postPage.getTotalPages())
                 .build();
 
         List<Post> postList = postPage.getContent();
         List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
-        return new ResponseSearchDTO(posts, pageInfo);
+        return new ResponseSearchDTO<>(posts, pageInfo);
     }
 
 }

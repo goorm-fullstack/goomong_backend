@@ -58,8 +58,9 @@ public class ChatRoomController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @DeleteMapping
-    public ResponseEntity softDelete(@RequestBody RequestChatSoftDelete requestChatSoftDelete) {
+    public ResponseEntity<Object> softDelete(@RequestBody RequestChatSoftDelete requestChatSoftDelete) {
         chatRoomService.softDelete(requestChatSoftDelete);
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
+
 }
