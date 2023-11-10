@@ -4,6 +4,7 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.support.dto.request.RequestEmailAskDTO;
+import R.VD.goomong.support.dto.response.ResponseEmailAsk;
 import R.VD.goomong.support.dto.response.ResponseEmailAskListDTO;
 import R.VD.goomong.support.dto.response.ResponsePageWrap;
 import R.VD.goomong.support.exception.SupportNotFoundException;
@@ -22,6 +23,12 @@ public class EmailAskService {
 
     private final EmailAskRepository emailAskRepository;
     private final MemberRepository memberRepository;
+
+    public ResponseEmailAsk getEmailAsk(Long emailAskId) {
+        EmailAsk emailAsk = emailAskRepository.findById(emailAskId)
+                .orElseThrow(() -> new SupportNotFoundException("고객 문의 " + emailAskId + " 는 존재하지 않습니다."));
+        return new ResponseEmailAsk(emailAsk);
+    }
 
     public ResponsePageWrap<List<ResponseEmailAskListDTO>> getEmailAskList(Pageable pageable) {
 
@@ -49,10 +56,10 @@ public class EmailAskService {
                 .isEmailOpened(false)
                 .build();
 
-        if (requestEmailAskDTO.getMemberId() == null) {
+        if (requestEmailAskDTO.getMemberId() != null) {
             Long memberId = requestEmailAskDTO.getMemberId();
             Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new SupportNotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
+                    .orElseThrow(() -> new SupportNotFoundException("멤버 " + memberId + " 는 존재하지 않습니다."));
             emailAsk.setMember(member);
         }
 

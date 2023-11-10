@@ -2,12 +2,10 @@ package R.VD.goomong.support.dto.response;
 
 import R.VD.goomong.support.model.EmailAsk;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
 public class ResponseEmailAskListDTO {
 
     private Long emailAskId;
@@ -18,7 +16,7 @@ public class ResponseEmailAskListDTO {
 
     private Boolean isEmailOpened;
 
-    private ZonedDateTime regDate;
+    private LocalDateTime regDate;
 
     public ResponseEmailAskListDTO(EmailAsk emailAsk) {
         this.emailAskId = emailAsk.getEmailAskId();

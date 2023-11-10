@@ -6,7 +6,7 @@ import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +30,6 @@ public class EmailAsk extends BaseTimeEntity {
     private String email;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -47,6 +44,6 @@ public class EmailAsk extends BaseTimeEntity {
     private List<Files> filesList = new ArrayList<>();
 
     @Column
-    private ZonedDateTime delDate;
-    
+    private LocalDateTime delDate;
+
 }
