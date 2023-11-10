@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class Comment extends BaseTimeEntity {
 
     public ResponseCommentDto toResponseCommentDto() {
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
         List<ResponseCommentDto> list = new ArrayList<>();
         for (Comment comment : childrenComment) {
             if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
@@ -70,8 +73,8 @@ public class Comment extends BaseTimeEntity {
                 .likeNo(likeNo)
                 .childrenComment(list)
                 .reportIdList(reports)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .build();
     }
 }

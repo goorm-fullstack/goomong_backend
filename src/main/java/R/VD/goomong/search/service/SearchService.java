@@ -4,7 +4,6 @@ import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -92,7 +92,13 @@ public class SearchService {
                 .build();
 
         List<Post> postList = postPage.getContent();
-        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
+        // todo: 정우님께 확인 부탁
+//        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
+        List<Object> posts = new ArrayList<>();
+        for (Post post : postList) {
+            if (post.getItem() != null) posts.add(post.toResponseItemPostDto());
+            else posts.add(post.toResponseFaqCoummunityDto());
+        }
         return new ResponseSearchDTO(posts, pageInfo);
     }
 

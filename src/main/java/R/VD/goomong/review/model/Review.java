@@ -4,13 +4,13 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,20 +55,22 @@ public class Review extends BaseTimeEntity {
 
     public ResponseReviewDto toResponseReviewDto() {
 
-        List<ResponseReportDto> reports = new ArrayList<>();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
+        List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+            if (report.getDelDate() == null) reports.add(report.getId());
         }
 
         return ResponseReviewDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
                 .imageList(imageList)
-                .reportList(reports)
+                .reportIdList(reports)
                 .title(title)
                 .content(content)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .rate(rate)
                 .build();
     }

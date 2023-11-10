@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,8 @@ public class Ask extends BaseTimeEntity {
 
     public ResponseAskDto toResponseAskDto() {
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
         List<ResponseAnswerDto> answers = new ArrayList<>();
         if (!answerList.isEmpty()) {
             for (Ask ask1 : answerList) {
@@ -85,12 +88,14 @@ public class Ask extends BaseTimeEntity {
                 .title(title)
                 .content(content)
                 .answerList(answers)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .build();
     }
 
     public ResponseAnswerDto toResponseAnswerDto() {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         return ResponseAnswerDto.builder()
                 .id(id)
@@ -98,8 +103,8 @@ public class Ask extends BaseTimeEntity {
                 .filesList(filesList)
                 .title(title)
                 .content(content)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .build();
     }
 }

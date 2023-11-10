@@ -1,6 +1,6 @@
 package R.VD.goomong.member.dto.response;
 
-import R.VD.goomong.post.dto.response.ResponsePostDto;
+import R.VD.goomong.post.dto.response.ResponseItemPostDto;
 import lombok.*;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public class ResponseMemberDto {
 
     private Long id;
     private String memberId;
-    private List<ResponsePostDto> posts;
+    private List<ResponseItemPostDto> posts;
 }

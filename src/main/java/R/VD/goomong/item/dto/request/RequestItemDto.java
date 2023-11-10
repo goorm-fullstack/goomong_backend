@@ -19,7 +19,7 @@ public class RequestItemDto {
     @NotEmpty
     @NotNull
     private String describe;//설명
-    
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;//아이템 상태값
