@@ -15,6 +15,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,8 @@ public class Post extends BaseTimeEntity {
     // ResponseItemPostDto로 변환
     public ResponseItemPostDto toResponseItemPostDto() {
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
         ResponseItemDto item1 = null;
         if (item != null) item1 = new ResponseItemDto(item);
 
@@ -107,12 +110,15 @@ public class Post extends BaseTimeEntity {
                 .fileList(fileList)
                 .commentList(comments)
                 .reportIdList(reports)
-                .regDate(delDate)
-                .delDate(this.getDelDate())
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .build();
     }
 
     public ResponseFaqCommunityPostDto toResponseFaqCoummunityDto() {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
         List<ResponseCommentDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
             if (comment.getParentComment() == null && comment.getDelDate() == null) {
@@ -134,11 +140,11 @@ public class Post extends BaseTimeEntity {
                 .postContent(postContent)
                 .postViews(postViews)
                 .postTitle(postTitle)
-                .regDate(this.getRegDate())
+                .regDate(this.getRegDate().format(dateTimeFormatter))
                 .reportIdList(reports)
                 .postType(postType)
                 .commentList(comments)
-                .delDate(delDate)
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .filesList(fileList)
                 .build();
     }

@@ -12,6 +12,7 @@ import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.request.RequestItemPostDto;
 import R.VD.goomong.post.exception.AlreadyDeletePostException;
 import R.VD.goomong.post.exception.NotExistPostException;
+import R.VD.goomong.post.exception.NotUnavailableTypeException;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,9 @@ public class ItemPostService {
 
     // 판매/기부/교환 게시글 생성
     public void saveItemPost(RequestItemPostDto requestItemPostDto, MultipartFile[] postImages, MultipartFile[] postFiles) {
+        if (requestItemPostDto.getPostType().equals("커뮤니티") || requestItemPostDto.getPostType().equals("FAQ"))
+            throw new NotUnavailableTypeException("해당 게시글에 사용할 수 없는 type입니다. type = " + requestItemPostDto.getPostType());
+
         Post entity = requestItemPostDto.toEntity();
 
         Member writer = memberRepository.findById(requestItemPostDto.getMemberId()).orElseThrow(() -> new RuntimeException("해당 id의 회원은 없습니다. id = " + requestItemPostDto.getMemberId()));
@@ -67,6 +71,9 @@ public class ItemPostService {
         Post onePost = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
         if (onePost.getDelDate() != null)
             throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + onePost.getId());
+
+        if (requestItemPostDto.getPostType().equals("커뮤니티") || requestItemPostDto.getPostType().equals("FAQ"))
+            throw new NotUnavailableTypeException("해당 게시글에 사용할 수 없는 type입니다. type = " + requestItemPostDto.getPostType());
 
         List<Image> postImageList = onePost.getImageList();
         if (postImages.length != 0) postImageList = imageService.saveImage(postImages);

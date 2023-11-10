@@ -10,6 +10,7 @@ import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.request.RequestFaqCommunityPostDto;
 import R.VD.goomong.post.exception.AlreadyDeletePostException;
 import R.VD.goomong.post.exception.NotExistPostException;
+import R.VD.goomong.post.exception.NotUnavailableTypeException;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,9 @@ public class FaqCommunityPostService {
 
     // FAQ, 커뮤니티 게시글 생성
     public void saveFaqCommunityPost(RequestFaqCommunityPostDto requestFaqCommunityPostDto, MultipartFile[] images, MultipartFile[] files) {
+        if (requestFaqCommunityPostDto.getPostType().equals("판매") || requestFaqCommunityPostDto.getPostType().equals("기부") || requestFaqCommunityPostDto.getPostType().equals("교환"))
+            throw new NotUnavailableTypeException("해당 게시글에 사용할 수 없는 type입니다. type = " + requestFaqCommunityPostDto.getPostType());
+
         Post entity = requestFaqCommunityPostDto.toEntity();
 
         Member member = memberRepository.findById(requestFaqCommunityPostDto.getMemberId()).orElseThrow(() -> new NotFoundMember("해당 id의 회원을 찾을 수 없습니다. id = " + requestFaqCommunityPostDto.getMemberId()));
@@ -55,6 +59,9 @@ public class FaqCommunityPostService {
         Post origin = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
         if (origin.getDelDate() != null)
             throw new AlreadyDeletePostException("해당 id의 게시글은 이미 삭제된 게시글입니다. id = " + postId);
+
+        if (requestFaqCommunityPostDto.getPostType().equals("판매") || requestFaqCommunityPostDto.getPostType().equals("기부") || requestFaqCommunityPostDto.getPostType().equals("교환"))
+            throw new NotUnavailableTypeException("해당 게시글에 사용할 수 없는 type입니다. type = " + requestFaqCommunityPostDto.getPostType());
 
         List<Image> imageList = origin.getImageList();
         if (images.length != 0) imageList = imageService.saveImage(images);
