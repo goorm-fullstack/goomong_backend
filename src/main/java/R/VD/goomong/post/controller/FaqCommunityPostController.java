@@ -80,7 +80,7 @@ public class FaqCommunityPostController {
 
         if (bindingResult.hasErrors()) return ResponseEntity.badRequest().build();
 
-        ResponseFaqCommunityPostDto responseFaqCommunityDto = faqCommunityPostService.updateFaqCommunityPost(postId, requestFaqCommunityPostDto, images, files).toResponseFaqCoummunityDto();
+        ResponseFaqCommunityPostDto responseFaqCommunityDto = faqCommunityPostService.updateFaqCommunityPost(postId, requestFaqCommunityPostDto, images, files).toResponseFaqCommunityDto();
         return ResponseEntity.ok(responseFaqCommunityDto);
     }
 }

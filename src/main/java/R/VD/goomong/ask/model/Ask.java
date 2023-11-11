@@ -11,8 +11,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +58,9 @@ public class Ask extends BaseTimeEntity {
     private List<Ask> answerList = new ArrayList<>(); // 답변 내용들
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseAskDto toResponseAskDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         List<ResponseAnswerDto> answers = new ArrayList<>();
         if (!answerList.isEmpty()) {
@@ -88,14 +85,12 @@ public class Ask extends BaseTimeEntity {
                 .title(title)
                 .content(content)
                 .answerList(answers)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .build();
     }
 
     public ResponseAnswerDto toResponseAnswerDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         return ResponseAnswerDto.builder()
                 .id(id)
@@ -103,8 +98,8 @@ public class Ask extends BaseTimeEntity {
                 .filesList(filesList)
                 .title(title)
                 .content(content)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .build();
     }
 }

@@ -9,8 +9,7 @@ import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +53,9 @@ public class Review extends BaseTimeEntity {
     private int likeNo; // 좋아요
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseReviewDto toResponseReviewDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
@@ -72,8 +69,8 @@ public class Review extends BaseTimeEntity {
                 .reportIdList(reports)
                 .title(title)
                 .content(content)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .rate(rate)
                 .likeNo(likeNo)
                 .build();

@@ -1,7 +1,10 @@
 package R.VD.goomong.post.dto.request;
 
 import R.VD.goomong.post.model.Post;
+import R.VD.goomong.post.model.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -23,8 +26,9 @@ public class RequestFaqCommunityPostDto {
     private String postCategory;
 
     @NotBlank
+    @Enumerated(EnumType.STRING)
     @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", example = "커뮤니티")
-    private String postType;
+    private Type postType;
 
     @NotBlank
     @Schema(description = "게시글 제목", example = "제목입니다")

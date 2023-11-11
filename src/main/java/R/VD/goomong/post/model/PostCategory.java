@@ -6,8 +6,7 @@ import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,19 +30,17 @@ public class PostCategory extends BaseTimeEntity {
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     // response로 변환
     public ResponsePostCategoryDto toResponsePostCategoryDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         return ResponsePostCategoryDto.builder()
                 .id(id)
                 .image(image)
                 .postCategoryName(postCategoryName)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .build();
     }
 }

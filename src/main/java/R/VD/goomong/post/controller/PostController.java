@@ -42,7 +42,7 @@ public class PostController {
 
         for (Post post : posts) {
             if (post.getItem() != null) list.add(post.toResponseItemPostDto());
-            else list.add(post.toResponseFaqCoummunityDto());
+            else list.add(post.toResponseFaqCommunityDto());
         }
 
         long totalElements = posts.getTotalElements();
@@ -273,6 +273,6 @@ public class PostController {
     private ResponseEntity<Object> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         if (findPost.getItem() != null) return ResponseEntity.ok(findPost.toResponseItemPostDto());
-        return ResponseEntity.ok(findPost.toResponseFaqCoummunityDto());
+        return ResponseEntity.ok(findPost.toResponseFaqCommunityDto());
     }
 }
