@@ -1,7 +1,10 @@
 package R.VD.goomong.post.dto.response;
 
 import R.VD.goomong.image.model.Image;
+import R.VD.goomong.post.model.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Schema(description = "카테고리 조회 정보")
-public class ResponsePostCategoryDto {
+public class ResponseCategoryDto {
 
     @Schema(description = "카테고리 id", example = "1")
     private Long id;
@@ -19,11 +22,12 @@ public class ResponsePostCategoryDto {
     @Schema(description = "카테고리 이미지", implementation = Image.class)
     private Image image;
 
-    @Schema(description = "카테고리 그룹", example = "커뮤니티")
-    private String postCategoryGroup;
+    @Schema(description = "카테고리 그룹", example = "COMMUNITY")
+    @Enumerated(EnumType.STRING)
+    private Type categoryGroup;
 
     @Schema(description = "카테고리 이름", example = "카테고리 이름")
-    private String postCategoryName;
+    private String categoryName;
 
     @Schema(description = "카테고리 생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private LocalDateTime regDate;
