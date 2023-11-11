@@ -31,6 +31,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping("/post")
     public ResponseEntity<Object> likePost(@RequestBody RequestPostLikeDto requestPostLikeDto) {
+        log.info("requestPostLikeDto={}", requestPostLikeDto);
         likeService.likePostInsert(requestPostLikeDto);
         return ResponseEntity.ok().build();
     }
@@ -45,6 +46,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping("/comment")
     public ResponseEntity<Object> likeComment(@RequestBody RequestCommentLikeDto requestCommentLikeDto) {
+        log.info("requestCommentLikeDto={}", requestCommentLikeDto);
         likeService.likeCommentInsert(requestCommentLikeDto);
         return ResponseEntity.ok().build();
     }
@@ -59,6 +61,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping("/review")
     public ResponseEntity<Object> likeReview(@RequestBody RequestReviewLikeDto requestReviewLikeDto) {
+        log.info("requestReviewLikeDto={}", requestReviewLikeDto);
         likeService.likeReviewInsert(requestReviewLikeDto);
         return ResponseEntity.ok().build();
     }
@@ -73,6 +76,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/post")
     public ResponseEntity<Object> dislikePost(@RequestBody RequestPostLikeDto requestPostLikeDto) {
+        log.info("requestPostLikeDto={}", requestPostLikeDto);
         likeService.likePostCancel(requestPostLikeDto);
         return ResponseEntity.ok().build();
     }
@@ -87,6 +91,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/comment")
     public ResponseEntity<Object> dislikeComment(@RequestBody RequestCommentLikeDto requestCommentLikeDto) {
+        log.info("requestCommentLikeDto={}", requestCommentLikeDto);
         likeService.likeCommentCancel(requestCommentLikeDto);
         return ResponseEntity.ok().build();
     }
@@ -101,6 +106,7 @@ public class LikeController {
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/review")
     public ResponseEntity<Object> dislikeReview(@RequestBody RequestReviewLikeDto requestReviewLikeDto) {
+        log.info("requestReviewLikeDto={}", requestReviewLikeDto);
         likeService.likeReviewCancel(requestReviewLikeDto);
         return ResponseEntity.ok().build();
     }
