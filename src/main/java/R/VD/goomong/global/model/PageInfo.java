@@ -1,4 +1,4 @@
-package R.VD.goomong.search.dto;
+package R.VD.goomong.global.model;
 
 import lombok.Builder;
 import lombok.Getter;

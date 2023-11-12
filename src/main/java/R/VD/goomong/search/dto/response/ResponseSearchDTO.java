@@ -1,6 +1,6 @@
 package R.VD.goomong.search.dto.response;
 
-import R.VD.goomong.search.dto.PageInfo;
+import R.VD.goomong.global.model.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,8 @@
 package R.VD.goomong.support.service;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.support.dto.request.RequestEmailAskDTO;
 import R.VD.goomong.support.dto.response.ResponseEmailAsk;
 import R.VD.goomong.support.dto.response.ResponseEmailAskListDTO;
