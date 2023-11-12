@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RequestChatSoftDelete {
-    private Long roomId;
     private Long memberId;
+    private String roomUUID;
 }

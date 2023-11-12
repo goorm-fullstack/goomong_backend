@@ -6,22 +6,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseChatMessageDTO {
-    private Long roomId;
+    private String roomUUID;
     private String message;
     private String senderName;
-    private ZonedDateTime regDate;
+    private LocalDateTime regDate;
 
     public ResponseChatMessageDTO(ChatMessage chatMessage) {
-        this.roomId = chatMessage.getChatRoom().getRoomId();
+        this.roomUUID = chatMessage.getRoomUUID().toString();
         this.message = chatMessage.getMessage();
-        this.senderName = chatMessage.getMember().getMemberName();
+        this.senderName = chatMessage.getSender().getName();
         this.regDate = chatMessage.getRegDate();
     }
 }

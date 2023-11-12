@@ -1,30 +1,19 @@
 package R.VD.goomong.chat.dto.response;
 
 import R.VD.goomong.chat.model.ChatRoom;
-import R.VD.goomong.item.model.Item;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ResponseChatRoomDTO {
-    private String roomId;
+    private String roomUUID;
     private String roomName;
-    private ResponseChatItem itemDto;
-    private ZonedDateTime regDate;
+    private LocalDateTime regDate;
 
-    public ResponseChatRoomDTO(ChatRoom chatRoom, Item item, String roomName) {
-        this.roomId = chatRoom.getRoomId().toString();
-        this.roomName = roomName;
-        if (item != null)
-            this.itemDto = new ResponseChatItem(item);
+    public ResponseChatRoomDTO(ChatRoom chatRoom) {
+        this.roomUUID = chatRoom.getRoomUUID().toString();
+        this.roomName = chatRoom.getRoomName();
         this.regDate = chatRoom.getRegDate();
     }
-
 }

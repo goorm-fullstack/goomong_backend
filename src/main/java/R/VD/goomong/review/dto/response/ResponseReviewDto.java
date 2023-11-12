@@ -1,24 +1,25 @@
 package R.VD.goomong.review.dto.response;
 
 import R.VD.goomong.image.model.Image;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
-import lombok.*;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.review.model.Review;
+import lombok.Data;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
-@Getter
-@Builder(toBuilder = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@Data
 public class ResponseReviewDto {
     private Long id;//DB 인덱스
-    private String memberId;//작성자
-    private List<Image> imageList; // 이미지
-    private List<ResponseReportDto> reportList; // 신고
-    private String title; // 제목
+    private Member member;//작성자
+    private List<Image> imageList;
     private String content;//리뷰 내용
     private Float rate;//평점
-    private ZonedDateTime regDate; // 작성 날짜
-    private ZonedDateTime delDate; // 삭제 날짜
+
+    public ResponseReviewDto(Review review) {
+        this.id = review.getId();
+        this.member = review.getMember();
+        this.imageList = review.getImageList();
+        this.content = review.getContent();
+        this.rate = review.getRate();
+    }
 }

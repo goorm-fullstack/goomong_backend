@@ -1,9 +1,5 @@
 package R.VD.goomong.report.service;
 
-import R.VD.goomong.ask.exception.AlreadyDeletedAskException;
-import R.VD.goomong.ask.exception.NotFoundAsk;
-import R.VD.goomong.ask.model.Ask;
-import R.VD.goomong.ask.repository.AskRepository;
 import R.VD.goomong.comment.exception.AlreadyDeletedCommentException;
 import R.VD.goomong.comment.exception.NotExistCommentException;
 import R.VD.goomong.comment.model.Comment;
@@ -17,13 +13,12 @@ import R.VD.goomong.post.exception.NotExistPostException;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.repository.PostRepository;
 import R.VD.goomong.report.dto.request.RequestReportDto;
-import R.VD.goomong.report.exception.*;
+import R.VD.goomong.report.exception.AlreadyDeletedReportException;
+import R.VD.goomong.report.exception.AlreadyReportedException;
+import R.VD.goomong.report.exception.NotDeletedReportException;
+import R.VD.goomong.report.exception.NotExistReportException;
 import R.VD.goomong.report.model.Report;
 import R.VD.goomong.report.repository.ReportRepository;
-import R.VD.goomong.review.exception.AlreadyDeletedReviewException;
-import R.VD.goomong.review.exception.NotFoundReview;
-import R.VD.goomong.review.model.Review;
-import R.VD.goomong.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,7 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +40,6 @@ public class ReportService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final ReviewRepository reviewRepository;
-    private final AskRepository askRepository;
     private final FilesService filesService;
 
     // 신고글 생성
@@ -87,34 +80,6 @@ public class ReportService {
             }
         }
 
-        Review review = null;
-        if (requestReportDto.getReviewId() != null) {
-            review = reviewRepository.findById(requestReportDto.getReviewId()).orElseThrow(() -> new NotFoundReview("해당 id의 리뷰글을 찾을 수 없습니다. id = " + requestReportDto.getReviewId()));
-            if (review.getDelDate() != null)
-                throw new AlreadyDeletedReviewException("해당 id의 리뷰글은 삭제된 리뷰글입니다. id = " + review.getId());
-
-            if (review.getReportList().size() != 0) {
-                for (Report report : review.getReportList()) {
-                    if (report.getDelDate() == null)
-                        throw new AlreadyReportedException("해당 id의 리뷰글은 이미 신고된 리뷰글입니다. id = " + review.getId());
-                }
-            }
-        }
-
-        Ask ask = null;
-        if (requestReportDto.getAskId() != null) {
-            ask = askRepository.findById(requestReportDto.getAskId()).orElseThrow(() -> new NotFoundAsk("해당 id의 문의글을 찾을 수 없습니다. id = " + requestReportDto.getAskId()));
-            if (ask.getDelDate() != null)
-                throw new AlreadyDeletedAskException("해당 id의 문의글은 삭제된 문의글입니다. id = " + ask.getId());
-
-            if (ask.getReportList().size() != 0) {
-                for (Report report : ask.getReportList()) {
-                    if (report.getDelDate() == null)
-                        throw new AlreadyReportedException("해당 id의 문의글은 이미 신고된 문의글입니다. id = " + ask.getId());
-                }
-            }
-        }
-
         List<Files> files = new ArrayList<>();
         if (reportFiles.length != 0) files = filesService.saveFiles(reportFiles);
 
@@ -122,8 +87,6 @@ public class ReportService {
                 .member(member)
                 .post(post)
                 .comment(comment)
-                .review(review)
-                .ask(ask)
                 .filesList(files)
                 .build();
         reportRepository.save(build);
@@ -151,7 +114,7 @@ public class ReportService {
         if (origin.getDelDate() != null) throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 신고글입니다.");
 
         Report build = origin.toBuilder()
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         reportRepository.save(build);
     }
@@ -178,8 +141,6 @@ public class ReportService {
     // 신고글 이상 없음 처리
     public void noProblemReport(Long reportId) {
         Report report = reportRepository.findById(reportId).orElseThrow(() -> new NotExistReportException("해당 id의 신고글을 찾을 수 없습니다. id = " + reportId));
-        if (report.getReportResult() != null)
-            throw new AlreadyCheckedReportException("해당 id의 신고글은 이미 처리된 신고글입니다. id = " + reportId);
         if (report.getDelDate() != null)
             throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 글입니다. id = " + reportId);
         initReportResult(reportId, "이상 없음");
@@ -188,8 +149,6 @@ public class ReportService {
     // 신고글 삭제 처리
     public void checkReportDelete(Long reportId) {
         Report report = reportRepository.findById(reportId).orElseThrow(() -> new NotExistReportException("해당 id의 신고글을 찾을 수 없습니다. id = " + reportId));
-        if (report.getReportResult() != null)
-            throw new AlreadyCheckedReportException("해당 id의 신고글은 이미 처리된 신고글입니다. id = " + reportId);
         if (report.getDelDate() != null)
             throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 글입니다. id = " + reportId);
         initReportResult(reportId, "삭제 처리");
@@ -199,7 +158,7 @@ public class ReportService {
             if (comment.getDelDate() != null)
                 throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
             Comment build = comment.toBuilder()
-                    .delDate(ZonedDateTime.now())
+                    .delDate(LocalDateTime.now())
                     .build();
             commentRepository.save(build);
         }
@@ -209,7 +168,7 @@ public class ReportService {
             if (post.getDelDate() != null)
                 throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + post.getId());
             Post build = post.toBuilder()
-                    .delDate(ZonedDateTime.now())
+                    .delDate(LocalDateTime.now())
                     .build();
             postRepository.save(build);
         }
@@ -256,7 +215,7 @@ public class ReportService {
         Report build = origin.toBuilder()
                 .reportCheck("처리 완료")
                 .reportResult(result)
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         reportRepository.save(build);
     }

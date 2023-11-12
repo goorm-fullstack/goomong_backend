@@ -7,7 +7,6 @@ import R.VD.goomong.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,16 +29,16 @@ public class PostController {
     /**
      * 게시글 생성
      *
-     * @param requestPostDto 게시글 생성 request
-     * @param postImages     게시글 이미지(상품 이미지와는 별개로)
-     * @param postFiles      게시글 첨부파일
-     * @param bindingResult  validation
+     * @param requestPostDto - 게시글 생성 request
+     * @param postImages     - 게시글 이미지(상품 이미지와는 별개로)
+     * @param postFiles      - 게시글 첨부파일
+     * @param bindingResult  - validation
      * @return 성공적으로 작성 시 200
      */
     @PostMapping("/post")
     public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
-        log.info("requestPostDto={}", requestPostDto.toString());
+        log.debug("requestPostDto={}", requestPostDto.toString());
 
         if (bindingResult.hasErrors()) return ResponseEntity.badRequest().build();
 
@@ -51,18 +49,18 @@ public class PostController {
     /**
      * 게시글 수정
      *
-     * @param postId         수정할 게시글의 pk
-     * @param requestPostDto 수정할 내용
-     * @param postImages     수정할 이미지
-     * @param postFiles      수정할 파일
-     * @param bindingResult  validation
+     * @param postId         - 수정할 게시글의 pk
+     * @param requestPostDto - 수정할 내용
+     * @param postImages     - 수정할 이미지
+     * @param postFiles      - 수정할 파일
+     * @param bindingResult  - validation
      * @return 수정된 게시글
      */
     @PutMapping("/post/{postId}")
     public ResponseEntity<ResponsePostDto> modifyPost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, @RequestParam(required = false) MultipartFile[] postImages, @RequestParam(required = false) MultipartFile[] postFiles, BindingResult bindingResult) {
 
         log.info("postId={}", postId);
-        log.info("requestPostDto={}", requestPostDto.toString());
+        log.debug("requestPostDto={}", requestPostDto.toString());
 
         if (bindingResult.hasErrors()) return ResponseEntity.badRequest().build();
 
@@ -73,7 +71,7 @@ public class PostController {
     /**
      * 게시글 소프트딜리트
      *
-     * @param postId 삭제할 게시글 pk
+     * @param postId - 삭제할 게시글 pk
      * @return 삭제 완료시 200
      */
     @PutMapping("/post/softdel/{postId}")
@@ -88,8 +86,8 @@ public class PostController {
     /**
      * 게시글 완전 삭제
      *
-     * @param postId 삭제할 게시글 pk
-     * @return 삭제 완료시 200
+     * @param postId - 삭제할 게시글 pk
+     * @return - 삭제 완료시 200
      */
     @DeleteMapping("/post/{postId}")
     public ResponseEntity<Object> deletePost(@PathVariable Long postId) {
@@ -103,12 +101,11 @@ public class PostController {
     /**
      * 삭제된 게시글 복구
      *
-     * @param postId 복구할 게시글 pk
-     * @return 복구 완료 시 200
+     * @param postId - 복구할 게시글 pk
+     * @return - 복구 완료 시 200
      */
     @PutMapping("/post/undel/{postId}")
     public ResponseEntity<Object> unDeletedPost(@PathVariable Long postId) {
-        log.info("postId={}", postId);
         postService.unDeleted(postId);
         return ResponseEntity.ok().build();
     }
@@ -116,8 +113,8 @@ public class PostController {
     /**
      * 클라이언트가 게시글 조회
      *
-     * @param postId 조회할 게시글 pk
-     * @return 조회된 게시글
+     * @param postId - 조회할 게시글 pk
+     * @return - 조회된 게시글
      */
     @GetMapping("/post/{postId}")
     public ResponseEntity<ResponsePostDto> viewPost(@PathVariable Long postId) {
@@ -132,8 +129,8 @@ public class PostController {
     /**
      * 조회수가 증가하지 않아야하는 경우의 게시글 조회(예: 관리자 페이지)
      *
-     * @param postId 조회할 게시글 pk
-     * @return 조회된 게시글
+     * @param postId - 조회할 게시글 pk
+     * @return - 조회된 게시글
      */
     @GetMapping("/post/admin/{postId}")
     public ResponseEntity<ResponsePostDto> adminViewPost(@PathVariable Long postId) {
@@ -147,46 +144,35 @@ public class PostController {
     /**
      * 좋아요 버튼 클릭
      *
-     * @param postId 좋아요 클릭 할 게시글 pk
-     * @return 정상 작동 시 200
+     * @param postId - 좋아요 클릭 할 게시글 pk
+     * @return - 해당 게시글의 좋아요 수
      */
-    @PutMapping("/post/like/{postId}")
-    public ResponseEntity<Object> likePost(@PathVariable Long postId) {
+    @GetMapping("/post/like/{postId}")
+    public ResponseEntity<Integer> likePost(@PathVariable Long postId) {
 
         log.info("postId={}", postId);
 
         postService.increaseLikeCount(postId);
-        return ResponseEntity.ok().build();
+        int postLikeNo = postService.findOnePost(postId).toResponsePostDto().getPostLikeNo();
+        return ResponseEntity.ok(postLikeNo);
     }
 
     /**
      * 삭제되지 않은 게시글 조회
      *
-     * @param orderBy   - 정렬 옵션 | postViews, postLikeNo, regDate
-     * @param direction - asc, desc
-     * @param pageable  - 페이징
+     * @param pageable - 페이징
      * @return - 조회된 게시글
      */
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy,
-                                                                  @RequestParam Optional<String> direction,
-                                                                  Pageable pageable) {
-
-        if (orderBy.isPresent() && direction.isPresent()) {
-            Sort.Direction dir = Sort.Direction.fromString(direction.get());
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
-        } else {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        }
-
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return getListResponseEntity(postService.listOfNotDeleted(pageable));
     }
 
     /**
      * 삭제된 게시글 조회
      *
-     * @param pageable 페이징
+     * @param pageable - 페이징
      * @return 조회된 게시글
      */
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
@@ -198,8 +184,8 @@ public class PostController {
     /**
      * 모든 게시글 조회
      *
-     * @param pageable 페이징
-     * @return 조회된 게시글
+     * @param pageable - 페이징
+     * @return - 조회된 게시글
      */
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     @GetMapping("/all")

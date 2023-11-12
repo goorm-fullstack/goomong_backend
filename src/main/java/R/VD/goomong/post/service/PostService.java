@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +109,7 @@ public class PostService {
             throw new AlreadyDeletePostException("해당 id의 게시글은 이미 삭제된 게시글입니다. id = " + postId);
 
         Post build = onePost.toBuilder()
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         postRepository.save(build);
     }

@@ -6,9 +6,7 @@ import R.VD.goomong.post.dto.response.ResponsePostCategoryDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,10 +23,6 @@ public class PostCategory extends BaseTimeEntity {
     @JoinColumn(name = "image_id")
     private Image image; // 카테고리 썸네일(커뮤니티 카테고리의 경우)
 
-    @OneToMany(mappedBy = "postCategory")
-    @Builder.Default
-    private List<Post> postList = new ArrayList<>(); // 게시글
-
     @Column(nullable = false)
     private String postCategoryName; // 카테고리 이름
 
@@ -36,7 +30,7 @@ public class PostCategory extends BaseTimeEntity {
     private String postCategoryGroup; // 카테고리 그룹(커뮤니티, FAQ)
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate; // 삭제일
 
     // response로 변환
     public ResponsePostCategoryDto toResponsePostCategoryDto() {
