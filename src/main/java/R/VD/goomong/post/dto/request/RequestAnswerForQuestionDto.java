@@ -24,7 +24,7 @@ public class RequestAnswerForQuestionDto {
 
     public Qna toEntity() {
         return Qna.builder()
-                .Content(content)
+                .content(content)
                 .build();
     }
 }

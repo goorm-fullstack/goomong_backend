@@ -25,7 +25,7 @@ public class RequestCategoryDto {
     @Schema(description = "카테고리 이름", example = "카테고리 이름입니다.")
     private String categoryName; // 카테고리 이름
 
-    // RequestPostCategoryDto 엔티티화
+    // RequestCategoryDto 엔티티화
     public Category toEntity() {
         return Category.builder()
                 .categoryGroup(categoryGroup)

@@ -4,6 +4,7 @@ import R.VD.goomong.post.exception.AlreadyDeletePostException;
 import R.VD.goomong.post.exception.NotDeletedPostException;
 import R.VD.goomong.post.exception.NotExistPostException;
 import R.VD.goomong.post.model.Post;
+import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -91,12 +92,12 @@ public class PostService {
     }
 
     // 게시글 종류로 조회(판매/기부/교환/커뮤니티/FAQ)
-    public Page<Post> listOfType(String type, Pageable pageable) {
+    public Page<Post> listOfType(Type type, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostType().equals(type)) list.add(post);
+            if (post.getPostType() == type) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }

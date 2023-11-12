@@ -1,8 +1,8 @@
 package R.VD.goomong.post.controller;
 
 import R.VD.goomong.post.dto.response.ResponseFaqCommunityPostDto;
-import R.VD.goomong.post.dto.response.ResponseItemPostDto;
 import R.VD.goomong.post.model.Post;
+import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.service.PostService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/posts")
-@Tag(name = "게시글(판매/기부/교환/커뮤니티/FAQ) 공통 api")
+@Tag(name = "게시글(커뮤니티/공지사항/이벤트) 공통 api")
 public class PostController {
 
     private final PostService postService;
@@ -41,8 +41,7 @@ public class PostController {
         List<Object> list = new ArrayList<>();
 
         for (Post post : posts) {
-            if (post.getItem() != null) list.add(post.toResponseItemPostDto());
-            else list.add(post.toResponseFaqCommunityDto());
+            list.add(post.toResponseFaqCommunityDto());
         }
 
         long totalElements = posts.getTotalElements();
@@ -111,7 +110,7 @@ public class PostController {
      */
     @Operation(summary = "클라이언트가 게시글 조회하는 경우(즉, 조회수 증가)")
     @Parameter(name = "postId", description = "조회할 게시글 id")
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(schema = @Schema(implementation = ResponseItemPostDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class)))
     @GetMapping("/post/{postId}")
     public ResponseEntity<Object> viewPost(@PathVariable Long postId) {
 
@@ -130,7 +129,7 @@ public class PostController {
      */
     @Operation(summary = "관리자 페이지에서의 게시글 조회")
     @Parameter(name = "postId", description = "조회할 게시글 id")
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(schema = @Schema(implementation = ResponseItemPostDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class)))
     @GetMapping("/post/admin/{postId}")
     public ResponseEntity<Object> adminViewPost(@PathVariable Long postId) {
 
@@ -146,20 +145,20 @@ public class PostController {
      * @param pageable 페이징
      * @return 조회된 게시글 리스트
      */
-    @Operation(summary = "게시글 종류에 따라 리스트 조회(판매/기부/교환/FAQ/커뮤니티)")
+    @Operation(summary = "게시글 종류에 따라 리스트 조회(커뮤니티/공지사항/이벤트)")
     @Parameters(value = {
-            @Parameter(name = "type", description = "종류(판매/기부/교환/FAQ/커뮤니티)"),
+            @Parameter(name = "type", description = "종류(커뮤니티/공지사항/이벤트)", schema = @Schema(implementation = Type.class)),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
     @GetMapping("/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
-    public ResponseEntity<List<Object>> listOfType(@PathVariable String type, Pageable pageable) {
+    public ResponseEntity<List<Object>> listOfType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
         Page<Post> posts = postService.listOfType(type, pageable);
         return getListResponseEntity(posts);
@@ -179,13 +178,13 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, FAQ/커뮤니티인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
     @GetMapping("/{category}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
-    public ResponseEntity<List<Object>> listOfCategory(@PathVariable String category, Pageable pageable) {
+    public ResponseEntity<List<Object>> listOfCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
         Page<Post> posts = postService.listOfCategory(category, pageable);
         return getListResponseEntity(posts);
@@ -205,7 +204,7 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
@@ -236,7 +235,7 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
@@ -259,7 +258,7 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공, 판매/기부/교환 게시글인 경우", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseItemPostDto.class))), headers = {
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseFaqCommunityPostDto.class))), headers = {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
@@ -272,7 +271,6 @@ public class PostController {
 
     private ResponseEntity<Object> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
-        if (findPost.getItem() != null) return ResponseEntity.ok(findPost.toResponseItemPostDto());
         return ResponseEntity.ok(findPost.toResponseFaqCommunityDto());
     }
 }

@@ -21,13 +21,11 @@ public class RequestFaqCommunityPostDto {
     @Schema(description = "작성자 id", example = "1", required = true)
     private Long memberId;
 
-    @NotBlank
     @Schema(description = "카테고리", example = "카테고리 이름")
     private String postCategory;
 
-    @NotBlank
     @Enumerated(EnumType.STRING)
-    @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", example = "커뮤니티")
+    @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", example = "커뮤니티", required = true)
     private Type postType;
 
     @NotBlank
