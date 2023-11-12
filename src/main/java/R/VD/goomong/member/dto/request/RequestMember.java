@@ -31,8 +31,10 @@ public class RequestMember {
 
     private Long memberLoginFailed = 0L; // 기본값 0으로 설정
 
+    private Boolean isKakao = true;
+
     @Builder(toBuilder = true)
-    public RequestMember(Long memberLoginFailed, String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestMember(Boolean isKakao, Long memberLoginFailed, String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -43,6 +45,7 @@ public class RequestMember {
         this.detailAddress = detailAddress;
         this.memberRole = memberRole;
         this.memberLoginFailed = memberLoginFailed;
+        this.isKakao = isKakao;
     }
 
     public Member toEntity(){
@@ -57,6 +60,7 @@ public class RequestMember {
                 .detailAddress(detailAddress)
                 .memberRole(memberRole)
                 .memberLoginFailed(memberLoginFailed)
+                .isKakao(isKakao)
                 .build();
     }
 }
