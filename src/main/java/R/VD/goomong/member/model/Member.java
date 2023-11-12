@@ -46,13 +46,10 @@ public class Member extends BaseTimeEntity {
 
     private LocalDateTime memberDeleteTime;
 
-    @Column(nullable = false)
     private Long zipCode;                                    //우편 번호
 
-    @Column(nullable = false)
     private String simpleAddress;                            //간단 주소
 
-    @Column(nullable = false)
     private String detailAddress;                            //상세 주소
 
     @Column(nullable = false)
@@ -60,6 +57,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Long memberLoginFailed;                              //로그인 실패 횟수
+
+    @Column(nullable = false)
+    private Boolean isKakao;                                    //카카오 아이디인가?
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();

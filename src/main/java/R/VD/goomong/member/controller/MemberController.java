@@ -3,8 +3,13 @@ package R.VD.goomong.member.controller;
 import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
+import R.VD.goomong.member.model.KakaoOAuthToken;
+import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -139,7 +145,51 @@ public class MemberController {
 
         ResponseEntity<String> response = restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
 
-        return "카카오 토큰 요청 완료 : 토큰 요청 응답 : " + response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        KakaoOAuthToken kakaoOAuthToken = null;
+        try {
+            kakaoOAuthToken = objectMapper.readValue(response.getBody(), KakaoOAuthToken.class);
+        } catch(JsonMappingException e) {
+            e.printStackTrace();
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("kakaoOAuthToken.getAccess_token() = " + kakaoOAuthToken.getAccess_token());
+
+        RestTemplate restTemplate2 = new RestTemplate();
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add("Authorization", "Bearer "+kakaoOAuthToken.getAccess_token());
+        headers2.add("Content-Type", "application/x-www-form-urlencoded");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers2);
+
+        ResponseEntity<String> response2 = restTemplate2.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoProfileRequest,
+                String.class);
+
+        System.out.println("response2.getBody() = " + response2.getBody());
+
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        KakaoProfile kakaoProfile = null;
+        try {
+            kakaoProfile = objectMapper2.readValue(response2.getBody(), KakaoProfile.class);
+        } catch(JsonMappingException e) {
+            e.printStackTrace();
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("카카오 회원번호: " + kakaoProfile.getId());
+        System.out.println("카카오 이메일: " + kakaoProfile.getKakao_account().getEmail());
+        System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId());
+        System.out.println("블로그서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
+        UUID fakePassword = UUID.randomUUID();
+        System.out.println("블로그서버 패스워드: " + fakePassword);
+
+        return kakaoProfile.getKakao_account().getEmail();
     }
 
 }

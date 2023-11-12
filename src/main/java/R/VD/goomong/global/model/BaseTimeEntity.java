@@ -27,4 +27,13 @@ public abstract class BaseTimeEntity {
     public void preUpdate() {
         this.chgDate = ZonedDateTime.now();
     }
+
+    /**
+     *
+     * DateTimeFormatter dateTimeFormatter
+     * = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+     *
+     * ZonedDateTime.format(dateTimeFormatter);
+     *
+     */
 }

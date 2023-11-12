@@ -108,6 +108,12 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    public Member findByMemberEmail(String memberEmail){
+        Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
+
+        return member.orElse(null);
+    }
+
 
     //UPDATE
     //memberId로 회원 정보 변경
