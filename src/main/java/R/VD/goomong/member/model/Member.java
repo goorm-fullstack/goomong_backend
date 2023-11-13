@@ -9,6 +9,7 @@ import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,9 @@ public class Member {
     private String memberId;
 
     private String name;
+
+    @Column(nullable = false)
+    private Long memberLoginFailed;                              //로그인 실패 횟수
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -58,6 +62,17 @@ public class Member {
                 .posts(posts)
                 .build();
     }
+
+    //    public ResponseMemberDto toResponseMemberDto() {
+//        List<ResponsePostDto> posts = null;
+//        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
+//
+//        return ResponseMemberDto.builder()
+//                .id(id)
+//                .memberId(memberId)
+//                .posts(posts)
+//                .build();
+//    }
 
     @Override
     public int hashCode() {

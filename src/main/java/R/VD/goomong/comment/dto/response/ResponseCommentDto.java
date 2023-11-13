@@ -1,9 +1,9 @@
 package R.VD.goomong.comment.dto.response;
 
-import R.VD.goomong.report.dto.response.ResponseReportDto;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,10 +14,20 @@ public class ResponseCommentDto {
 
     private Long id;
     private String memberId;
+
+    @ArraySchema(schema = @Schema(description = "대댓글 리스트", implementation = ResponseCommentDto.class))
     private List<ResponseCommentDto> childrenComment;
-    private List<ResponseReportDto> reportList;
+
+    @ArraySchema(schema = @Schema(description = "신고 id 리스트", implementation = Long.class))
+    private List<Long> reportIdList;
+
+    @Schema(description = "댓글 내용", example = "내용입니다.")
     private String content;
     private int likeNo;
-    private LocalDateTime regDate;
-    private LocalDateTime delDate;
+
+    @Schema(description = "생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
+    private String regDate;
+
+    @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
+    private String delDate;
 }

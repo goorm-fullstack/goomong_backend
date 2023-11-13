@@ -172,6 +172,26 @@ public class ReportService {
                     .build();
             postRepository.save(build);
         }
+
+        if (report.getReview() != null) {
+            Review review = report.getReview();
+            if (review.getDelDate() != null)
+                throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + review.getId());
+            Review build = review.toBuilder()
+                    .delDate(ZonedDateTime.now())
+                    .build();
+            reviewRepository.save(build);
+        }
+
+        if (report.getAsk() != null) {
+            Ask ask = report.getAsk();
+            if (ask.getDelDate() != null)
+                throw new AlreadyDeletedAskException("해당 문의글은 이미 삭제된 문의글입니다. id = " + ask.getId());
+            Ask build = ask.toBuilder()
+                    .delDate(ZonedDateTime.now())
+                    .build();
+            askRepository.save(build);
+        }
     }
 
     // 특정 신고글 조회

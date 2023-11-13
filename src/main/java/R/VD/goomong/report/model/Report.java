@@ -9,7 +9,8 @@ import R.VD.goomong.report.dto.response.ResponseReportDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,17 +55,22 @@ public class Report extends BaseTimeEntity {
     private LocalDateTime delDate; // 삭제 날짜
 
     public ResponseReportDto toResponseReportDto() {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
+
         return ResponseReportDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .post(post.toResponsePostDto())
-                .comment(comment.toResponseCommentDto())
+                .postId(post != null ? post.getId() : null)
+                .commentId(comment != null ? comment.getId() : null)
+                .reviewId(review != null ? review.getId() : null)
+                .askId(ask != null ? ask.getId() : null)
                 .filesList(filesList)
                 .reportReason(reportReason)
                 .reportCheck(reportCheck)
                 .reportResult(reportResult)
-                .regDate(this.getRegDate())
-                .delDate(delDate)
+                .regDate(this.getRegDate().format(dateTimeFormatter))
+                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
                 .build();
     }
 }
