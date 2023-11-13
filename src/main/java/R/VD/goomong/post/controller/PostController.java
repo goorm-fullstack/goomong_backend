@@ -210,8 +210,8 @@ public class PostController {
     })
     @GetMapping("/notdeletedtype/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("type={}", type.toString());
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("type={}", type);
         Page<Post> posts = postService.listOfNotDeletedAndType(type, pageable);
         return getListResponseEntity(posts);
     }
@@ -236,8 +236,8 @@ public class PostController {
     })
     @GetMapping("/deletedtype/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
-    public ResponseEntity<List<ResponsePostDto>> listOfDeletedAndType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("type={}", type.toString());
+    public ResponseEntity<List<ResponsePostDto>> listOfDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("type={}", type);
         Page<Post> posts = postService.listOfDeletedAndType(type, pageable);
         return getListResponseEntity(posts);
     }
