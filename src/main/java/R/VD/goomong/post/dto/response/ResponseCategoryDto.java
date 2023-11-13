@@ -22,7 +22,7 @@ public class ResponseCategoryDto {
     @Schema(description = "카테고리 이미지", implementation = Image.class)
     private Image image;
 
-    @Schema(description = "카테고리 그룹", example = "COMMUNITY")
+    @Schema(description = "카테고리 그룹", implementation = Type.class)
     @Enumerated(EnumType.STRING)
     private Type categoryGroup;
 

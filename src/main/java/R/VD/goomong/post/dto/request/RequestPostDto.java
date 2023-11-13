@@ -15,17 +15,17 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Schema(description = "FAQ, 커뮤니티 게시판 작성 정보")
-public class RequestFaqCommunityPostDto {
+public class RequestPostDto {
 
     @Positive
     @Schema(description = "작성자 id", example = "1", required = true)
     private Long memberId;
 
-    @Schema(description = "카테고리", example = "카테고리 이름")
-    private String postCategory;
+    @Schema(description = "카테고리 id", example = "1")
+    private Long postCategoryId;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", example = "커뮤니티", required = true)
+    @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", implementation = Type.class, required = true)
     private Type postType;
 
     @NotBlank
@@ -38,7 +38,6 @@ public class RequestFaqCommunityPostDto {
 
     public Post toEntity() {
         return Post.builder()
-                .postCategory(postCategory)
                 .postType(postType)
                 .postTitle(postTitle)
                 .postContent(postContent)

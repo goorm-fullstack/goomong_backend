@@ -8,6 +8,7 @@ import R.VD.goomong.post.exception.NotDeletedCategoryException;
 import R.VD.goomong.post.exception.NotExistCategoryException;
 import R.VD.goomong.post.exception.NotExistCategoryInfoException;
 import R.VD.goomong.post.model.Category;
+import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,12 @@ public class CategoryService {
 
         Category entity = requestCategoryDto.toEntity();
 
+        Type categoryGroup = null;
+        String requestGroup = requestCategoryDto.getCategoryGroup();
+        if (requestGroup.equals("COMMUNITY")) categoryGroup = Type.COMMUNITY;
+        if (requestGroup.equals("NOTICE")) categoryGroup = Type.NOTICE;
+        if (requestGroup.equals("EVENT")) categoryGroup = Type.EVENT;
+
         Image image = null;
         if (categoryImage.length != 0) {
             List<Image> images = imageService.saveImage(categoryImage);
@@ -42,6 +49,7 @@ public class CategoryService {
         }
 
         Category build = entity.toBuilder()
+                .categoryGroup(categoryGroup)
                 .image(image)
                 .build();
         categoryRepository.save(build);

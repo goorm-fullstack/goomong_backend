@@ -96,7 +96,7 @@ public class SearchService {
 //        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
         List<Object> posts = new ArrayList<>();
         for (Post post : postList) {
-            posts.add(post.toResponseFaqCommunityDto());
+            posts.add(post.toResponsePostDto());
         }
         return new ResponseSearchDTO(posts, pageInfo);
     }
