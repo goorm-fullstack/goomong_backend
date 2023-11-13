@@ -223,4 +223,11 @@ public class CommentController {
         Page<Comment> comments = commentService.allList(pageable);
         return getListResponseEntity(comments);
     }
+
+    @GetMapping("/memberId/{memberId}")
+    public ResponseEntity<List<ResponseCommentDto>> getAllByMemberId(@PathVariable Long memberId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Comment> comments = commentService.getAllByMemberId(memberId, pageable);
+
+        return getListResponseEntity(comments);
+    }
 }

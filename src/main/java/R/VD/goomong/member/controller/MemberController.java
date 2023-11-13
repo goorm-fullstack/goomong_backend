@@ -60,9 +60,18 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+    //회원 인덱스로 회원 정보 찾기
     @GetMapping("/id/{id}")
     public ResponseEntity<Member> findById(@PathVariable Long id){
         Member member = memberService.findById(id);
+
+        return ResponseEntity.ok(member);
+    }
+
+    //회원 이메일로 회원 정보 찾기
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Member> findByMemberEmail(@PathVariable String email){
+        Member member = memberService.findByMemberEmail(email);
 
         return ResponseEntity.ok(member);
     }

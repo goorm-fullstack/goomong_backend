@@ -46,11 +46,17 @@ public class Member extends BaseTimeEntity {
 
     private LocalDateTime memberDeleteTime;
 
-    private Long zipCode;                                    //우편 번호
+    private Long buyZipCode;                                    //구매자 우편 번호
 
-    private String simpleAddress;                            //간단 주소
+    private String buySimpleAddress;                            //구매자 간단 주소
 
-    private String detailAddress;                            //상세 주소
+    private String buyDetailAddress;                            //구매자 상세 주소
+
+    private Long saleZipCode;                                    //판매자 우편 번호
+
+    private String saleSimpleAddress;                            //판매자 간단 주소
+
+    private String saleDetailAddress;                            //판매자 상세 주소
 
     @Column(nullable = false)
     private String memberRole;                                //권한
@@ -60,6 +66,8 @@ public class Member extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Boolean isKakao;                                    //카카오 아이디인가?
+
+    private String saleInfo;                                      //판매자 소개
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -80,14 +88,18 @@ public class Member extends BaseTimeEntity {
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
-    public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
+    public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
-        this.zipCode = zipCode;
-        this.simpleAddress = simpleAddress;
-        this.detailAddress = detailAddress;
+        this.buyZipCode = buyZipCode;
+        this.buySimpleAddress = buySimpleAddress;
+        this.buyDetailAddress = buyDetailAddress;
+        this.saleZipCode = saleZipCode;
+        this.saleSimpleAddress = saleSimpleAddress;
+        this.saleDetailAddress = saleDetailAddress;
+        this.saleInfo = saleInfo;
     }
 
     //    public ResponseMemberDto toResponseMemberDto() {

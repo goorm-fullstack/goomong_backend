@@ -122,7 +122,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
@@ -135,7 +135,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
+            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);

@@ -32,10 +32,9 @@ public class memberTest {
                 .memberPassword("testPw")
                 .memberName("test")
                 .memberEmail("test@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember);
@@ -54,10 +53,9 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         RequestMember requestMember2 = RequestMember.builder()
@@ -65,10 +63,9 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12312L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("BUSAN")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         RequestMember requestMember3 = RequestMember.builder()
@@ -76,10 +73,9 @@ public class memberTest {
                 .memberPassword("testPw3")
                 .memberName("test3")
                 .memberEmail("test3@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(11111L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("DAEJEON")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -103,10 +99,9 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         RequestMember requestMember2 = RequestMember.builder()
@@ -114,10 +109,9 @@ public class memberTest {
                 .memberPassword("testPw2")
                 .memberName("test2")
                 .memberEmail("test2@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12312L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("BUSAN")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -138,10 +132,9 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -169,10 +162,9 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -197,10 +189,9 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
@@ -226,28 +217,27 @@ public class memberTest {
                 .memberPassword("testPw1")
                 .memberName("test1")
                 .memberEmail("test1@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember1);
 
         Member member = memberService.findByMemberId("testId1");
 
-        RequestUpdateDto requestUpdate = RequestUpdateDto.builder()
+        RequestUpdateDto requestUpdateDto = RequestUpdateDto.builder()
                 .memberId(member.getMemberId())
                 .memberPassword("updatedPassword")
                 .memberName("updatedName")
                 .memberEmail("updated@test.com")
-                .zipCode(11111L)
-                .simpleAddress("SOUTHKKOREA")
-                .detailAddress("SSEOUL")
+                .buyZipCode(11111L)
+                .buySimpleAddress("SOUTHKKOREA")
+                .buyDetailAddress("SSEOUL")
                 .build();
 
 
-        memberService.updateMemberByMemberId(member.getMemberId(), requestUpdate);
+        memberService.updateMemberByMemberId(member.getMemberId(), requestUpdateDto);
 
         Member member1 = memberService.findByMemberId("testId1");
 
@@ -256,9 +246,9 @@ public class memberTest {
         System.out.println("member1 = " + member1.getMemberName());
         System.out.println("member1 = " + member1.getMemberEmail());
         System.out.println("member1 = " + member1.getMemberSignupTime());
-        System.out.println("member1 = " + member1.getZipCode());
-        System.out.println("member1 = " + member1.getSimpleAddress());
-        System.out.println("member1 = " + member1.getDetailAddress());
+        System.out.println("member1 = " + member1.getBuyZipCode());
+        System.out.println("member1 = " + member1.getBuySimpleAddress());
+        System.out.println("member1 = " + member1.getBuyDetailAddress());
 
     }
 
@@ -269,10 +259,9 @@ public class memberTest {
                 .memberPassword("testPw")
                 .memberName("test")
                 .memberEmail("test@test.com")
-                .memberSignupTime(ZonedDateTime.now())
-                .zipCode(12345L)
-                .simpleAddress("SOUTHKOREA")
-                .detailAddress("SEOUL")
+                .buyZipCode(12345L)
+                .buySimpleAddress("SOUTHKOREA")
+                .buyDetailAddress("SEOUL")
                 .build();
 
         memberService.save(requestMember);
