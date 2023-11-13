@@ -1,5 +1,6 @@
 package R.VD.goomong.file.service;
 
+import R.VD.goomong.file.exception.NotExistFileException;
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.file.repository.FilesRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class FilesService {
     @Value("${File.upload.path}")
     private String path;
 
-    // 이미지 저장 로직 및 DB에 관련 내용 반영
+    // 파일 저장 로직 및 DB에 관련 내용 반영
     public List<Files> saveFiles(MultipartFile[] fileList) {
         List<Files> result = new ArrayList<>();
         if (fileList == null) {
@@ -41,6 +42,12 @@ public class FilesService {
             uploadFile(result, file);
         }
         return result;
+    }
+
+    // 파일 다운로드
+    public File downloadFile(String fileName) {
+        Files files = filesRepository.findByFileName(fileName).orElseThrow(() -> new NotExistFileException("해당 이름의 파일을 찾을 수 없습니다. fileName = " + fileName));
+        return new File(files.getPath());
     }
 
     private void uploadFile(List<Files> result, MultipartFile file) {
