@@ -9,6 +9,7 @@ import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,9 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String memberRole;                                //권한
 
+    @Column(nullable = false)
+    private Long memberLoginFailed;                              //로그인 실패 횟수
+
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
 
@@ -86,7 +90,7 @@ public class Member extends BaseTimeEntity {
         this.detailAddress = detailAddress;
     }
 
-//    public ResponseMemberDto toResponseMemberDto() {
+    //    public ResponseMemberDto toResponseMemberDto() {
 //        List<ResponsePostDto> posts = null;
 //        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
 //

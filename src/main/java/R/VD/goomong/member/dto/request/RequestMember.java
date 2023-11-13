@@ -29,9 +29,10 @@ public class RequestMember {
 
     private String memberRole;
 
+    private Long memberLoginFailed = 0L; // 기본값 0으로 설정
 
     @Builder(toBuilder = true)
-    public RequestMember(String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestMember(Long memberLoginFailed, String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -41,9 +42,10 @@ public class RequestMember {
         this.simpleAddress = simpleAddress;
         this.detailAddress = detailAddress;
         this.memberRole = memberRole;
+        this.memberLoginFailed = memberLoginFailed;
     }
 
-    public Member toEntity() {
+    public Member toEntity(){
         return Member.builder()
                 .memberId(memberId)
                 .memberPassword(memberPassword)
@@ -54,8 +56,7 @@ public class RequestMember {
                 .simpleAddress(simpleAddress)
                 .detailAddress(detailAddress)
                 .memberRole(memberRole)
+                .memberLoginFailed(memberLoginFailed)
                 .build();
     }
-
-
 }

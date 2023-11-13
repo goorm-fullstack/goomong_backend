@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 @Service
 @Transactional
@@ -27,9 +29,57 @@ public class MemberService {
     private final BCryptPasswordEncoder encoder;
 
     //CREATE
+    //아이디 중복 체크
+    private boolean isId(String memberId){
+        Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
+        if(byMemberId.isEmpty()){
+            return true;                        //이미 생성된 아이디가 없음
+        }
+        else
+            return false;                         //이미 생성된 아이디가 있음
+    }
+    //비밀번호 체크
+    private boolean isPassword(String memberPassword, String memberId) {
+        int minLength = 9;
+        int maxLength = 20;
+        Pattern specialCharPattern = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>?]");
+        Matcher matcher = specialCharPattern.matcher(memberPassword);
+
+        if(memberPassword.length() < minLength || memberPassword.length() >= maxLength) {               //비밀번호 9자 이상 20자 미만
+            throw new NotFoundMember("비밀번호는 9자 이상 20자 미만이어야 합니다.");
+        }
+
+        if(memberPassword.contains(memberId)){
+            throw new NotFoundMember("비밀번호에 ID를 포함할 수 없습니다.");
+        }
+
+        if (!matcher.find()) {
+            throw new NotFoundMember("비밀번호에 특수문자가 최소 1개 포함되어야 합니다.");
+        }
+
+        return true;
+    }
+
+    //이메일 중복 체크
+    private boolean isEmail(String memberEmail) {
+        Optional<Member> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
+        if(byMemberEmail.isEmpty())                 //존재할 때
+            return true;
+        else                                        //없을 때
+            return false;
+
+    }
     //회원 가입
     public void save(RequestMember requestMember) {
+        if(isId(requestMember.getMemberId())==false){
+            throw new NotFoundMember("이미 존재하는 아이디입니다.");
+        }
+        isPassword(requestMember.getMemberPassword(), requestMember.getMemberId());
+        if(isEmail(requestMember.getMemberEmail())==false){
+            throw new NotFoundMember("이미 존재하는 이메일입니다.");
+        }
         Member member = requestMember.toEntity();
+
         member.setMemberRole("MEMBER");
         String rawPassword = member.getMemberPassword();
         String encodePassword = encoder.encode(rawPassword);
@@ -141,18 +191,58 @@ public class MemberService {
     }
 
     //로그인
-    public Member memberLogin(RequestLogin requestLogin) {
+    @Transactional(noRollbackFor = NotFoundMember.class)
+    public Member memberLogin(RequestLogin requestLogin){
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
-        if (byMemberId.isEmpty()) {
+        if(byMemberId.isEmpty()){                                               //아이디 없음
             throw new NotFoundMember("아이디 없음.");
         }
 
         Member member = byMemberId.get();
-        if (!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())) {
-            throw new NotFoundMember("비밀번호 불일치");
+        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){                 //비밀번호 틀림
+            try{
+                LoginFail fail = new LoginFail(memberRepository);
+                fail.extracted(member);
+            }
+            catch (Exception e){
+                throw new NotFoundMember("비밀번호 불일치");
+
+            }
+
+
         }
 
+        else{                                                                       //아이디, 비밀번호 모두 맞췄을 때
+            if(member.getMemberLoginFailed() == 5L){                                //이미 로그인 5회 실패일 때
+                throw new NotFoundMember("회원 잠김");
+            }
+            else{
+                member.setMemberLoginFailed(0L);                                    //로그인 성공
+                memberRepository.save(member);
+            }
+        }
         return member;
+    }
+
+
+
+}
+
+
+class LoginFail{
+
+    private final MemberRepository memberRepository;
+
+    public LoginFail(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Transactional(noRollbackFor = Exception.class)
+    public void extracted(Member member) throws Exception {
+        member.setMemberLoginFailed(member.getMemberLoginFailed() + 1L);
+        memberRepository.save(member);
+
+        throw new Exception("비밀번호 불일치");
     }
 }
