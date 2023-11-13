@@ -8,8 +8,16 @@ import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Schema(description = "조회된 문의글")
 public class ResponseAskDto {
+
+    @Schema(description = "문의글 id", example = "1")
+    private Long id;
+
     @Schema(description = "작성자 id", example = "test")
     private String memberId; // 작성자
 

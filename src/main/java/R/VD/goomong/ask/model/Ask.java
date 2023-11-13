@@ -1,12 +1,15 @@
 package R.VD.goomong.ask.model;
 
+import R.VD.goomong.ask.dto.response.ResponseAnswerDto;
+import R.VD.goomong.ask.dto.response.ResponseAskDto;
+import R.VD.goomong.file.model.Files;
+import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
+import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,24 +18,28 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-public class Ask {
+@Builder(toBuilder = true)
+public class Ask extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Member member;//작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // 작성자
 
-    @ManyToOne
-    private Item item;//작성할 아이템
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item; // 작성할 아이템
 
     @OneToMany
-    private List<Ask> asks = new ArrayList<>();//답변 내용들
+    @JoinColumn(name = "ask_id")
+    @Builder.Default
+    private List<Files> filesList = new ArrayList<>(); // 업로드 파일
 
-    
     @OneToMany(mappedBy = "ask", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Report> reportList = new ArrayList<>();

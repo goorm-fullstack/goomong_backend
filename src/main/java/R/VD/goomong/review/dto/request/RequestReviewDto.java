@@ -1,6 +1,5 @@
 package R.VD.goomong.review.dto.request;
 
-import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +37,7 @@ public class RequestReviewDto {
 
     public Review toEntity() {
         return Review.builder()
-                .member(member)
+                .title(title)
                 .content(content)
                 .rate(rate)
                 .build();

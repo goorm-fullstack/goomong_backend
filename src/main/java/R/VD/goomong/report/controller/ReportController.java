@@ -26,6 +26,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -34,6 +36,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReportController {
 
     private final ReportService reportService;
+
+    private static ResponseEntity<List<ResponseReportDto>> getListResponseEntity(Page<Report> reports) {
+        long totalElements = reports.getTotalElements();
+        int totalPages = reports.getTotalPages();
+
+        return ResponseEntity.ok()
+                .header("TotalPages", String.valueOf(totalPages))
+                .header("TotalData", String.valueOf(totalElements))
+                .body(reports.getContent().stream().map(Report::toResponseReportDto).toList());
+    }
 
     /**
      * 신고글 생성

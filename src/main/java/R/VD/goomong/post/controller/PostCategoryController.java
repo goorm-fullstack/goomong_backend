@@ -74,14 +74,15 @@ public class PostCategoryController {
     /**
      * 카테고리 소프트딜리트
      *
-     * @param postCategoryId - 삭제할 카테고리 pk
-     * @return - 삭제 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 pk
+     * @return 삭제 완료 시 200
      */
     @Operation(summary = "카테고리 삭제")
     @Parameter(name = "postCategoryId", description = "삭제할 카테고리 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/postcategory/softdel/{postCategoryId}")
     public ResponseEntity<Object> softDeletePostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.softDeletePostCategory(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -89,12 +90,13 @@ public class PostCategoryController {
     /**
      * 카테고리 완전 삭제
      *
-     * @param postCategoryId - 삭제할 카테고리 pk
-     * @return - 삭제 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 pk
+     * @return 삭제 완료 시 200
      */
     @Hidden
     @DeleteMapping("/postcategory/{postCategoryId}")
     public ResponseEntity<Object> deletePostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.deletePostCategory(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -102,14 +104,15 @@ public class PostCategoryController {
     /**
      * 삭제된 카테고리 복구
      *
-     * @param postCategoryId - 삭제할 카테고리 id
-     * @return - 복구 완료 시 200
+     * @param postCategoryId 삭제할 카테고리 id
+     * @return 복구 완료 시 200
      */
     @Operation(summary = "삭제한 카테고리 복구")
     @Parameter(name = "postCategoryId", description = "복구할 카테고리 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @PutMapping("/postcategory/undel/{postCategoryId}")
     public ResponseEntity<Object> unDelete(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         postCategoryService.unDelete(postCategoryId);
         return ResponseEntity.ok().build();
     }
@@ -117,14 +120,15 @@ public class PostCategoryController {
     /**
      * 카테고리 조회
      *
-     * @param postCategoryId - 조회할 카테고리 pk
-     * @return - 조회된 카테고리
+     * @param postCategoryId 조회할 카테고리 pk
+     * @return 조회된 카테고리
      */
     @Operation(summary = "특정 카테고리 조회")
     @Parameter(name = "postCategoryId", description = "조회할 카테고리 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostCategoryDto.class)))
     @GetMapping("/{postCategoryId}")
     public ResponseEntity<ResponsePostCategoryDto> viewPostCategory(@PathVariable Long postCategoryId) {
+        log.info("postCategoryId={}", postCategoryId);
         PostCategory onePostCategory = postCategoryService.findOnePostCategory(postCategoryId);
         return ResponseEntity.ok(onePostCategory.toResponsePostCategoryDto());
     }
@@ -132,7 +136,7 @@ public class PostCategoryController {
     /**
      * 삭제되지 않은 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @Operation(summary = "삭제되지 않은 카테고리 리스트 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostCategoryDto.class))))
@@ -145,7 +149,7 @@ public class PostCategoryController {
     /**
      * 삭제된 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @Operation(summary = "삭제된 카테고리 리스트 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostCategoryDto.class))))
@@ -158,7 +162,7 @@ public class PostCategoryController {
     /**
      * 모든 카테고리 조회
      *
-     * @return - 조회된 카테고리
+     * @return 조회된 카테고리
      */
     @Operation(summary = "모든 카테고리 리스트 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostCategoryDto.class))))

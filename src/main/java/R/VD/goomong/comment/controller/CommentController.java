@@ -30,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/comments")
+@Tag(name = "댓글 api")
 public class CommentController {
 
     private final CommentService commentService;
@@ -46,11 +47,14 @@ public class CommentController {
     /**
      * 댓글 작성
      *
-     * @param requestCommentDto - 댓글 작성 request
-     * @return - 작성 완료 시 200
+     * @param requestCommentDto 댓글 작성 request
+     * @return 작성 완료 시 200
      */
+    @Operation(summary = "댓글 작성")
+    @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping("/comment")
     public ResponseEntity<Object> initComment(@Validated @RequestBody RequestCommentDto requestCommentDto) {
+        log.info("requestCommentDto={}", requestCommentDto);
         commentService.saveComment(requestCommentDto);
         return ResponseEntity.ok().build();
     }
@@ -58,15 +62,17 @@ public class CommentController {
     /**
      * 댓글 수정
      *
-     * @param commentId         - 수정할 댓글 pk
-     * @param requestCommentDto - 댓글 수정 내용
-     * @return - 수정된 댓글
+     * @param commentId         수정할 댓글 pk
+     * @param requestCommentDto 댓글 수정 내용
+     * @return 수정된 댓글
      */
     @Operation(summary = "댓글 수정")
     @Parameter(name = "commentId", description = "수정할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> updateComment(@PathVariable Long commentId, @Validated @RequestBody RequestCommentDto requestCommentDto) {
+        log.info("commentId={}", commentId);
+        log.info("requestCommentDto={}", requestCommentDto);
         Comment comment = commentService.updateComment(commentId, requestCommentDto);
         return ResponseEntity.ok(comment.toResponseCommentDto());
     }
@@ -74,14 +80,15 @@ public class CommentController {
     /**
      * 댓글 소프트딜리트
      *
-     * @param commentId - 삭제할 댓글 pk
-     * @return - 삭제 완료 시 200
+     * @param commentId 삭제할 댓글 pk
+     * @return 삭제 완료 시 200
      */
     @Operation(summary = "댓글 삭제")
     @Parameter(name = "commentId", description = "삭제할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/comment/softdel/{commentId}")
     public ResponseEntity<Object> softDeleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.softDeleteComment(commentId);
         return ResponseEntity.ok().build();
     }
@@ -89,11 +96,13 @@ public class CommentController {
     /**
      * 댓글 완전삭제
      *
-     * @param commentId - 삭제할 댓글 pk
-     * @return - 삭제 완료 시 200
+     * @param commentId 삭제할 댓글 pk
+     * @return 삭제 완료 시 200
      */
+    @Hidden
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<Object> deleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
@@ -101,14 +110,15 @@ public class CommentController {
     /**
      * 삭제된 댓글 복구
      *
-     * @param commentId - 복구할 댓글 pk
-     * @return - 복구 완료 시 200
+     * @param commentId 복구할 댓글 pk
+     * @return 복구 완료 시 200
      */
     @Operation(summary = "삭제된 댓글 복구")
     @Parameter(name = "commentId", description = "복구할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @PutMapping("/comment/undel/{commentId}")
     public ResponseEntity<Object> unDeleteComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.unDelete(commentId);
         return ResponseEntity.ok().build();
     }
@@ -116,14 +126,15 @@ public class CommentController {
     /**
      * 특정 댓글 조회
      *
-     * @param commentId - 조회할 댓글 pk
-     * @return - 조회된 댓글
+     * @param commentId 조회할 댓글 pk
+     * @return 조회된 댓글
      */
     @Operation(summary = "특정 댓글 조회")
     @Parameter(name = "commentId", description = "조회할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCommentDto.class)))
     @GetMapping("/comment/{commentId}")
     public ResponseEntity<ResponseCommentDto> viewComment(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         Comment oneComment = commentService.findOneComment(commentId);
         return ResponseEntity.ok(oneComment.toResponseCommentDto());
     }
@@ -131,24 +142,24 @@ public class CommentController {
     /**
      * 댓글 좋아요 클릭
      *
-     * @param commentId - 좋아요 클릭할 댓글 pk
-     * @return - 댓글의 좋아요 수
+     * @param commentId 좋아요 클릭할 댓글 pk
+     * @return 댓글의 좋아요 수
      */
     @Operation(summary = "댓글 좋아요 클릭")
     @Parameter(name = "commentId", description = "좋아요 클릭할 댓글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @GetMapping("/comment/like/{commentId}")
-    public ResponseEntity<Integer> increaseLike(@PathVariable Long commentId) {
+    public ResponseEntity<Object> increaseLike(@PathVariable Long commentId) {
+        log.info("commentId={}", commentId);
         commentService.increaseCommentLike(commentId);
-        Comment oneComment = commentService.findOneComment(commentId);
-        return ResponseEntity.ok(oneComment.getLikeNo());
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 삭제되지 않은 댓글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 댓글
+     * @param pageable 페이징
+     * @return 조회된 댓글
      */
     @Operation(summary = "삭제되지 않은 댓글 리스트 조회")
     @Parameters(value = {
@@ -170,8 +181,8 @@ public class CommentController {
     /**
      * 삭제된 댓글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 댓글
+     * @param pageable 페이징
+     * @return 조회된 댓글
      */
     @Operation(summary = "삭제된 댓글 리스트 조회")
     @Parameters(value = {
@@ -193,8 +204,8 @@ public class CommentController {
     /**
      * 전체 댓글 리스트(삭제된 것과 삭제 안된 것 모두 포함)
      *
-     * @param pageable - 페이징
-     * @return - 조회된 댓글
+     * @param pageable 페이징
+     * @return 조회된 댓글
      */
     @Operation(summary = "전체 댓글 리스트 조회")
     @Parameters(value = {

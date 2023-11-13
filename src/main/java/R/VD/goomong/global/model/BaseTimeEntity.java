@@ -1,24 +1,30 @@
 package R.VD.goomong.global.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime regDate;
+    @Column
+    private ZonedDateTime regDate;
 
-    @LastModifiedDate
-    private LocalDateTime chgDate;
+    @Column
+    private ZonedDateTime chgDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.regDate = ZonedDateTime.now();
+        this.chgDate = ZonedDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.chgDate = ZonedDateTime.now();
+    }
 }

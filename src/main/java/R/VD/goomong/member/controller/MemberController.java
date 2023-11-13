@@ -1,8 +1,12 @@
 package R.VD.goomong.member.controller;
 
-import R.VD.goomong.member.dto.response.ResponseMemberDto;
+import R.VD.goomong.member.dto.request.RequestLogin;
+import R.VD.goomong.member.dto.request.RequestMember;
+import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,21 +17,28 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 public class MemberController {
     private final MemberService memberService;
 
+    //CREATE
+    //회원가입
     @PostMapping("/save")
-    public void saveMember(@RequestBody Member member) {
-        memberService.save(member);
+    public ResponseEntity<Member> saveMember(@RequestBody RequestMember requestMember) {
+        memberService.save(requestMember);
+
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{memberId}")
-    public ResponseEntity<ResponseMemberDto> findOneMember(@PathVariable Long memberId) {
-        Member oneMember = memberService.findOneMember(memberId);
-        return ResponseEntity.ok(oneMember.toResponseMemberDto());
+    //READ
+    //모든 회원 정보 불러오기
+    @GetMapping("list")
+    public List<Member> getAllMembers() {
+        return memberService.getAll();
     }
 
     //회원 아이디로 회원 정보 찾기

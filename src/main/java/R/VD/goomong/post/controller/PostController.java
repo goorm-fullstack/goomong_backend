@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,7 +56,7 @@ public class PostController {
     /**
      * 게시글 소프트딜리트
      *
-     * @param postId - 삭제할 게시글 pk
+     * @param postId 삭제할 게시글 pk
      * @return 삭제 완료시 200
      */
     @Operation(summary = "게시글 삭제")
@@ -72,8 +74,8 @@ public class PostController {
     /**
      * 게시글 완전 삭제
      *
-     * @param postId - 삭제할 게시글 pk
-     * @return - 삭제 완료시 200
+     * @param postId 삭제할 게시글 pk
+     * @return 삭제 완료시 200
      */
     @Hidden
     @DeleteMapping("/post/{postId}")
@@ -88,14 +90,15 @@ public class PostController {
     /**
      * 삭제된 게시글 복구
      *
-     * @param postId - 복구할 게시글 pk
-     * @return - 복구 완료 시 200
+     * @param postId 복구할 게시글 pk
+     * @return 복구 완료 시 200
      */
     @Operation(summary = "삭제된 게시글 복구")
     @Parameter(name = "postId", description = "복구할 게시글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @PutMapping("/post/undel/{postId}")
     public ResponseEntity<Object> unDeletedPost(@PathVariable Long postId) {
+        log.info("postId={}", postId);
         postService.unDeleted(postId);
         return ResponseEntity.ok().build();
     }
@@ -103,8 +106,8 @@ public class PostController {
     /**
      * 좋아요 버튼 클릭
      *
-     * @param postId - 좋아요 클릭 할 게시글 pk
-     * @return - 해당 게시글의 좋아요 수
+     * @param postId 좋아요 클릭 할 게시글 pk
+     * @return 정상 작동 시 200
      */
     @Operation(summary = "좋아요 버튼 클릭")
     @Parameter(name = "postId", description = "좋아요 클릭할 게시글 id")
@@ -115,8 +118,7 @@ public class PostController {
         log.info("postId={}", postId);
 
         postService.increaseLikeCount(postId);
-        int postLikeNo = postService.findOnePost(postId).toResponsePostDto().getPostLikeNo();
-        return ResponseEntity.ok(postLikeNo);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -210,7 +212,9 @@ public class PostController {
     /**
      * 삭제되지 않은 게시글 조회
      *
-     * @param pageable - 페이징
+     * @param orderBy   - 정렬 옵션 | postViews, postLikeNo, regDate
+     * @param direction - asc, desc
+     * @param pageable  - 페이징
      * @return - 조회된 게시글
      */
     @Operation(summary = "삭제되지 않은 게시글 리스트 조회")
@@ -241,7 +245,7 @@ public class PostController {
     /**
      * 삭제된 게시글 조회
      *
-     * @param pageable - 페이징
+     * @param pageable 페이징
      * @return 조회된 게시글
      */
     @Operation(summary = "삭제된 게시글 조회")
@@ -264,8 +268,8 @@ public class PostController {
     /**
      * 모든 게시글 조회
      *
-     * @param pageable - 페이징
-     * @return - 조회된 게시글
+     * @param pageable 페이징
+     * @return 조회된 게시글
      */
     @Operation(summary = "모든 게시글 조회")
     @Parameters(value = {

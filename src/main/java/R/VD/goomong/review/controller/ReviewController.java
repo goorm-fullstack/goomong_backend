@@ -2,6 +2,7 @@ package R.VD.goomong.review.controller;
 
 import R.VD.goomong.review.dto.request.RequestReviewDto;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
+import R.VD.goomong.review.model.Review;
 import R.VD.goomong.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,13 +35,14 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping("/save/{itemId}")
-    public ResponseEntity<String> writeReview(
-            @PathVariable Long itemId,
-            @RequestPart RequestReviewDto requestReviewDto,
-            MultipartFile[] multipartFiles) {
-        reviewService.save(itemId, requestReviewDto, multipartFiles);
-        return ResponseEntity.ok("작성 완료");
+    private static ResponseEntity<List<ResponseReviewDto>> getListResponseEntity(Page<Review> reviews) {
+        long totalElements = reviews.getTotalElements();
+        int totalPages = reviews.getTotalPages();
+
+        return ResponseEntity.ok()
+                .header("TotalPages", String.valueOf(totalPages))
+                .header("TotalData", String.valueOf(totalElements))
+                .body(reviews.getContent().stream().map(Review::toResponseReviewDto).toList());
     }
 
     /**
