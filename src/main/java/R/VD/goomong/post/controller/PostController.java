@@ -296,6 +296,7 @@ public class PostController {
         return ResponseEntity.ok(findPost.toResponseFaqCoummunityDto());
     }
 
+    // MemberId로 게시글 조회
     @GetMapping("/memberId/{memberId}")
     private ResponseEntity<List<Object>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         Page<Post> byMemberId = postService.findByMemberId(memberId, pageable);
