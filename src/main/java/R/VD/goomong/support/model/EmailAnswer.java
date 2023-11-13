@@ -2,46 +2,40 @@ package R.VD.goomong.support.model;
 
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailAsk extends BaseTimeEntity {
+public class EmailAnswer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long emailAskId;
+    private Long emailAnswerId;
 
-    @Column
-    private String email;
-
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String content;
 
-    @Column
-    private Boolean isEmailOpened = false;
+    @OneToOne
+    @JoinColumn(name = "email_ask_id")
+    private EmailAsk emailAsk;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member admin;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "email_ask_id")
+    @JoinColumn(name = "email_answer_id")
     @Builder.Default
     private List<Files> filesList = new ArrayList<>();
-
-    @Column
-    private LocalDateTime delDate;
-
-    @OneToOne(mappedBy = "emailAsk", cascade = CascadeType.ALL, orphanRemoval = true)
-    private EmailAnswer emailAnswer;
 
 }

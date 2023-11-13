@@ -10,7 +10,7 @@ public class ResponseEmailAskListDTO {
 
     private Long emailAskId;
 
-    private String memberName;
+    private String email;
 
     private String title;
 
@@ -21,10 +21,7 @@ public class ResponseEmailAskListDTO {
     public ResponseEmailAskListDTO(EmailAsk emailAsk) {
         this.emailAskId = emailAsk.getEmailAskId();
         this.title = emailAsk.getTitle();
-        if (emailAsk.getMember() == null)
-            this.memberName = "비회원";
-        else
-            this.memberName = emailAsk.getMember().getMemberName();
+        this.email = emailAsk.getEmail();
         this.isEmailOpened = emailAsk.getIsEmailOpened();
         this.regDate = emailAsk.getRegDate();
     }
