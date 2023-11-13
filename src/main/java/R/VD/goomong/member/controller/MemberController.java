@@ -1,5 +1,6 @@
 package R.VD.goomong.member.controller;
 
+import R.VD.goomong.member.dto.request.RequestChangePassword;
 import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,7 +77,7 @@ public class MemberController {
     }
 
     //UPDATE
-// 회원 memberId로 회원 정보 수정
+    // 회원 memberId로 회원 정보 수정
     @PutMapping("/update/memberId/{memberId}")
     public ResponseEntity<Member> updateByMemberId(@PathVariable String memberId, @RequestBody RequestUpdateDto requestUpdateDto) {
         Member updatedMember = memberService.updateMemberByMemberId(memberId, requestUpdateDto);
@@ -89,6 +89,14 @@ public class MemberController {
     public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto) {
         Member updatedMember = memberService.updateMemberById(id, requestUpdateDto);
         return ResponseEntity.ok(updatedMember);
+    }
+
+    //memberId로 비밀번호 변경
+    @PutMapping("/update/password")
+    public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword){
+        Member member = memberService.changePasswordByMemberId(requestChangePassword);
+
+        return ResponseEntity.ok(member);
     }
 
     //DELETE

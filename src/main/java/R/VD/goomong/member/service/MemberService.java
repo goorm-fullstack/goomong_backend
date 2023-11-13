@@ -1,5 +1,6 @@
 package R.VD.goomong.member.service;
 
+import R.VD.goomong.member.dto.request.RequestChangePassword;
 import R.VD.goomong.member.dto.request.RequestLogin;
 import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
@@ -140,6 +141,21 @@ public class MemberService {
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);
         }
+    }
+
+    //memberId로 비밀번호 변경
+    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword){
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangePassword.getMemberId());
+
+        if(byMemberId.isPresent()){
+            Member member = byMemberId.get();
+            member.changePassword(requestChangePassword.getMemberId(), requestChangePassword.getNewPassword());
+
+            return memberRepository.save(member);
+        }
+
+        else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
 
     //DELETE

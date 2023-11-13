@@ -102,6 +102,11 @@ public class Member extends BaseTimeEntity {
         this.saleInfo = saleInfo;
     }
 
+    public void changePassword(String memberId, String memberPassword){
+        this.memberId = memberId;
+        this.memberPassword = memberPassword;
+    }
+
     //    public ResponseMemberDto toResponseMemberDto() {
 //        List<ResponsePostDto> posts = null;
 //        if (postList != null) posts = postList.stream().map(Post::toResponsePostDto).toList();
