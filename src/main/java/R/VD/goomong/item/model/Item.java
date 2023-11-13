@@ -35,18 +35,20 @@ public class Item extends BaseTimeEntity {
     private Status status;//상태값 -> RequestDto를 상황별로 만들고, 상태를 지정해야겠다.
 
     @OneToMany
+    @JoinColumn(name = "image_id")
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션
     private String describe;//설명
 
     @OneToMany
+    @JoinColumn(name = "item_category_id")
     private List<ItemCategory> itemCategories = new ArrayList<>();//카테고리 목록
 
-    @OneToMany
+    @OneToMany(mappedBy = "item")
     private List<Review> reviewList = new ArrayList<>();//리뷰 목록
 
-    @OneToMany
+    @OneToMany(mappedBy = "item")
     private List<Ask> askList = new ArrayList<>();
 
     private Float rate = 0F;//평점

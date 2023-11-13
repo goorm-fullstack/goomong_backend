@@ -1,6 +1,6 @@
 package R.VD.goomong.payment.kakao.dto;
 
-import R.VD.goomong.order.dto.request.RequestOrderDto;
+import R.VD.goomong.order.dto.request.RequestPayOrderDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -31,5 +31,5 @@ public class RequestKakaoPay {
     private String cancelURL;//취소시 리다이렉션할 주소
 
     @NotNull
-    private RequestOrderDto orderDto;
+    private RequestPayOrderDto orderDto;
 }

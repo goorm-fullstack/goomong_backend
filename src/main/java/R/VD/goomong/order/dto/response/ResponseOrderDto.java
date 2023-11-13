@@ -26,5 +26,6 @@ public class ResponseOrderDto {
         this.price = order.getPrice();
         this.address = order.getAddress();
         this.status = order.getStatus();
+        this.orderNumber = order.getOrderNumber();
     }
 }

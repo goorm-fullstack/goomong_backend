@@ -11,7 +11,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RequestOrderDto {
+public class RequestPayOrderDto {
     @NotEmpty
     @NotNull
     private List<Long> orderItem;
@@ -19,6 +19,10 @@ public class RequestOrderDto {
     @NotEmpty
     @Positive
     private Long memberId;
+
+    @NotEmpty
+    @Positive
+    private int price;
 
     private String orderNumber;
 
@@ -32,6 +36,7 @@ public class RequestOrderDto {
                 .address(address)
                 .status(Status.WAITING)
                 .orderNumber(orderNumber)
+                .price(price)
                 .build();
     }
 }
