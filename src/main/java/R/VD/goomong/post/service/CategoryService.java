@@ -12,6 +12,9 @@ import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,11 +39,8 @@ public class CategoryService {
 
         Category entity = requestCategoryDto.toEntity();
 
-        Type categoryGroup = null;
-        String requestGroup = requestCategoryDto.getCategoryGroup();
-        if (requestGroup.equals("COMMUNITY")) categoryGroup = Type.COMMUNITY;
-        if (requestGroup.equals("NOTICE")) categoryGroup = Type.NOTICE;
-        if (requestGroup.equals("EVENT")) categoryGroup = Type.EVENT;
+        Type categoryGroup = Type.COMMUNITY;
+        categoryGroup = categoryGroup.toType(requestCategoryDto.getCategoryGroup());
 
         Image image = null;
         if (categoryImage.length != 0) {
@@ -64,6 +64,9 @@ public class CategoryService {
         if (onePostCategory.getDelDate() != null)
             throw new AlreadyDeleteCategoryException("해당 id의 카테고리는 삭제된 카테고리입니다. id = " + categoryId);
 
+        Type categoryGroup = Type.COMMUNITY;
+        categoryGroup = categoryGroup.toType(requestCategoryDto.getCategoryGroup());
+
         Image image = null;
         if (categoryImage.length != 0) {
             List<Image> images = imageService.saveImage(categoryImage);
@@ -72,6 +75,7 @@ public class CategoryService {
 
         Category build = onePostCategory.toBuilder()
                 .categoryName(requestCategoryDto.getCategoryName())
+                .categoryGroup(categoryGroup)
                 .image(image)
                 .build();
 
@@ -118,30 +122,63 @@ public class CategoryService {
         return category;
     }
 
+    // 삭제되지 않은 카테고리 중 카테고리 이름으로 카테고리 리스트 조회
+    public Page<Category> listOfNotDeletedAndName(String categoryName, Pageable pageable) {
+        Page<Category> all = categoryRepository.findAll(pageable);
+        List<Category> list = new ArrayList<>();
+
+        for (Category category : all) {
+            if (category.getCategoryName().equals(categoryName) && category.getDelDate() == null) list.add(category);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 삭제된 카테고리 중 카테고리 이름으로 카테고리 리스트 조회
+    public Page<Category> listOfDeletedAndName(String categoryName, Pageable pageable) {
+        Page<Category> all = categoryRepository.findAll(pageable);
+        List<Category> list = new ArrayList<>();
+
+        for (Category category : all) {
+            if (category.getCategoryName().equals(categoryName) && category.getDelDate() != null) list.add(category);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 카테고리 이름으로 전체 카테고리 리스트 조회
+    public Page<Category> listOfAllAndName(String categoryName, Pageable pageable) {
+        Page<Category> all = categoryRepository.findAll(pageable);
+        List<Category> list = new ArrayList<>();
+
+        for (Category category : all) {
+            if (category.getCategoryName().equals(categoryName)) list.add(category);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 삭제되지 않은 카테고리 조회
-    public List<Category> listOfNotDeleted() {
-        List<Category> all = categoryRepository.findAll();
+    public Page<Category> listOfNotDeleted(Pageable pageable) {
+        Page<Category> all = categoryRepository.findAll(pageable);
         List<Category> list = new ArrayList<>();
 
         for (Category category : all) {
             if (category.getDelDate() == null) list.add(category);
         }
-        return list;
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 삭제된 게시글 카테고리 조회
-    public List<Category> listOfDeleted() {
-        List<Category> all = categoryRepository.findAll();
+    public Page<Category> listOfDeleted(Pageable pageable) {
+        Page<Category> all = categoryRepository.findAll(pageable);
         List<Category> list = new ArrayList<>();
 
         for (Category category : all) {
             if (category.getDelDate() != null) list.add(category);
         }
-        return list;
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     // 전체 게시글 카테고리 조회
-    public List<Category> allList() {
-        return categoryRepository.findAll();
+    public Page<Category> allList(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
     }
 }

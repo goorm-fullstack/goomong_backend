@@ -1,10 +1,9 @@
 package R.VD.goomong.post.dto.request;
 
+import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.model.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -24,9 +23,9 @@ public class RequestPostDto {
     @Schema(description = "카테고리 id", example = "1")
     private Long postCategoryId;
 
-    @Enumerated(EnumType.STRING)
+    @EnumValue(enumClass = Type.class)
     @Schema(description = "게시글 종류(예: FAQ, 커뮤니티)", implementation = Type.class, required = true)
-    private Type postType;
+    private String postType;
 
     @NotBlank
     @Schema(description = "게시글 제목", example = "제목입니다")
@@ -38,7 +37,6 @@ public class RequestPostDto {
 
     public Post toEntity() {
         return Post.builder()
-                .postType(postType)
                 .postTitle(postTitle)
                 .postContent(postContent)
                 .postViews(0)

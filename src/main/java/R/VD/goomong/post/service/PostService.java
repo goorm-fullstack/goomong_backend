@@ -52,6 +52,9 @@ public class PostService {
                 throw new AlreadyDeleteCategoryException("해당 id의 카테고리는 이미 삭제된 카테고리입니다. id = " + category.getId());
         }
 
+        Type type = Type.EVENT;
+        type = type.toType(requestPostDto.getPostType());
+
         List<Image> imageList = entity.getImageList();
         if (images.length != 0) imageList = imageService.saveImage(images);
 
@@ -61,6 +64,7 @@ public class PostService {
         Post build = entity.toBuilder()
                 .member(member)
                 .postCategory(category)
+                .postType(type)
                 .imageList(imageList)
                 .fileList(fileList)
                 .build();
@@ -80,6 +84,9 @@ public class PostService {
                 throw new AlreadyDeleteCategoryException("해당 id의 카테고리는 이미 삭제된 카테고리입니다. id = " + originCategory.getId());
         }
 
+        Type type = Type.EVENT;
+        type = type.toType(requestPostDto.getPostType());
+
         List<Image> imageList = origin.getImageList();
         if (images.length != 0) imageList = imageService.saveImage(images);
 
@@ -90,6 +97,7 @@ public class PostService {
                 .postCategory(originCategory)
                 .postTitle(requestPostDto.getPostTitle())
                 .postContent(requestPostDto.getPostContent())
+                .postType(type)
                 .fileList(filesList)
                 .imageList(imageList)
                 .build();
@@ -164,45 +172,54 @@ public class PostService {
     }
 
     // 삭제되지 않은 게시글 중 게시글 종류로 조회(커뮤니티/공지사항/이벤트)
-    public Page<Post> listOfNotDeletedAndType(Type type, Pageable pageable) {
+    public Page<Post> listOfNotDeletedAndType(String type, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
+        Type t = Type.COMMUNITY;
+        t = t.toType(type);
+
         for (Post post : all) {
-            if (post.getPostType().equals(type) && post.getDelDate() == null) list.add(post);
+            if (post.getPostType().equals(t) && post.getDelDate() == null) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
 
     // 삭제된 게시글 중 게시글 종류로 조회(커뮤니티/공지사항/이벤트)
-    public Page<Post> listOfDeletedAndType(Type type, Pageable pageable) {
+    public Page<Post> listOfDeletedAndType(String type, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
+        Type t = Type.COMMUNITY;
+        t = t.toType(type);
+
         for (Post post : all) {
-            if (post.getPostType().equals(type) && post.getDelDate() != null) list.add(post);
+            if (post.getPostType().equals(t) && post.getDelDate() != null) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
 
     // 게시글 종류로 전체 리스트 조회(커뮤니티/공지사항/이벤트)
-    public Page<Post> listOfAllAndType(Type type, Pageable pageable) {
+    public Page<Post> listOfAllAndType(String type, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
+        Type t = Type.COMMUNITY;
+        t = t.toType(type);
+
         for (Post post : all) {
-            if (post.getPostType().equals(type)) list.add(post);
+            if (post.getPostType().equals(t)) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
 
     // 삭제되지 않은 게시글 중 게시글 카테고리로 조회(커뮤니티)
-    public Page<Post> listOfNotDeletedAndCategory(String categoryName, Pageable pageable) {
+    public Page<Post> listOfNotDeletedAndCategory(String category, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getDelDate() == null)
+            if (post.getPostCategory().getCategoryName().equals(category) && post.getDelDate() == null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());

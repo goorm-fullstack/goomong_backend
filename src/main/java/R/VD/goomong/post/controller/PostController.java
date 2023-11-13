@@ -1,5 +1,6 @@
 package R.VD.goomong.post.controller;
 
+import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.model.Post;
@@ -207,7 +208,7 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/notdeleted/{type}")
+    @GetMapping("/notdeletedtype/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type.toString());
@@ -233,7 +234,7 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/deleted/{type}")
+    @GetMapping("/deletedtype/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfDeletedAndType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type.toString());
@@ -259,10 +260,10 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/{type}")
+    @GetMapping("/alltype/{type}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
-    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@PathVariable Type type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("type={}", type.toString());
+    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("type={}", type);
         Page<Post> posts = postService.listOfAllAndType(type, pageable);
         return getListResponseEntity(posts);
     }
@@ -276,7 +277,7 @@ public class PostController {
      */
     @Operation(summary = "삭제되지 않은 게시글 중 카테고리에 따라 게시글 리스트 조회")
     @Parameters(value = {
-            @Parameter(name = "category", description = "카테고리"),
+            @Parameter(name = "category", description = "카테고리 이름", example = "카테고리 이름"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
@@ -285,7 +286,7 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/notdeleted/{category}")
+    @GetMapping("/notdeletedcategory/{category}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
@@ -302,7 +303,7 @@ public class PostController {
      */
     @Operation(summary = "삭제된 게시글 중 카테고리에 따라 게시글 리스트 조회")
     @Parameters(value = {
-            @Parameter(name = "category", description = "카테고리"),
+            @Parameter(name = "category", description = "카테고리 이름", example = "카테고리 이름"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
@@ -311,7 +312,7 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/deleted/{category}")
+    @GetMapping("/deletedcategory/{category}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
@@ -328,7 +329,7 @@ public class PostController {
      */
     @Operation(summary = "카테고리에 따라 게시글 전체 리스트 조회")
     @Parameters(value = {
-            @Parameter(name = "category", description = "카테고리"),
+            @Parameter(name = "category", description = "카테고리 이름", example = "카테고리 이름"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
@@ -337,7 +338,7 @@ public class PostController {
             @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
             @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
     })
-    @GetMapping("/{category}")
+    @GetMapping("/allcategory/{category}")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
