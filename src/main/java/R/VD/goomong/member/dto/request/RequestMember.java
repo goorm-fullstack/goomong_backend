@@ -31,7 +31,7 @@ public class RequestMember {
 
     private Long memberLoginFailed = 0L; // 기본값 0으로 설정
 
-    private Boolean isKakao = true;
+    private Boolean isKakao = false;
 
     @Builder(toBuilder = true)
     public RequestMember(Boolean isKakao, Long memberLoginFailed, String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {

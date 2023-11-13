@@ -1,5 +1,6 @@
 package R.VD.goomong.post.controller;
 
+import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.response.ResponseFaqCommunityPostDto;
 import R.VD.goomong.post.dto.response.ResponseItemPostDto;
 import R.VD.goomong.post.model.Post;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -292,5 +294,12 @@ public class PostController {
         Post findPost = postService.findOnePost(postId);
         if (findPost.getItem() != null) return ResponseEntity.ok(findPost.toResponseItemPostDto());
         return ResponseEntity.ok(findPost.toResponseFaqCoummunityDto());
+    }
+
+    @GetMapping("/memberId/{memberId}")
+    private ResponseEntity<List<Object>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<Post> byMemberId = postService.findByMemberId(memberId, pageable);
+
+        return getListResponseEntity(byMemberId);
     }
 }

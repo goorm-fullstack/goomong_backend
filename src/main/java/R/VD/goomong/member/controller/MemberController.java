@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,7 +30,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 public class MemberController {
+
     private final MemberService memberService;
+
+    @Value("${cos.key}")
+    private String cosKey;
 
     //CREATE
     //회원가입
@@ -129,7 +134,7 @@ public class MemberController {
 
     //카카오톡 로그인
     @GetMapping("/kakao/callback")
-    public String kakaoCallBack(@RequestParam String code) {
+    public String kakaoCallBack(@RequestParam String code, HttpServletResponse response3) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -186,10 +191,41 @@ public class MemberController {
         System.out.println("카카오 이메일: " + kakaoProfile.getKakao_account().getEmail());
         System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId());
         System.out.println("블로그서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
-        UUID fakePassword = UUID.randomUUID();
-        System.out.println("블로그서버 패스워드: " + fakePassword);
+        System.out.println("블로그서버 패스워드: " + cosKey);
 
-        return kakaoProfile.getKakao_account().getEmail();
+        Member kakaoMember = Member.builder()
+                .memberId(String.valueOf(kakaoProfile.getId()))
+                .memberPassword(cosKey)
+                .memberName(kakaoProfile.properties.nickname)
+                .memberEmail(kakaoProfile.getKakao_account().getEmail())
+                .isKakao(true)
+                .build();
+
+        Member byMemberId = memberService.findByMemberId(kakaoMember.getMemberId());
+
+        if (byMemberId == null || byMemberId.getMemberId() == null) {
+            System.out.println("기존 회원이 아님. 자동 회원가입 진행.");
+            RequestMember requestMember = new RequestMember();
+            requestMember.setMemberId(String.valueOf(kakaoProfile.getId()));
+            requestMember.setMemberPassword(cosKey);
+            requestMember.setMemberName(kakaoProfile.properties.nickname);
+            requestMember.setMemberEmail(kakaoProfile.getKakao_account().getEmail());
+            requestMember.setIsKakao(true);
+
+            memberService.save(requestMember);
+        }
+
+        System.out.println("자동 로그인 진행.");
+        RequestLogin requestLogin = new RequestLogin();
+        requestLogin.setMemberId(String.valueOf(kakaoProfile.getId()));
+        requestLogin.setMemberPassword(cosKey);
+        memberService.memberLogin(requestLogin);
+
+        Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
+        cookie.setMaxAge(60*30);
+        response3.addCookie(cookie);
+
+        return "자동 회원가입 및 로그인 진행 완료";
     }
 
 }

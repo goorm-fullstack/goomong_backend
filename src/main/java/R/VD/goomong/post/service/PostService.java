@@ -1,5 +1,6 @@
 package R.VD.goomong.post.service;
 
+import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.exception.AlreadyDeletePostException;
 import R.VD.goomong.post.exception.NotDeletedPostException;
 import R.VD.goomong.post.exception.NotExistPostException;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
     // 게시글 소프트딜리트
     public void softDeletePost(Long postId) {
@@ -122,5 +124,18 @@ public class PostService {
     // 전체 게시글 조회
     public Page<Post> allList(Pageable pageable) {
         return postRepository.findAll(pageable);
+    }
+
+    //회원 아이디로 게시글 조회
+    public Page<Post> findByMemberId(Long id, Pageable pageable){
+        Page<Post> all = postRepository.findAllByMemberId(id, pageable);
+        List<Post> list = new ArrayList<>();
+
+        for(Post post : all){
+            if(post.getDelDate()!= null)
+                list.add(post);
+        }
+
+        return new PageImpl<>(list, pageable, list.size());
     }
 }
