@@ -22,7 +22,7 @@ public class RankingSupportRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Tuple> calculateSellerRanking(LocalDateTime start, LocalDateTime end, String categoryTitle, String sortBy) {
+    public List<Tuple> calculateSellerRanking(String categoryTitle, String sortBy) {
 
         JPAQuery<Tuple> query = jpaQueryFactory
                 .select(member, itemCategory.title, item.countDistinct(), order.price.sum(), review.id.count())
@@ -31,8 +31,7 @@ public class RankingSupportRepository {
                 .join(order.orderItem, item)
                 .leftJoin(item.reviewList, review)
                 .join(item.itemCategories, itemCategory)
-                .where(order.status.eq(Status.COMPLETE)
-                        .and(order.regDate.between(start, end)));
+                .where(order.status.eq(Status.COMPLETE));
 
         if (categoryTitle != null && !categoryTitle.trim().isEmpty()) {
             query.where(itemCategory.title.eq(categoryTitle));

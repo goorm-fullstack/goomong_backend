@@ -8,9 +8,9 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,21 +19,16 @@ public class Ranking extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long rankingId;
+    private Long rankingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Member member;
 
-    private String itemCategoryTitle;
-
-    private Long salesCount;
-
-    private Long totalSales;
-
-    private Long reviewCount;
+    private Long count;
 
     @Enumerated(EnumType.STRING)
-    private RankingPeriod period;
+    private RankingType rankingType;
 
     private LocalDateTime delDate;
+
 }

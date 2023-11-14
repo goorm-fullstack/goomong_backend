@@ -1,7 +1,7 @@
 package R.VD.goomong.ranking.dto.response;
 
+import R.VD.goomong.ranking.model.Ranking;
 import R.VD.goomong.ranking.model.RankingType;
-import R.VD.goomong.ranking.model.TopSellerRanking;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseTopSellerRanking {
+public class ResponseMonthTopRanking {
 
     private Long memberId;
 
@@ -21,7 +21,7 @@ public class ResponseTopSellerRanking {
 
     private RankingType type;
 
-    public ResponseTopSellerRanking(TopSellerRanking ranking) {
+    public ResponseMonthTopRanking(Ranking ranking) {
         this.memberId = ranking.getMember().getId();
         this.memberName = ranking.getMember().getMemberName();
         this.count = ranking.getCount();
