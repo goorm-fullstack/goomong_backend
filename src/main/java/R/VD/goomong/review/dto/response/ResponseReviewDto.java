@@ -21,6 +21,15 @@ public class ResponseReviewDto {
     @Schema(description = "작성자 아이디", example = "아이디")
     private String memberId;//작성자
 
+    @Schema(description = "상품 id", example = "1")
+    private Long itemId; // 상품 id
+
+    @Schema(description = "상품 카테고리", example = "카테고리")
+    private String itemCategory; // 상품 카테고리
+
+    @Schema(description = "상품 이름", example = "상품 이름")
+    private String itemName; // 상품 이름
+
     @ArraySchema(schema = @Schema(description = "업로드한 이미지 리스트", implementation = Image.class))
     private List<Image> imageList; // 이미지
 

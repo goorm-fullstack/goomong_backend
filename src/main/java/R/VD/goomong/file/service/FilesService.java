@@ -44,7 +44,7 @@ public class FilesService {
         return result;
     }
 
-    // 파일 다운로드
+    // 파일 이름으로 파일 다운로드
     public File downloadFile(String fileName) {
         Files files = filesRepository.findByFileName(fileName).orElseThrow(() -> new NotExistFileException("해당 이름의 파일을 찾을 수 없습니다. fileName = " + fileName));
         return new File(files.getPath());
