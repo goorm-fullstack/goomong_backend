@@ -34,7 +34,7 @@ public class EmailAnswer extends BaseTimeEntity {
     private Member admin;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "email_answer_id")
+    @JoinColumn(name = "files_id")
     @Builder.Default
     private List<Files> filesList = new ArrayList<>();
 

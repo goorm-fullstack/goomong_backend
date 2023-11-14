@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -65,7 +67,12 @@ public class ChatMessageService {
                 .orElseThrow(() -> new ChatNotFoundException("채팅방 " + roomId + " 은 존재하지 않습니다."));
         Member sender = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ChatNotFoundException("멤버 " + memberId + " 은 존재하지 않습니다."));
-        List<Image> images = imageService.saveImage(chatImageDTO.getImage());
+
+        List<Image> images = new ArrayList<>();
+
+        MultipartFile[] uploadImage = chatImageDTO.getImage();
+        if (uploadImage != null && uploadImage.length > 0)
+            images = imageService.saveImage(uploadImage);
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .member(sender)

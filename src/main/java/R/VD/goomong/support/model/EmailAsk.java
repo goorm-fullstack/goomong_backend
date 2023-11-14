@@ -34,7 +34,7 @@ public class EmailAsk extends BaseTimeEntity {
     private Boolean isEmailOpened = false;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "email_ask_id")
+    @JoinColumn(name = "files_id")
     @Builder.Default
     private List<Files> filesList = new ArrayList<>();
 

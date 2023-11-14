@@ -45,7 +45,7 @@ public class SupportController {
     }
 
     @PostMapping("/email-asks")
-    public ResponseEntity<Object> saveEmailAsk(@RequestBody RequestEmailAskDTO requestEmailAskDTO) {
+    public ResponseEntity<Object> saveEmailAsk(@ModelAttribute RequestEmailAskDTO requestEmailAskDTO) {
 
         log.info(requestEmailAskDTO.toString());
 

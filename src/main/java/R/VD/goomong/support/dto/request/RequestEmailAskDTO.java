@@ -1,6 +1,7 @@
 package R.VD.goomong.support.dto.request;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -14,5 +15,7 @@ public class RequestEmailAskDTO {
     private String title;
 
     private String content;
+
+    private MultipartFile[] files;
 
 }
