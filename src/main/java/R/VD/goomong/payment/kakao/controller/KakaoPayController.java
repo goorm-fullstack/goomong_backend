@@ -1,6 +1,6 @@
 package R.VD.goomong.payment.kakao.controller;
 
-import R.VD.goomong.order.dto.request.RequestOrderDto;
+import R.VD.goomong.order.dto.request.RequestPayOrderDto;
 import R.VD.goomong.payment.kakao.dto.RequestKakaoPay;
 import R.VD.goomong.payment.kakao.exception.ExceptionCode;
 import R.VD.goomong.payment.kakao.exception.KakaoPayLogicException;
@@ -68,10 +68,9 @@ public class KakaoPayController {
             @RequestParam("pg_token") String pgToken,
             @RequestParam("partner_order_id") String orderNumber,
             @RequestParam("partner_user_id") String userId,
-            @SessionAttribute(name = "order", required = false) RequestOrderDto orderDto,
+            @SessionAttribute(name = "order", required = false) RequestPayOrderDto orderDto,
             SessionStatus status
     ) {
-        System.out.println(orderDto.toString());
         return ResponseEntity.ok(kakaoPayService.approveResponse(pgToken, orderNumber, userId, orderDto, status));
     }
 

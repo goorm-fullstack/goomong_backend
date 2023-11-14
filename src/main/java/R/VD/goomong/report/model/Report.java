@@ -64,13 +64,14 @@ public class Report extends BaseTimeEntity {
     private LocalDateTime delDate;
 
     public ResponseReportDto toResponseReportDto() {
+
         return ResponseReportDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .post(post != null ? post.toResponsePostDto() : null)
-                .comment(comment != null ? comment.toResponseCommentDto() : null)
-                .review(review != null ? review.toResponseReviewDto() : null)
-                .ask(ask != null ? ask.toResponseAskDto() : null)
+                .postId(post != null ? post.getId() : null)
+                .commentId(comment != null ? comment.getId() : null)
+                .reviewId(review != null ? review.getId() : null)
+                .askId(ask != null ? ask.getId() : null)
                 .filesList(filesList)
                 .reportReason(reportReason)
                 .reportCheck(reportCheck)

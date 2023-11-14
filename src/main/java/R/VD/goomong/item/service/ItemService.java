@@ -12,9 +12,11 @@ import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.item.repository.ItemCategoryRepository;
 import R.VD.goomong.item.repository.ItemRepository;
+import R.VD.goomong.member.exception.NotFoundMember;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +34,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ImageService imageService;
     private final ItemCategoryRepository categoryRepository;
+    private final MemberRepository memberRepository;
 
 
     // 아이템 저장
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
-        saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
+        saveItem(multipartFiles, itemDto, itemDto.getItemCategories());
     }
 
     // 아이템 찾기
@@ -45,47 +48,53 @@ public class ItemService {
         return new ResponseItemDto(item);
     }
 
-    public Page<ResponseItemDto> findAll(Pageable pageable) {
-        Page<Item> items = itemRepository.findAll(pageable);
-        List<Item> itemList = items.getContent();
-        List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
-        return new PageImpl<>(list, pageable, list.size());
+    // 전체 아이템 찾기
+    public List<ResponseItemDto> findAll() {
+        List<Item> items = itemRepository.findAll();
+        return items.stream().map(ResponseItemDto::new).toList();
     }
 
     // 판매 조회
-    // 11/09 PageNation 수정 (송정우)
-    public Page<ResponseItemDto> findAllBySale(Pageable pageable) {
+    public List<ResponseItemDto> findAllBySale(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE.toString(), pageable);
-        List<Item> itemList = items.getContent();
-        List<ResponseItemDto> list = itemList.stream().map(ResponseItemDto::new).toList();
-        return new PageImpl<>(list, pageable, list.size());
+        List<ResponseItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseItemDto(item));
+        }
+
+        return result;
     }
 
     // 재능 기부 조회
-    // 11/09 PageNation 수정 (송정우)
-    public Page<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE.toString(), pageable);
-        List<Item> itemList = items.getContent();
-        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
-        return new PageImpl<>(list, pageable, list.size());
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+
+        return result;
     }
 
     // 구인 조회
-    // 11/09 PageNation 수정 (송정우)
-    public Page<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE.toString(), pageable);
-        List<Item> itemList = items.getContent();
-        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
-        return new PageImpl<>(list, pageable, list.size());
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+        return result;
     }
 
     // 구인 조회
-    // 11/09 PageNation 수정 (송정우)
-    public Page<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
+    public List<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED.toString(), pageable);
-        List<Item> itemList = items.getContent();
-        List<ResponseNonSaleItemDto> list = itemList.stream().map(ResponseNonSaleItemDto::new).toList();
-        return new PageImpl<>(list, pageable, list.size());
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+
+        return result;
     }
 
     // 아이템 삭제
@@ -110,7 +119,8 @@ public class ItemService {
     }
 
     // 공통 아이템 저장 함수
-    private void saveItem(MultipartFile[] multipartFiles, Item entity, List<Long> itemCategories) {
+    private void saveItem(MultipartFile[] multipartFiles, RequestItemDto entity, List<Long> itemCategories) {
+        Item item = entity.toEntity();
         List<Image> imageList = imageService.saveImage(multipartFiles);
         List<ItemCategory> categories = new ArrayList<>();
         for (Long categoryId : itemCategories) {
@@ -118,9 +128,14 @@ public class ItemService {
             findCategory.ifPresent(categories::add);
         }
 
-        entity.setItemCategories(categories);
-        entity.setThumbNailList(imageList);
-        itemRepository.save(entity);
+        Optional<Member> member = memberRepository.findById(entity.getMemberId());
+        if (member.isEmpty())
+            throw new NotFoundMember();
+
+        item.setMember(member.get());
+        item.setItemCategories(categories);
+        item.setThumbNailList(imageList);
+        itemRepository.save(item);
     }
 
     //수정된 데이터로 DB 업데이트

@@ -13,11 +13,14 @@ public class RequestLogin {
 
     private String memberPassword;
 
+    private Long memberLoginFailed;
+
 
     @Builder
-    public RequestLogin(String memberId, String memberPassword) {
+    public RequestLogin(String memberId, String memberPassword, Long memberLoginFailed) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
+        this.memberLoginFailed = memberLoginFailed;
     }
 
     public Member toEntity() {

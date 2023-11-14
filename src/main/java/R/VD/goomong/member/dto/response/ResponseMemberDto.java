@@ -1,9 +1,6 @@
 package R.VD.goomong.member.dto.response;
 
-import R.VD.goomong.post.dto.response.ResponsePostDto;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Builder(toBuilder = true)
@@ -13,5 +10,6 @@ public class ResponseMemberDto {
 
     private Long id;
     private String memberId;
-    private List<ResponsePostDto> posts;
+    // todo: 동규님꼐 전달 -> post내용 바껴서 수정 필요
+//    private List<ResponseItemPostDto> posts;
 }

@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    Page<Item> findAllByStatus(String status, Pageable pageable);
 
     Page<Item> findAllByDelDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
+    Page<Item> findAllByStatus(String status, Pageable pageable);
 }

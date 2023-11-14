@@ -19,12 +19,14 @@ public class RequestItemDto {
     @NotEmpty
     @NotNull
     private String describe;//설명
-    
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;//아이템 상태값
 
     private int price;
+
+    private Long memberId;
 
     @NotEmpty
     private List<Long> itemCategories;//카테고리 목록

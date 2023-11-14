@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,7 +57,7 @@ public class AskController {
      * @return 생성 완료 시 200
      */
     @Operation(summary = "문의글 생성")
-    @Parameter(name = "files", description = "사용자가 등록한 파일")
+    @Parameter(name = "files", description = "사용자가 등록한 파일", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/ask", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initAsk(@Validated @ModelAttribute RequestAskDto requestAskDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -73,7 +75,7 @@ public class AskController {
      * @return 생성 완료 시 200
      */
     @Operation(summary = "답변글 생성")
-    @Parameter(name = "files", description = "사용자가 등록한 파일")
+    @Parameter(name = "files", description = "사용자가 등록한 파일", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/answer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initAnswer(@Validated @ModelAttribute RequestAnswerDto requestAnswerDto, @RequestParam(required = false) MultipartFile[] files) {
@@ -93,8 +95,8 @@ public class AskController {
      */
     @Operation(summary = "문의글 수정")
     @Parameters(value = {
-            @Parameter(name = "askId", description = "수정할 문의글의 id", schema = @Schema(type = "Long")),
-            @Parameter(name = "files", description = "사용자가 올린 파일", schema = @Schema(type = "array[MultipartFile]"))
+            @Parameter(name = "askId", description = "수정할 문의글의 id"),
+            @Parameter(name = "files", description = "사용자가 올린 파일", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAskDto.class)))
     @PutMapping(value = "/ask/{askId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -116,8 +118,8 @@ public class AskController {
      */
     @Operation(summary = "답글 수정")
     @Parameters(value = {
-            @Parameter(name = "answerId", description = "수정할 답변글 id", schema = @Schema(type = "Long")),
-            @Parameter(name = "files", description = "사용자가 업로드한 파일", schema = @Schema(type = "array[MultipartFile]"))
+            @Parameter(name = "answerId", description = "수정할 답변글 id"),
+            @Parameter(name = "files", description = "사용자가 업로드한 파일", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAnswerDto.class)))
     @PutMapping(value = "/answer/{answerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -136,7 +138,7 @@ public class AskController {
      * @return 삭제 완료 시 200
      */
     @Operation(summary = "문의글 소프트딜리트")
-    @Parameter(name = "askId", description = "삭제할 문의글 id", schema = @Schema(type = "Long"))
+    @Parameter(name = "askId", description = "삭제할 문의글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @DeleteMapping("/ask/softdel/{askId}")
     public ResponseEntity<Object> softDelete(@PathVariable Long askId) {
@@ -161,8 +163,14 @@ public class AskController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(description = "삭제된 문의글 복구")
-    @Parameter(name = "askId", description = "복구할 문의글 id", schema = @Schema(type = "Long"))
+    /**
+     * 삭제된 문의글 복구
+     *
+     * @param askId 복구할 글 pk
+     * @return 복구 완료 시 200
+     */
+    @Operation(summary = "삭제된 문의글 복구")
+    @Parameter(name = "askId", description = "복구할 문의글 id")
     @ApiResponse(responseCode = "200", description = "성공")
     @PutMapping("/ask/undel/{askId}")
     public ResponseEntity<Object> undelete(@PathVariable Long askId) {
@@ -177,7 +185,7 @@ public class AskController {
      * @return 조회된 문의글
      */
     @Operation(summary = "특정 문의글 조회")
-    @Parameter(name = "askId", description = "조회할 문의글 id", schema = @Schema(type = "Long"))
+    @Parameter(name = "askId", description = "조회할 문의글 id")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAskDto.class)))
     @GetMapping("/ask/{askId}")
     public ResponseEntity<ResponseAskDto> viewAsk(@PathVariable Long askId) {
@@ -196,9 +204,13 @@ public class AskController {
     @Operation(summary = "삭제되지 않은 문의글 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAskDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -216,9 +228,13 @@ public class AskController {
     @Operation(summary = "삭제된 문의글 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAskDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("/del")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -236,9 +252,13 @@ public class AskController {
     @Operation(summary = "전체 문의글 조회")
     @Parameters(value = {
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int"))
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAskDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
+            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
+            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
+    })
     @GetMapping("all")
     @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {

@@ -4,7 +4,6 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import jakarta.persistence.*;
@@ -50,26 +49,30 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false)
     private Float rate;//평점
 
+    @Column(nullable = false)
+    private int likeNo; // 좋아요
+
     @Column
     private LocalDateTime delDate;
 
     public ResponseReviewDto toResponseReviewDto() {
 
-        List<ResponseReportDto> reports = new ArrayList<>();
+        List<Long> reports = new ArrayList<>();
         for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.toResponseReportDto());
+            if (report.getDelDate() == null) reports.add(report.getId());
         }
 
         return ResponseReviewDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
                 .imageList(imageList)
-                .reportList(reports)
+                .reportIdList(reports)
                 .title(title)
                 .content(content)
                 .regDate(this.getRegDate())
                 .delDate(delDate)
                 .rate(rate)
+                .likeNo(likeNo)
                 .build();
     }
 }

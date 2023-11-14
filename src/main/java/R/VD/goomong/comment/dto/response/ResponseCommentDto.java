@@ -1,5 +1,6 @@
 package R.VD.goomong.comment.dto.response;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -19,10 +20,10 @@ public class ResponseCommentDto {
     @Schema(description = "작성자 회원 id", example = "아이디")
     private String memberId;
 
-    @Schema(description = "대댓글 리스트", implementation = ResponseCommentDto.class)
+    @ArraySchema(schema = @Schema(description = "대댓글 리스트", implementation = ResponseCommentDto.class))
     private List<ResponseCommentDto> childrenComment;
 
-    @Schema(description = "신고 id 리스트", type = "List", example = "[1, 2]")
+    @ArraySchema(schema = @Schema(description = "신고 id 리스트", implementation = Long.class))
     private List<Long> reportIdList;
 
     @Schema(description = "댓글 내용", example = "내용입니다.")

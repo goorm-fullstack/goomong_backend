@@ -20,10 +20,6 @@ public class RequestOrderDto {
     @Positive
     private Long memberId;
 
-    @NotEmpty
-    @Positive
-    private int price;
-
     private String orderNumber;
 
     @NotEmpty
@@ -35,7 +31,7 @@ public class RequestOrderDto {
                 .orderNumber(orderNumber)
                 .address(address)
                 .status(Status.WAITING)
-                .price(price)
+                .orderNumber(orderNumber)
                 .build();
     }
 }
