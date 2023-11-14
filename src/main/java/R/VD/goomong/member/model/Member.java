@@ -2,6 +2,7 @@ package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
@@ -59,7 +60,7 @@ public class Member extends BaseTimeEntity {
     private String saleDetailAddress;                            //판매자 상세 주소
 
     @Column(nullable = false)
-    private String memberRole;                                //권한
+    private String memberRole;                                   //권한
 
     @Column(nullable = false)
     private Long memberLoginFailed;                              //로그인 실패 횟수
@@ -68,6 +69,10 @@ public class Member extends BaseTimeEntity {
     private Boolean isKakao;                                    //카카오 아이디인가?
 
     private String saleInfo;                                      //판매자 소개
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image profileImage;                                 //프로필 이미지
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -88,7 +93,7 @@ public class Member extends BaseTimeEntity {
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
-    public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
+    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -105,6 +110,11 @@ public class Member extends BaseTimeEntity {
     public void changePassword(String memberId, String memberPassword){
         this.memberId = memberId;
         this.memberPassword = memberPassword;
+    }
+
+    public void changeEmail(String memberId, String memberEmail) {
+        this.memberId = memberId;
+        this.memberPassword = memberEmail;
     }
 
     //    public ResponseMemberDto toResponseMemberDto() {

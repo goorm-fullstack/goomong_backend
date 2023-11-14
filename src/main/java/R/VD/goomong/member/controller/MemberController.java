@@ -1,9 +1,6 @@
 package R.VD.goomong.member.controller;
 
-import R.VD.goomong.member.dto.request.RequestChangePassword;
-import R.VD.goomong.member.dto.request.RequestLogin;
-import R.VD.goomong.member.dto.request.RequestMember;
-import R.VD.goomong.member.dto.request.RequestUpdateDto;
+import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
@@ -95,6 +92,13 @@ public class MemberController {
     @PutMapping("/update/password")
     public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword){
         Member member = memberService.changePasswordByMemberId(requestChangePassword);
+
+        return ResponseEntity.ok(member);
+    }
+
+    @PutMapping("/update/email")
+    public ResponseEntity<Member> updateEmailByMemberId(@RequestBody RequestChangeEmail requestChangeEmail) {
+        Member member = memberService.changeEmailByMemberId(requestChangeEmail);
 
         return ResponseEntity.ok(member);
     }

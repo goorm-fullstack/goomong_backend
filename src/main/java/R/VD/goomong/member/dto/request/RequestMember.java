@@ -1,5 +1,6 @@
 package R.VD.goomong.member.dto.request;
 
+import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class RequestMember {
 
 
     @Builder(toBuilder = true)
-    public RequestMember(String saleInfo, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao) {
+    public RequestMember(String saleInfo, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, Image profileImage) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;

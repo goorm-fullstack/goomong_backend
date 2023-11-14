@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RequestChangePassword {
+public class RequestChangeEmail {
     private String memberId;
-    private String memberPassword;
+    private String memberEmail;
 
     @Builder
-    public RequestChangePassword(String memberId, String memberPassword) {
+    public RequestChangeEmail(String memberId, String memberEmail) {
         this.memberId = memberId;
-        this.memberPassword = memberPassword;
+        this.memberEmail = memberEmail;
     }
 }

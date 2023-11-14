@@ -1,9 +1,7 @@
 package R.VD.goomong.member.service;
 
-import R.VD.goomong.member.dto.request.RequestChangePassword;
-import R.VD.goomong.member.dto.request.RequestLogin;
-import R.VD.goomong.member.dto.request.RequestMember;
-import R.VD.goomong.member.dto.request.RequestUpdateDto;
+import R.VD.goomong.image.service.ImageService;
+import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
@@ -28,6 +26,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
+    private final ImageService imageService;
 
     //CREATE
     //아이디 중복 체크
@@ -123,7 +122,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
@@ -136,7 +135,7 @@ public class MemberService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);
@@ -149,11 +148,25 @@ public class MemberService {
 
         if(byMemberId.isPresent()){
             Member member = byMemberId.get();
-            member.changePassword(requestChangePassword.getMemberId(), requestChangePassword.getNewPassword());
+            member.changePassword(requestChangePassword.getMemberId(), requestChangePassword.getMemberPassword());
 
             return memberRepository.save(member);
         }
 
+        else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+    }
+
+    //memberId로 이메일 변경
+    public Member changeEmailByMemberId(RequestChangeEmail requestChangeEmail) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangeEmail.getMemberId());
+
+        if(byMemberId.isPresent()){
+            Member member = byMemberId.get();
+            member.changeEmail(requestChangeEmail.getMemberId(), requestChangeEmail.getMemberEmail());
+
+            return memberRepository.save(member);
+        }
         else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
