@@ -12,6 +12,9 @@ import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.item.repository.ItemCategoryRepository;
 import R.VD.goomong.item.repository.ItemRepository;
+import R.VD.goomong.member.exception.NotFoundMember;
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +34,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ImageService imageService;
     private final ItemCategoryRepository categoryRepository;
+    private final MemberRepository memberRepository;
 
 
     // 아이템 저장
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
-        saveItem(multipartFiles, itemDto.toEntity(), itemDto.getItemCategories());
+        saveItem(multipartFiles, itemDto, itemDto.getItemCategories());
     }
 
     // 아이템 찾기
@@ -115,7 +119,8 @@ public class ItemService {
     }
 
     // 공통 아이템 저장 함수
-    private void saveItem(MultipartFile[] multipartFiles, Item entity, List<Long> itemCategories) {
+    private void saveItem(MultipartFile[] multipartFiles, RequestItemDto entity, List<Long> itemCategories) {
+        Item item = entity.toEntity();
         List<Image> imageList = imageService.saveImage(multipartFiles);
         List<ItemCategory> categories = new ArrayList<>();
         for (Long categoryId : itemCategories) {
@@ -123,9 +128,14 @@ public class ItemService {
             findCategory.ifPresent(categories::add);
         }
 
-        entity.setItemCategories(categories);
-        entity.setThumbNailList(imageList);
-        itemRepository.save(entity);
+        Optional<Member> member = memberRepository.findById(entity.getMemberId());
+        if (member.isEmpty())
+            throw new NotFoundMember();
+
+        item.setMember(member.get());
+        item.setItemCategories(categories);
+        item.setThumbNailList(imageList);
+        itemRepository.save(item);
     }
 
     //수정된 데이터로 DB 업데이트
