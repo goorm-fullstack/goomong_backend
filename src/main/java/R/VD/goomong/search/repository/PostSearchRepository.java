@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static R.VD.goomong.comment.model.QComment.comment;
+import static R.VD.goomong.post.model.QCategory.category;
 import static R.VD.goomong.post.model.QPost.post;
 
 @Slf4j
@@ -53,12 +54,12 @@ public class PostSearchRepository {
         return new PageImpl<>(posts, pageable, total);
     }
 
-    public JPAQuery<Post> getPostQuery(String keyword, String category) {
+    public JPAQuery<Post> getPostQuery(String keyword, String categoryName) {
 
         // todo: 정우님께 확인부탁
         JPAQuery<Post> query = jpaQueryFactory
                 .selectFrom(post)
-//                .leftJoin(post.postCategory, postCategory)
+                .leftJoin(post.postCategory, category)
                 .leftJoin(post.commentList, comment)
                 .where(
                         post.postTitle.contains(keyword)
@@ -67,8 +68,8 @@ public class PostSearchRepository {
                                 .and(post.delDate.isNull())
                 );
 
-        if (category != null && !category.isEmpty()) {
-            query.where(post.postCategory.eq(category));
+        if (categoryName != null && !categoryName.isEmpty()) {
+            query.where(post.postCategory.categoryName.eq(categoryName));
         }
 
         return query;

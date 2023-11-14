@@ -1,5 +1,6 @@
 package R.VD.goomong.order.controller;
 
+import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.order.dto.response.ResponseOrderDto;
 import R.VD.goomong.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,5 +104,11 @@ public class OrderController {
     public ResponseEntity<String> jobsFinish(@PathVariable Long id) {
         orderService.jobsFinish(id);
         return ResponseEntity.ok("작업이 완료되었습니다.");
+    }
+
+    @PostMapping("/success")
+    public ResponseEntity<String> orderComplete(@RequestBody RequestOrderDto orderDto) {
+        orderService.createNewOrder(orderDto);
+        return ResponseEntity.ok("주문이 완료되었습니다");
     }
 }

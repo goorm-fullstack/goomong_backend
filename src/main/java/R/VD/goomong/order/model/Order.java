@@ -27,6 +27,7 @@ public class Order extends BaseTimeEntity {
     private Long id;
 
     @OneToMany
+    @JoinColumn(name = "item_id")
     @JsonIgnore
     private List<Item> orderItem = new ArrayList<>();
 

@@ -11,8 +11,7 @@ import R.VD.goomong.review.model.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,11 +61,9 @@ public class Report extends BaseTimeEntity {
     private String reportResult; // 신고 처리 결과 (삭제 처리, 이상 없음)
 
     @Column
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseReportDto toResponseReportDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         return ResponseReportDto.builder()
                 .id(id)
@@ -79,8 +76,8 @@ public class Report extends BaseTimeEntity {
                 .reportReason(reportReason)
                 .reportCheck(reportCheck)
                 .reportResult(reportResult)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .build();
     }
 }

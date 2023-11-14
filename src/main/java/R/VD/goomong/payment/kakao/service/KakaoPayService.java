@@ -2,7 +2,7 @@ package R.VD.goomong.payment.kakao.service;
 
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.order.dto.request.RequestOrderDto;
+import R.VD.goomong.order.dto.request.RequestPayOrderDto;
 import R.VD.goomong.order.exception.NotExistOrder;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.order.model.Status;
@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
@@ -34,12 +36,13 @@ import java.util.Random;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class KakaoPayService {
     private final String cid = "TC0ONETIME";//가맹점 코드, 현재 값은 테스트용
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final MemberRepository memberRepository;
-//    @Value("${adminKey}")
+    @Value("${adminKey}")
     private String adminKey;
     private KakaoPayResponse kakaoPayResponse;
 
@@ -63,7 +66,7 @@ public class KakaoPayService {
         return kakaoPayResponse;
     }
 
-    public KakaoPayApproveResponse approveResponse(String pgToken, String orderNumber, String userId, RequestOrderDto orderDto, SessionStatus status) {
+    public KakaoPayApproveResponse approveResponse(String pgToken, String orderNumber, String userId, RequestPayOrderDto orderDto, SessionStatus status) {
         // 카카오 요청
         MultiValueMap<String, String> parameters = setApproveParameter(pgToken, orderNumber, userId);
 
@@ -72,15 +75,20 @@ public class KakaoPayService {
 
         // 외부에 보낼 url
         RestTemplate restTemplate = new RestTemplate();
-
-        KakaoPayApproveResponse kakaoPayApproveResponse = restTemplate.postForObject(
-                "https://kapi.kakao.com/v1/payment/approve",
-                requestEntity,
-                KakaoPayApproveResponse.class);
-
-        orderService.createNewOrder(orderDto);//주문 정보 저장
-        status.setComplete();//세션 클리어
-        return kakaoPayApproveResponse;
+        try {
+            KakaoPayApproveResponse kakaoPayApproveResponse = restTemplate.postForObject(
+                    "https://kapi.kakao.com/v1/payment/approve",
+                    requestEntity,
+                    KakaoPayApproveResponse.class);
+            orderService.createNewOrder(orderDto);//주문 정보 저장
+            status.setComplete();//세션 클리어
+            return kakaoPayApproveResponse;
+        } catch (HttpClientErrorException e) {
+            if (e.getResponseBodyAsString().contains("\"code\":-702")) {
+                log.warn("결제를 여러번 시도하지 마세요");
+            }
+            return null;
+        }
     }
 
     public KakaoCancelResponse cancel(Long id) {

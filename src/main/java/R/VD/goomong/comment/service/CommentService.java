@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class CommentService {
             throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
 
         Comment build = comment.toBuilder()
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         commentRepository.save(build);
     }
@@ -100,14 +100,6 @@ public class CommentService {
                 .delDate(null)
                 .build();
         commentRepository.save(build);
-    }
-
-    // 댓글 좋아요 증가
-    public void increaseCommentLike(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotExistCommentException("해당 id의 댓글을 찾을 수 없습니다. id = " + commentId));
-        if (comment.getDelDate() != null)
-            throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + commentId);
-        commentRepository.increaseLikeCount(commentId);
     }
 
     // 특정 댓글 조회

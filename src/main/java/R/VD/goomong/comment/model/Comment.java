@@ -8,8 +8,7 @@ import R.VD.goomong.report.model.Report;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,11 +49,9 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private int likeNo; // 댓글 좋아요 수
 
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
     public ResponseCommentDto toResponseCommentDto() {
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.XXX");
 
         List<ResponseCommentDto> list = new ArrayList<>();
         for (Comment comment : childrenComment) {
@@ -73,8 +70,8 @@ public class Comment extends BaseTimeEntity {
                 .likeNo(likeNo)
                 .childrenComment(list)
                 .reportIdList(reports)
-                .regDate(this.getRegDate().format(dateTimeFormatter))
-                .delDate(delDate != null ? delDate.format(dateTimeFormatter) : null)
+                .regDate(this.getRegDate())
+                .delDate(delDate)
                 .build();
     }
 }

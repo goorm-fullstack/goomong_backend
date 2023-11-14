@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class ReviewService {
             throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + reviewId);
 
         Review build = origin.toBuilder()
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         reviewRepository.save(build);
     }

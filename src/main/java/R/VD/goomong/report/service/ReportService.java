@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +48,46 @@ public class ReportService {
     private final ReviewRepository reviewRepository;
     private final AskRepository askRepository;
     private final FilesService filesService;
+
+    private void deleteTargetOfReport(Report report) {
+
+        if (report.getComment() != null) {
+            Comment comment = report.getComment();
+            if (comment.getDelDate() != null)
+                throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
+            Comment build = comment.toBuilder()
+                    .delDate(LocalDateTime.now())
+                    .build();
+            commentRepository.save(build);
+        }
+        if (report.getPost() != null) {
+            Post post = report.getPost();
+            if (post.getDelDate() != null)
+                throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + post.getId());
+            Post build = post.toBuilder()
+                    .delDate(LocalDateTime.now())
+                    .build();
+            postRepository.save(build);
+        }
+        if (report.getReview() != null) {
+            Review review = report.getReview();
+            if (review.getDelDate() != null)
+                throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + review.getId());
+            Review build = review.toBuilder()
+                    .delDate(LocalDateTime.now())
+                    .build();
+            reviewRepository.save(build);
+        }
+        if (report.getAsk() != null) {
+            Ask ask = report.getAsk();
+            if (ask.getDelDate() != null)
+                throw new AlreadyDeletedAskException("해당 문의글은 이미 삭제된 문의글입니다. id = " + ask.getId());
+            Ask build = ask.toBuilder()
+                    .delDate(LocalDateTime.now())
+                    .build();
+            askRepository.save(build);
+        }
+    }
 
     // 신고글 생성
     public void saveReport(RequestReportDto requestReportDto, MultipartFile[] reportFiles) {
@@ -151,7 +191,7 @@ public class ReportService {
         if (origin.getDelDate() != null) throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 신고글입니다.");
 
         Report build = origin.toBuilder()
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         reportRepository.save(build);
     }
@@ -193,46 +233,7 @@ public class ReportService {
         if (report.getDelDate() != null)
             throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 글입니다. id = " + reportId);
         initReportResult(reportId, "삭제 처리");
-
-        if (report.getComment() != null) {
-            Comment comment = report.getComment();
-            if (comment.getDelDate() != null)
-                throw new AlreadyDeletedCommentException("해당 id의 댓글은 삭제된 댓글입니다. id = " + comment.getId());
-            Comment build = comment.toBuilder()
-                    .delDate(ZonedDateTime.now())
-                    .build();
-            commentRepository.save(build);
-        }
-
-        if (report.getPost() != null) {
-            Post post = report.getPost();
-            if (post.getDelDate() != null)
-                throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + post.getId());
-            Post build = post.toBuilder()
-                    .delDate(ZonedDateTime.now())
-                    .build();
-            postRepository.save(build);
-        }
-
-        if (report.getReview() != null) {
-            Review review = report.getReview();
-            if (review.getDelDate() != null)
-                throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + review.getId());
-            Review build = review.toBuilder()
-                    .delDate(ZonedDateTime.now())
-                    .build();
-            reviewRepository.save(build);
-        }
-
-        if (report.getAsk() != null) {
-            Ask ask = report.getAsk();
-            if (ask.getDelDate() != null)
-                throw new AlreadyDeletedAskException("해당 문의글은 이미 삭제된 문의글입니다. id = " + ask.getId());
-            Ask build = ask.toBuilder()
-                    .delDate(ZonedDateTime.now())
-                    .build();
-            askRepository.save(build);
-        }
+        deleteTargetOfReport(report);
     }
 
     // 특정 신고글 조회
@@ -276,7 +277,7 @@ public class ReportService {
         Report build = origin.toBuilder()
                 .reportCheck("처리 완료")
                 .reportResult(result)
-                .delDate(ZonedDateTime.now())
+                .delDate(LocalDateTime.now())
                 .build();
         reportRepository.save(build);
     }

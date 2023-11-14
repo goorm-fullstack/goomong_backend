@@ -12,15 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
 
     @Modifying
     @Query("UPDATE Post p SET p.postViews = p.postViews + 1 WHERE p.id = :postId")
     void increaseViewCount(@Param("postId") Long postId);
-
-    @Modifying
-    @Query("UPDATE Post p SET p.postLikeNo = p.postLikeNo + 1 WHERE p.id = :postId")
-    void increaseLikeCount(@Param("postId") Long postId);
 
     Page<Post> findAllByMemberId(Long id, Pageable pageable);
 }
