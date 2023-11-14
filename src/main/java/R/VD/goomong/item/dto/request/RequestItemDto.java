@@ -26,6 +26,8 @@ public class RequestItemDto {
 
     private int price;
 
+    private Long memberId;
+
     @NotEmpty
     private List<Long> itemCategories;//카테고리 목록
 
