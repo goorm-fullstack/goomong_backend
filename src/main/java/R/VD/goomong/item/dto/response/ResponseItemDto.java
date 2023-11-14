@@ -29,10 +29,6 @@ public class ResponseItemDto {
     private Status status;
 
     public ResponseItemDto(Item item) {
-//        List<ResponseItemCategoryDto> categoryDtoList = new ArrayList<>();
-//        for (ItemCategory itemCategory : item.getItemCategories()) {
-//            categoryDtoList.add(new ResponseItemCategoryDto(itemCategory));
-//        }
 
         this.id = item.getId();
         this.title = item.getTitle();
