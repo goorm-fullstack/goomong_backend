@@ -1,11 +1,11 @@
 package R.VD.goomong.search.service;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.model.Post;
-import R.VD.goomong.search.dto.PageInfo;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestPostSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
@@ -69,7 +69,7 @@ public class SearchService {
         PageInfo pageinfo = PageInfo.builder()
                 .page(page)
                 .size(pageSize)
-                .totalElements((int) itemPage.getTotalElements())
+                .totalElements(itemPage.getTotalElements())
                 .totalPage(itemPage.getTotalPages())
                 .build();
 
@@ -87,7 +87,7 @@ public class SearchService {
         PageInfo pageInfo = PageInfo.builder()
                 .page(page)
                 .size(pageSize)
-                .totalElements((int) postPage.getTotalElements())
+                .totalElements(postPage.getTotalElements())
                 .totalPage(postPage.getTotalPages())
                 .build();
 

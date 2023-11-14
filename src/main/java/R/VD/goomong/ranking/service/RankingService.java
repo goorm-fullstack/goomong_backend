@@ -1,12 +1,12 @@
 package R.VD.goomong.ranking.service;
 
-import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.ranking.dto.response.ResponseRanking;
+import R.VD.goomong.ranking.dto.response.ResponseMonthTopRanking;
+import R.VD.goomong.ranking.dto.response.ResponseTopRanking;
 import R.VD.goomong.ranking.model.Ranking;
-import R.VD.goomong.ranking.model.RankingPeriod;
+import R.VD.goomong.ranking.model.RankingType;
 import R.VD.goomong.ranking.repository.RankingRepository;
-import R.VD.goomong.ranking.repository.RankingRepositorySupport;
+import R.VD.goomong.ranking.repository.RankingSupportRepository;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +15,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+
+import static R.VD.goomong.item.model.QItem.item;
+import static R.VD.goomong.item.model.QItemCategory.itemCategory;
+import static R.VD.goomong.member.model.QMember.member;
+import static R.VD.goomong.order.model.QOrder.order;
+import static R.VD.goomong.review.model.QReview.review;
 
 @Slf4j
 @Service
@@ -29,70 +36,86 @@ import java.util.List;
 public class RankingService {
 
     private final RankingRepository rankingRepository;
-    private final RankingRepositorySupport rankingRepositorySupport;
+    private final RankingSupportRepository rankingSupportRepository;
 
-    public List<ResponseRanking> getRanking(RankingPeriod period) {
+    public List<ResponseMonthTopRanking> getMonthRanking() {
+        List<Ranking> topRankings = rankingRepository.findAll();
 
-        List<Ranking> rankings = rankingRepository.findByPeriod(period);
+        // RankingType 순서대로 정렬하기 위한 순서 목록
+        List<RankingType> order = Arrays.asList(RankingType.REVIEW, RankingType.ORDER, RankingType.SALES);
 
-        return rankings.stream().map(ResponseRanking::new).toList();
-
+        return topRankings.stream()
+                .sorted(Comparator.comparingInt(r -> order.indexOf(r.getRankingType())))
+                .map(ResponseMonthTopRanking::new)
+                .toList();
     }
 
-    @Transactional
-    @Scheduled(cron = "1 0 0 * * *")
-    public void updateDailyRankings() {
-        LocalDateTime startOfYesterday = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
-                .minusDays(1)
-                .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime endOfYesterday = startOfYesterday.plusDays(1);
-
-        updateRankings(startOfYesterday, endOfYesterday, RankingPeriod.DAY);
-    }
-
-    @Transactional
-    @Scheduled(cron = "1 0 0 * * MON")
-    public void updateWeeklyRankings() {
-        LocalDateTime startOfLastWeek = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .minusWeeks(1)
-                .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime endOfLastWeek = startOfLastWeek.plusWeeks(1).minusNanos(1);
-
-        updateRankings(startOfLastWeek, endOfLastWeek, RankingPeriod.WEEK);
+    public List<ResponseTopRanking> getSellerRankings(String categoryTitle, String sortBy) {
+        return rankingSupportRepository.calculateSellerRanking(categoryTitle, sortBy).stream()
+                .map(tuple -> ResponseTopRanking.builder()
+                        .memberId(tuple.get(member.id))
+                        .memberName(tuple.get(member.memberName))
+                        .categoryTitle(tuple.get(itemCategory.title))
+                        .itemCount(tuple.get(item.countDistinct()))
+                        .totalSales(tuple.get(order.price.sum()).longValue())
+                        .reviewCount(tuple.get(review.id.count()))
+                        .build())
+                .toList();
     }
 
     @Transactional
     @Scheduled(cron = "1 0 0 1 * *")
     public void updateMonthlyRankings() {
-        LocalDateTime startOfLastMonth = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+        LocalDateTime startOfLastMonth = LocalDateTime.now()
                 .with(TemporalAdjusters.firstDayOfMonth())
                 .minusMonths(1)
                 .truncatedTo(ChronoUnit.DAYS);
         LocalDateTime endOfLastMonth = startOfLastMonth.plusMonths(1).minusNanos(1);
 
-        updateRankings(startOfLastMonth, endOfLastMonth, RankingPeriod.MONTH);
+        updateRankings(startOfLastMonth, endOfLastMonth);
     }
 
-    private void updateRankings(LocalDateTime startOfYesterday, LocalDateTime endOfYesterday, RankingPeriod period) {
-        List<Tuple> tuples = rankingRepositorySupport
-                .calculateSellerSalesCount(startOfYesterday, endOfYesterday);
+    private void updateRankings(LocalDateTime startOfLastMonth, LocalDateTime endOfLastMonth) {
+        for (RankingType type : RankingType.values()) {
+            // 해당 타입의 기존 랭킹 데이터를 soft delete 처리
+            rankingRepository.deleteAllByRankingTypeAndDelDateIsNull(type);
 
-        rankingRepository.deleteAllByPeriodAndDelDateIsNull(period);
+            // 새로운 랭킹 데이터 계산 및 저장
+            List<Ranking> newRankings = calculateRankingForType(type, startOfLastMonth, endOfLastMonth);
+            rankingRepository.saveAll(newRankings);
+        }
+    }
 
-        List<Ranking> rankings = tuples.stream().map(tuple -> {
-            Member seller = tuple.get(0, Member.class);
-            ItemCategory itemCategory = tuple.get(1, ItemCategory.class);
-            Long salesCount = tuple.get(2, Long.class);
+    private List<Ranking> calculateRankingForType(RankingType type, LocalDateTime start, LocalDateTime end) {
+        List<Ranking> rankings = new ArrayList<>();
 
-            return Ranking.builder()
-                    .member(seller)
-                    .itemCategory(itemCategory)
-                    .salesCount(salesCount)
-                    .period(period)
-                    .build();
-        }).toList();
+        switch (type) {
+            case ORDER:
+                List<Tuple> orderRankings = rankingSupportRepository.calculateTop5SellersByOrderCount(start, end);
+                orderRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.ORDER)));
+                break;
 
-        rankingRepository.saveAll(rankings);
+            case REVIEW:
+                List<Tuple> reviewRankings = rankingSupportRepository.calculateTop5SellersByReviewCount(start, end);
+                reviewRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.REVIEW)));
+                break;
+
+            case SALES:
+                List<Tuple> salesRankings = rankingSupportRepository.calculateTop5SellersBySalesAmount(start, end);
+                salesRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.SALES)));
+                break;
+        }
+
+        return rankings;
+    }
+
+    private Ranking createRanking(Tuple tuple, RankingType type) {
+        Member member = tuple.get(0, Member.class);
+        Long count = tuple.get(1, Long.class);
+        return Ranking.builder()
+                .member(member)
+                .count(count)
+                .rankingType(type)
+                .build();
     }
 }
