@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -45,8 +46,8 @@ public class ResponseReportDto {
     private String reportResult;
 
     @Schema(description = "신고글 생성 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private String regDate;
+    private LocalDateTime regDate;
 
     @Schema(description = "신고글 삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
-    private String delDate;
+    private LocalDateTime delDate;
 }

@@ -140,22 +140,6 @@ public class CommentController {
     }
 
     /**
-     * 댓글 좋아요 클릭
-     *
-     * @param commentId 좋아요 클릭할 댓글 pk
-     * @return 댓글의 좋아요 수
-     */
-    @Operation(summary = "댓글 좋아요 클릭")
-    @Parameter(name = "commentId", description = "좋아요 클릭할 댓글 id")
-    @ApiResponse(responseCode = "200", description = "성공")
-    @GetMapping("/comment/like/{commentId}")
-    public ResponseEntity<Object> increaseLike(@PathVariable Long commentId) {
-        log.info("commentId={}", commentId);
-        commentService.increaseCommentLike(commentId);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
      * 삭제되지 않은 댓글 조회
      *
      * @param pageable 페이징

@@ -40,6 +40,7 @@ public class RequestReviewDto {
                 .title(title)
                 .content(content)
                 .rate(rate)
+                .likeNo(0)
                 .build();
     }
 }

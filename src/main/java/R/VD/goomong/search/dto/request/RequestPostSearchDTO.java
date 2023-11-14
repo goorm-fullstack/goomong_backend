@@ -1,5 +1,6 @@
 package R.VD.goomong.search.dto.request;
 
+import R.VD.goomong.post.model.Category;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +12,5 @@ public class RequestPostSearchDTO {
     private Long memberId;
     private String keyword;
     private String order;
-    private String category;
+    private Category category;
 }
