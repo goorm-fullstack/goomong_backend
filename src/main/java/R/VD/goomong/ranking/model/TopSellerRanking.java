@@ -8,32 +8,27 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Ranking SET del_date = CURRENT_TIMESTAMP WHERE ranking_id = ?")
-public class Ranking extends BaseTimeEntity {
+@SQLDelete(sql = "UPDATE Ranking SET del_date = CURRENT_TIMESTAMP WHERE top_seller_ranking_id = ?")
+public class TopSellerRanking extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long rankingId;
+    private Long topSellerRankingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Member member;
 
-    private String itemCategoryTitle;
-
-    private Long salesCount;
-
-    private Long totalSales;
-
-    private Long reviewCount;
+    private Long count;
 
     @Enumerated(EnumType.STRING)
-    private RankingPeriod period;
+    private RankingType rankingType;
 
     private LocalDateTime delDate;
+
 }

@@ -18,7 +18,7 @@ import static R.VD.goomong.review.model.QReview.review;
 
 @Repository
 @RequiredArgsConstructor
-public class RankingsRepositorySupport {
+public class RankingSupportRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
