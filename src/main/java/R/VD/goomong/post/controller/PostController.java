@@ -4,8 +4,6 @@ import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.post.dto.response.ResponseFaqCommunityPostDto;
-import R.VD.goomong.post.dto.response.ResponseItemPostDto;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.service.PostService;
@@ -21,7 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -436,9 +434,9 @@ public class PostController {
 
     // MemberId로 게시글 조회
     @GetMapping("/memberId/{memberId}")
-    private ResponseEntity<List<Object>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<Post> byMemberId = postService.findByMemberId(memberId, pageable);
+    private ResponseEntity<List<ResponsePostDto>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
-        return getListResponseEntity(byMemberId);
+        Page<Post> posts = postService.findByMemberId(memberId, pageable);
+        return getListResponseEntity(posts);
     }
 }
