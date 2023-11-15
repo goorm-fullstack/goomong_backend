@@ -9,7 +9,6 @@ import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -62,19 +61,24 @@ public class Member extends BaseTimeEntity {
     private Long memberLoginFailed;                              //로그인 실패 횟수
 
     @OneToMany
+    @Builder.Default
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany
     @JsonIgnore
+    @Builder.Default
     private List<Order> orderList = new ArrayList<>();
 
     @OneToMany
+    @Builder.Default
     private List<Review> reviewList = new ArrayList<>();
 
     @OneToMany
+    @Builder.Default
     private List<Ask> askList = new ArrayList<>();
 
     @Column
