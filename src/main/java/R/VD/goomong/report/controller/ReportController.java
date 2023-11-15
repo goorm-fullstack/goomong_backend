@@ -1,5 +1,6 @@
 package R.VD.goomong.report.controller;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.report.dto.request.RequestReportDto;
 import R.VD.goomong.report.dto.response.ResponseReportDto;
 import R.VD.goomong.report.model.Report;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,14 +38,27 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    private static ResponseEntity<List<ResponseReportDto>> getListResponseEntity(Page<Report> reports) {
+    private static ResponseEntity<List<ResponseReportDto>> getListResponseReportDto(Pageable pageable, Page<Report> reports) {
         long totalElements = reports.getTotalElements();
         int totalPages = reports.getTotalPages();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
 
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(reports.getContent().stream().map(Report::toResponseReportDto).toList());
+        List<ResponseReportDto> list = new ArrayList<>();
+        for (Report report : reports.getContent()) {
+            ResponseReportDto responseReportDto = report.toResponseReportDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseReportDto build1 = responseReportDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -192,16 +206,11 @@ public class ReportController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))))
     @GetMapping
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReportDto>> listOfNotDelete(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Report> reports = reportService.listOfNotDeleted(pageable);
-
-        return getListResponseEntity(reports);
+        return getListResponseReportDto(pageable, reports);
     }
 
     /**
@@ -216,16 +225,11 @@ public class ReportController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))))
     @GetMapping("/del")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReportDto>> listOfDelete(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Report> reports = reportService.listOfDeleted(pageable);
-
-        return getListResponseEntity(reports);
+        return getListResponseReportDto(pageable, reports);
     }
 
     /**
@@ -240,15 +244,10 @@ public class ReportController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReportDto.class))))
     @GetMapping("/all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReportDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Report> reports = reportService.allList(pageable);
-
-        return getListResponseEntity(reports);
+        return getListResponseReportDto(pageable, reports);
     }
 }

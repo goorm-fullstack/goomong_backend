@@ -5,6 +5,7 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.report.model.Report;
+import R.VD.goomong.review.model.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,8 +29,12 @@ public class Comment extends BaseTimeEntity {
     private Member member; // 작성자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post; // 댓글이 달린 게시글
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")

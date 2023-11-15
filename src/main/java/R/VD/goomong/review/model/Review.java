@@ -1,5 +1,6 @@
 package R.VD.goomong.review.model;
 
+import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
@@ -33,6 +34,10 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     @Builder.Default
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Report> reportList = new ArrayList<>(); // 신고
 
     @OneToMany
@@ -62,6 +67,11 @@ public class Review extends BaseTimeEntity {
             if (report.getDelDate() == null) reports.add(report.getId());
         }
 
+        List<Comment> comments = new ArrayList<>();
+        for (Comment comment : commentList) {
+            if (comment.getParentComment() == null) comments.add(comment);
+        }
+
         return ResponseReviewDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
@@ -70,6 +80,8 @@ public class Review extends BaseTimeEntity {
                 .itemName(item.getTitle())
                 .imageList(imageList)
                 .reportIdList(reports)
+                .commentNo(commentList.size())
+                .commentList(comments.stream().map(Comment::toResponseCommentDto).toList())
                 .title(title)
                 .content(content)
                 .regDate(this.getRegDate())

@@ -1,5 +1,7 @@
 package R.VD.goomong.review.dto.response;
 
+import R.VD.goomong.comment.dto.response.ResponseCommentDto;
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.image.model.Image;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +32,12 @@ public class ResponseReviewDto {
     @Schema(description = "상품 이름", example = "상품 이름")
     private String itemName; // 상품 이름
 
+    @Schema(description = "댓글 수", example = "1")
+    private int commentNo;
+
+    @ArraySchema(schema = @Schema(description = "댓글 리스트", implementation = ResponseCommentDto.class))
+    private List<ResponseCommentDto> commentList;
+
     @ArraySchema(schema = @Schema(description = "업로드한 이미지 리스트", implementation = Image.class))
     private List<Image> imageList; // 이미지
 
@@ -53,4 +61,7 @@ public class ResponseReviewDto {
 
     @Schema(description = "리뷰 삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private LocalDateTime delDate; // 삭제 날짜
+
+    @Schema(description = "페이징 정보", implementation = PageInfo.class)
+    private PageInfo pageInfo;
 }
