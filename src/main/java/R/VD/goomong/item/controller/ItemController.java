@@ -1,8 +1,10 @@
 package R.VD.goomong.item.controller;
 
 import R.VD.goomong.item.dto.request.RequestItemDto;
+import R.VD.goomong.item.dto.request.RequestSearchDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
+import R.VD.goomong.item.dto.response.ResponseItemPageDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,12 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Tag(name = "Item", description = "아이템 API")
 @RestController
@@ -37,8 +36,9 @@ public class ItemController {
             }
     )
     @GetMapping("/list")
-    public ResponseEntity<List<ResponseItemDto>> getItemList() {
-        return ResponseEntity.ok(itemService.findAll());
+    public ResponseEntity<ResponseItemPageDto> getItemList(int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(itemService.findAll(searchDto));
     }
 
     @Operation(
@@ -78,8 +78,9 @@ public class ItemController {
             }
     )
     @GetMapping("/list/sale")
-    public ResponseEntity<List<ResponseItemDto>> getItemListBySale(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllBySale(pageable));
+    public ResponseEntity<ResponseItemPageDto> getItemListBySale(int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(itemService.findAllBySale(searchDto));
     }
 
     @Operation(
@@ -92,9 +93,10 @@ public class ItemController {
                             content = @Content(schema = @Schema(implementation = ResponseNonSaleItemDto.class)))
             }
     )
-    @GetMapping("/list/non-sale")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByGive(pageable));
+    @GetMapping("/list/give")
+    public ResponseEntity<ResponseItemPageDto> getItemListByGive(int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(itemService.findAllByGive(searchDto));
     }
 
     @Operation(
@@ -108,8 +110,9 @@ public class ItemController {
             }
     )
     @GetMapping("/list/wanted")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByWanted(pageable));
+    public ResponseEntity<ResponseItemPageDto> getItemListByWanted(int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(itemService.findAllByWanted(searchDto));
     }
 
     @Operation(
@@ -123,8 +126,9 @@ public class ItemController {
             }
     )
     @GetMapping("/list/exchange")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(Pageable pageable) {
-        return ResponseEntity.ok(itemService.findAllByExchange(pageable));
+    public ResponseEntity<ResponseItemPageDto> getItemListByExchange(int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(itemService.findAllByExchange(searchDto));
     }
 
     @Operation(
