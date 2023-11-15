@@ -18,4 +18,6 @@ RUN ./gradlew clean build
 
 ENV DATABASE_URL=jdbc:mysql://mysqldb/krampoline
 
+EXPOSE 8080
+
 CMD ["java", "-jar", "/app/build/libs/goomong-0.0.1-SNAPSHOT.jar"]
