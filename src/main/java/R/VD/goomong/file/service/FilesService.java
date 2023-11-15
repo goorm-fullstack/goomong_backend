@@ -46,7 +46,7 @@ public class FilesService {
     private void uploadFile(List<Files> result, MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String newPath = path + "\\file\\" + date;
+        String newPath = path + "/file/" + date;
         File Folder = new File(newPath);
         if (!Folder.exists()) {
             try {
@@ -58,13 +58,13 @@ public class FilesService {
 
         UUID uuid = UUID.randomUUID();
         String saveFileName = uuid + "_" + fileName;
-        File saveFile = new File(newPath + "\\" + saveFileName);
+        File saveFile = new File(newPath + "/" + saveFileName);
         try {
             file.transferTo(saveFile);
             Files saveImage = Files.builder()
                     .fileName(fileName)
                     .saveFileName(saveFileName)
-                    .path(newPath + "\\" + saveFileName)
+                    .path(newPath + "/" + saveFileName)
                     .build();
             Files save = filesRepository.save(saveImage);
             result.add(save);
