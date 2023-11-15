@@ -1,11 +1,9 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 namespace: default
 resources:
   - nginx.yaml
   - mysqldb.yaml
   - backend.yaml
 configMapGenerator:
-  - name: nginx-config
+  - name: nginx
     files:
-      - default.conf=config/default.conf
+      - config/default.conf
