@@ -32,7 +32,6 @@ public class ItemCategory extends BaseTimeEntity {
 
     @OneToMany
     @JsonIgnore
-    @Builder.Default
     private List<ItemCategory> childCategory = new ArrayList<>();//자식 카테고리
 
     public void setParent(ItemCategory itemCategory) {
