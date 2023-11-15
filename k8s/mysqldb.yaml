@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysqldb
+spec:
+  serviceName: mysqldb
+  selector:
+    matchLabels:
+      app: mysqldb
+  template:
+    metadata:
+      labels:
+        app: mysqldb
+    spec:
+      containers:
+        - name: mysqldb
+          image: mysql:latest
+          env:
+            - name: TZ
+              value: Asia/Seoul
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: krampoline
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: data
+              subPath: mysql
+          resources:
+            limits:
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb
+spec:
+  type: ClusterIP
+  clusterIP: None # Headless
+  selector:
+    app: mysqldb
+  ports:
+    - port: 3306
