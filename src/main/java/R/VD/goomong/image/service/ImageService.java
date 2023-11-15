@@ -46,7 +46,7 @@ public class ImageService {
     private void uploadImage(List<Image> result, MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String newPath = path + "/image/" + date;
+        String newPath = path + "\\image\\" + date;
         File Folder = new File(newPath);
         if (!Folder.exists()) {
             try {
@@ -58,13 +58,13 @@ public class ImageService {
 
         UUID uuid = UUID.randomUUID();
         String saveFileName = uuid + "_" + fileName;
-        File saveFile = new File(newPath + "/" + saveFileName);
+        File saveFile = new File(newPath + "\\" + saveFileName);
         try {
             file.transferTo(saveFile);
             Image saveImage = Image.builder()
                     .fileName(fileName)
                     .saveFileName(saveFileName)
-                    .path(newPath + "/" + saveFileName)
+                    .path(newPath + "\\" + saveFileName)
                     .build();
             Image save = imageRepository.save(saveImage);
             result.add(save);
