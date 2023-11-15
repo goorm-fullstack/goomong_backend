@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/support")
+@RequestMapping("/api/support")
 public class SupportController {
 
     private final EmailAskService emailAskService;
