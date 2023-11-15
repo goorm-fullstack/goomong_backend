@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -24,8 +26,11 @@ public class Word extends BaseTimeEntity {
 
     @ColumnDefault("1")
     private Long wordCount;
+    
+    private LocalDateTime delDate;
 
     public Word(String keyword) {
         this.keyword = keyword;
     }
+
 }

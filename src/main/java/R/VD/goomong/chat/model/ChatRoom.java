@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -35,6 +35,6 @@ public class ChatRoom extends BaseTimeEntity {
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatRoomMember> members;
 
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
 
 }

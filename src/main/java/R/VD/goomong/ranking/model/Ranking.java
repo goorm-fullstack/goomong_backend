@@ -1,17 +1,16 @@
 package R.VD.goomong.ranking.model;
 
 import R.VD.goomong.global.model.BaseTimeEntity;
-import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,18 +19,16 @@ public class Ranking extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long rankingId;
+    private Long rankingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ItemCategory itemCategory;
-
-    private Long salesCount;
+    private Long count;
 
     @Enumerated(EnumType.STRING)
-    private RankingPeriod period;
+    private RankingType rankingType;
 
-    private ZonedDateTime delDate;
+    private LocalDateTime delDate;
+
 }
