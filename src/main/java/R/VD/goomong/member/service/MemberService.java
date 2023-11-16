@@ -1,8 +1,8 @@
 package R.VD.goomong.member.service;
 
-import R.VD.goomong.member.dto.request.RequestLogin;
-import R.VD.goomong.member.dto.request.RequestMember;
-import R.VD.goomong.member.dto.request.RequestUpdateDto;
+import R.VD.goomong.image.model.Image;
+import R.VD.goomong.image.service.ImageService;
+import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +28,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
+    private final ImageService imageService;
 
     //CREATE
     //아이디 중복 체크
@@ -108,15 +110,25 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    public Member findByMemberEmail(String memberEmail){
+        Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
+
+        return member.orElse(null);
+    }
+
 
     //UPDATE
     //memberId로 회원 정보 변경
-    public Member updateMemberByMemberId(String memberId, RequestUpdateDto requestUpdate) {
+    public Member updateMemberByMemberId(String memberId, RequestUpdateDto requestUpdate, MultipartFile[] multipartFiles) {
         Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
+            if(multipartFiles != null){
+                List<Image> images = imageService.saveImage(multipartFiles);
+                member.setProfileImages(images);
+            }
+            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
@@ -124,16 +136,70 @@ public class MemberService {
     }
 
     //index로 회원 정보 변경
-    public Member updateMemberById(Long id, RequestUpdateDto requestUpdate) {
+    public Member updateMemberById(Long id, RequestUpdateDto requestUpdate, MultipartFile[] multipartFiles) {
         Optional<Member> optionalMember = memberRepository.findById(id);
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            member.update(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getZipCode(), requestUpdate.getSimpleAddress(), requestUpdate.getDetailAddress());
+            if (multipartFiles != null) {
+                List<Image> images = imageService.saveImage(multipartFiles);
+                member.setProfileImages(images);
+            }
+
+            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
             return memberRepository.save(member);
+
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + id);
         }
+    }
+
+    //memberId로 비밀번호 변경
+    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword){
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangePassword.getMemberId());
+
+        if(byMemberId.isPresent()){
+            Member member = byMemberId.get();
+            member.changePassword(requestChangePassword.getMemberId(), requestChangePassword.getMemberPassword());
+
+            return memberRepository.save(member);
+        }
+
+        else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+    }
+
+    //memberId로 이메일 변경
+    public Member changeEmailByMemberId(RequestChangeEmail requestChangeEmail) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangeEmail.getMemberId());
+
+        if(byMemberId.isPresent()){
+            Member member = byMemberId.get();
+            member.changeEmail(requestChangeEmail.getMemberId(), requestChangeEmail.getMemberEmail());
+
+            return memberRepository.save(member);
+        }
+        else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+    }
+
+    //memberId로 프로필사진 저장
+    public Member changeProfileImageByMemberId(String memberId, MultipartFile[] multipartFiles) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
+
+        if(byMemberId.isPresent()){
+            Member member = byMemberId.get();
+            List<Image> imageList = null;
+            if (multipartFiles.length != 0)
+                imageList = imageService.saveImage(multipartFiles);
+
+            member.changeProfileImage(member.getMemberId(), imageList);
+
+            return memberRepository.save(member);
+        }
+
+        else throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+
     }
 
     //DELETE
@@ -209,7 +275,6 @@ public class MemberService {
                 throw new NotFoundMember("비밀번호 불일치");
 
             }
-
 
         }
 

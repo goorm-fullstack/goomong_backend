@@ -10,6 +10,10 @@ import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.exception.*;
 import R.VD.goomong.post.model.Category;
+import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.post.exception.AlreadyDeletePostException;
+import R.VD.goomong.post.exception.NotDeletedPostException;
+import R.VD.goomong.post.exception.NotExistPostException;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.CategoryRepository;
@@ -252,5 +256,18 @@ public class PostService {
     // 전체 게시글 조회
     public Page<Post> allList(Pageable pageable) {
         return postRepository.findAll(pageable);
+    }
+
+    //회원 아이디로 게시글 조회
+    public Page<Post> findByMemberId(Long id, Pageable pageable){
+        Page<Post> all = postRepository.findAllByMemberId(id, pageable);
+        List<Post> list = new ArrayList<>();
+
+        for(Post post : all){
+            if(post.getDelDate()!= null)
+                list.add(post);
+        }
+
+        return new PageImpl<>(list, pageable, list.size());
     }
 }

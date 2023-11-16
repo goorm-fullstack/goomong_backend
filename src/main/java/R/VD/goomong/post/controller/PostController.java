@@ -4,6 +4,7 @@ import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
+import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.service.PostService;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -418,5 +420,13 @@ public class PostController {
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         return ResponseEntity.ok(findPost.toResponsePostDto());
+    }
+
+    // MemberId로 게시글 조회
+    @GetMapping("/memberId/{memberId}")
+    private ResponseEntity<List<ResponsePostDto>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+
+        Page<Post> posts = postService.findByMemberId(memberId, pageable);
+        return getListResponseEntity(posts);
     }
 }

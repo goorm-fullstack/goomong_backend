@@ -2,6 +2,7 @@ package R.VD.goomong.member.model;
 
 import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
@@ -9,7 +10,6 @@ import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,10 +22,11 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Member extends BaseTimeEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -46,20 +47,32 @@ public class Member extends BaseTimeEntity {
 
     private LocalDateTime memberDeleteTime;
 
-    @Column(nullable = false)
-    private Long zipCode;                                    //우편 번호
+    private Long buyZipCode;                                    //구매자 우편 번호
+
+    private String buySimpleAddress;                            //구매자 간단 주소
+
+    private String buyDetailAddress;                            //구매자 상세 주소
+
+    private Long saleZipCode;                                    //판매자 우편 번호
+
+    private String saleSimpleAddress;                            //판매자 간단 주소
+
+    private String saleDetailAddress;                            //판매자 상세 주소
 
     @Column(nullable = false)
-    private String simpleAddress;                            //간단 주소
-
-    @Column(nullable = false)
-    private String detailAddress;                            //상세 주소
-
-    @Column(nullable = false)
-    private String memberRole;                                //권한
+    private String memberRole;                                   //권한
 
     @Column(nullable = false)
     private Long memberLoginFailed;                              //로그인 실패 횟수
+
+    @Column(nullable = false)
+    private Boolean isKakao;                                    //카카오 아이디인가?
+
+    private String saleInfo;                                      //판매자 소개
+
+    @OneToMany
+    @JoinColumn(name = "image_id")
+    private List<Image> profileImages = new ArrayList<>();        //프로필 이미지
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -80,14 +93,39 @@ public class Member extends BaseTimeEntity {
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
-    public void update(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
+    private Boolean emailChecked;       //이메일 인증 확인 여부
+
+    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
-        this.zipCode = zipCode;
-        this.simpleAddress = simpleAddress;
-        this.detailAddress = detailAddress;
+        this.buyZipCode = buyZipCode;
+        this.buySimpleAddress = buySimpleAddress;
+        this.buyDetailAddress = buyDetailAddress;
+        this.saleZipCode = saleZipCode;
+        this.saleSimpleAddress = saleSimpleAddress;
+        this.saleDetailAddress = saleDetailAddress;
+        this.saleInfo = saleInfo;
+    }
+
+    public void changePassword(String memberId, String memberPassword){
+        this.memberId = memberId;
+        this.memberPassword = memberPassword;
+    }
+
+    public void changeEmail(String memberId, String memberEmail) {
+        this.memberId = memberId;
+        this.memberPassword = memberEmail;
+    }
+
+    public void changeProfileImage(String memberId, List<Image> profileImages) {
+        this.memberId = memberId;
+        this.profileImages = profileImages;
+    }
+
+    public void emailCheckedSuccess() {
+        this.emailChecked = true;               //이메일 인증 확인
     }
 
     //    public ResponseMemberDto toResponseMemberDto() {
