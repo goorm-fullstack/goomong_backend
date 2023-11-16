@@ -190,4 +190,41 @@ public class ReviewController {
         Page<Review> reviews = reviewService.allList(pageable);
         return getListResponseEntity(pageable, reviews);
     }
+
+    /**
+     * 전체 리뷰의 평균 평점 구하기
+     *
+     * @return 전체 리뷰의 평균 평점
+     */
+    @Operation(summary = "전체 리뷰 평균 평점 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Float.class)))
+    @GetMapping("/aveRate")
+    public ResponseEntity<Float> aveRate() {
+        return ResponseEntity.ok(reviewService.aveReview());
+    }
+
+    /**
+     * 고객 만족도
+     *
+     * @return 고객 만족도
+     */
+    @Operation(summary = "고객 만족도 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Integer.class)))
+    @GetMapping("/customerSatisfaction")
+    public ResponseEntity<Float> customerSatisfaction() {
+        return ResponseEntity.ok(reviewService.customerSatisfaction());
+    }
+
+    /**
+     * 베스트 리뷰 리스트
+     *
+     * @return 베스트 리뷰 리스트
+     */
+    @Operation(summary = "베스트 리뷰 리스트 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
+    @GetMapping("/best")
+    public ResponseEntity<List<ResponseReviewDto>> bestReview() {
+        Page<ResponseReviewDto> responseReviewDtos = reviewService.bestReview(0, 9);
+        return ResponseEntity.ok(responseReviewDtos.getContent());
+    }
 }
