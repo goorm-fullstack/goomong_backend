@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -42,9 +43,10 @@ public class RequestMember {
 
     private String saleInfo;
 
+    private List<Image> profileImage;
 
     @Builder(toBuilder = true)
-    public RequestMember(String saleInfo, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, Image profileImage) {
+    public RequestMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, String saleInfo, List<Image> profileImage) { // 'Image' 객체를 'List<Image>'로 수정
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -60,9 +62,8 @@ public class RequestMember {
         this.memberLoginFailed = memberLoginFailed;
         this.isKakao = isKakao;
         this.saleInfo = saleInfo;
+        this.profileImage = profileImage;
     }
-
-
 
     public Member toEntity(){
         return Member.builder()
@@ -81,6 +82,7 @@ public class RequestMember {
                 .memberLoginFailed(memberLoginFailed)
                 .isKakao(isKakao)
                 .saleInfo(saleInfo)
+                .profileImages(profileImage)
                 .build();
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -76,15 +77,15 @@ public class MemberController {
     //UPDATE
     // 회원 memberId로 회원 정보 수정
     @PutMapping("/update/memberId/{memberId}")
-    public ResponseEntity<Member> updateByMemberId(@PathVariable String memberId, @RequestBody RequestUpdateDto requestUpdateDto) {
-        Member updatedMember = memberService.updateMemberByMemberId(memberId, requestUpdateDto);
+    public ResponseEntity<Member> updateByMemberId(@PathVariable String memberId, @RequestBody RequestUpdateDto requestUpdateDto, MultipartFile[] multipartFiles) {
+        Member updatedMember = memberService.updateMemberByMemberId(memberId, requestUpdateDto, multipartFiles);
         return ResponseEntity.ok(updatedMember);
     }
 
     // 회원 index로 회원 정보 수정
     @PutMapping("/update/id/{id}")
-    public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto) {
-        Member updatedMember = memberService.updateMemberById(id, requestUpdateDto);
+    public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto, MultipartFile[] multipartFiles) {
+        Member updatedMember = memberService.updateMemberById(id, requestUpdateDto, multipartFiles);
         return ResponseEntity.ok(updatedMember);
     }
 
@@ -96,9 +97,18 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+
     @PutMapping("/update/email")
     public ResponseEntity<Member> updateEmailByMemberId(@RequestBody RequestChangeEmail requestChangeEmail) {
         Member member = memberService.changeEmailByMemberId(requestChangeEmail);
+
+        return ResponseEntity.ok(member);
+    }
+
+    //memberId로 프로필 이미지 변경
+    @PutMapping("/update/image")
+    public ResponseEntity<Member> updateProfileImage(String memberId, MultipartFile[] multipartFiles) {
+        Member member = memberService.changeProfileImageByMemberId(memberId, multipartFiles);
 
         return ResponseEntity.ok(member);
     }

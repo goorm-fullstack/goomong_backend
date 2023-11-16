@@ -5,13 +5,13 @@ import R.VD.goomong.member.dto.request.RequestMember;
 import R.VD.goomong.member.dto.request.RequestUpdateDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import R.VD.goomong.support.service.EmailMemberSaveService;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -20,6 +20,9 @@ public class memberTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private EmailMemberSaveService emailMemberSaveService;
 
     @Test
     void contextLoads() {
@@ -237,7 +240,7 @@ public class memberTest {
                 .build();
 
 
-        memberService.updateMemberByMemberId(member.getMemberId(), requestUpdateDto);
+        memberService.updateMemberByMemberId(member.getMemberId(), requestUpdateDto, null);
 
         Member member1 = memberService.findByMemberId("testId1");
 

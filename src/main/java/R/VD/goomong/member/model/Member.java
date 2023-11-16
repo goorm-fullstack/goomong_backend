@@ -10,7 +10,6 @@ import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,10 +22,11 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Member extends BaseTimeEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -70,9 +70,9 @@ public class Member extends BaseTimeEntity {
 
     private String saleInfo;                                      //판매자 소개
 
-    @OneToOne
+    @OneToMany
     @JoinColumn(name = "image_id")
-    private Image profileImage;                                 //프로필 이미지
+    private List<Image> profileImages = new ArrayList<>();        //프로필 이미지
 
     @OneToMany
     private List<Item> itemList = new ArrayList<>();
@@ -92,6 +92,8 @@ public class Member extends BaseTimeEntity {
 
     @Column
     private LocalDateTime delDate; // 삭제 날짜
+
+    private Boolean emailChecked;       //이메일 인증 확인 여부
 
     public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
@@ -115,6 +117,15 @@ public class Member extends BaseTimeEntity {
     public void changeEmail(String memberId, String memberEmail) {
         this.memberId = memberId;
         this.memberPassword = memberEmail;
+    }
+
+    public void changeProfileImage(String memberId, List<Image> profileImages) {
+        this.memberId = memberId;
+        this.profileImages = profileImages;
+    }
+
+    public void emailCheckedSuccess() {
+        this.emailChecked = true;               //이메일 인증 확인
     }
 
     //    public ResponseMemberDto toResponseMemberDto() {
