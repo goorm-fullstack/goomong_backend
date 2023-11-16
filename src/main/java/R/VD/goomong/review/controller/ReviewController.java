@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -190,18 +189,5 @@ public class ReviewController {
     public ResponseEntity<List<ResponseReviewDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Review> reviews = reviewService.allList(pageable);
         return getListResponseEntity(pageable, reviews);
-    }
-
-    /**
-     * memberId로 리뷰 조회
-     * @param memberId
-     * @param pageable
-     * @return
-     */
-    @GetMapping("/memberId/{memberId}")
-    public ResponseEntity<List<ResponseReviewDto>> findReviewsByMemberId(@PathVariable Long memberId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Review> reviews = reviewService.findReviewsByMemberId(memberId, pageable);
-
-        return getListResponseEntity(reviews);
     }
 }

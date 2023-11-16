@@ -30,6 +30,9 @@ public class ResponsePostDto {
     @Schema(description = "작성자 지역 정보", example = "지역")
     private String memberAddress;
 
+    @Schema(description = "작성자 이미지", implementation = Image.class)
+    private List<Image> memberImageList;
+
     @ArraySchema(schema = @Schema(description = "게시글 이미지 리스트", implementation = Image.class))
     private List<Image> imageList;
 
