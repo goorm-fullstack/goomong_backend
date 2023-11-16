@@ -27,7 +27,7 @@ public class EmailMemberSaveService {
     private final JavaMailSender javaMailSender;
     private final VerificationService verificationService;
     private final EmailMemberSaveRepository emailMemberSaveRepository;
-    private static final String senderEmail = "ehdrb141@gmail.com";
+    private static final String senderEmail = "";       //이메일 입력
 
     //메일 작성
     public MimeMessage CreateMail(String email){
