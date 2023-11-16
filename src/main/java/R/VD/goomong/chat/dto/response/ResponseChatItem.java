@@ -29,7 +29,7 @@ public class ResponseChatItem {
         this.member = item.getMember().getMemberName();
         this.price = item.getPrice();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescribe();
+        this.describe = item.getDescription();
         this.itemCategories = item.getItemCategories();
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();

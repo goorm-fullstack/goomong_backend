@@ -1,6 +1,7 @@
 package R.VD.goomong.item.dto.request;
 
 import R.VD.goomong.item.model.Item;
+import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,6 +29,8 @@ public class RequestItemDto {
 
     private Long memberId;
 
+    private List<ItemOption> itemOptions;
+
     @NotEmpty
     private List<Long> itemCategories;//카테고리 목록
 
@@ -35,7 +38,7 @@ public class RequestItemDto {
         return Item.builder()
                 .title(title)
                 .price(price)
-                .describe(describe)
+                .description(describe)
                 .status(status)
                 .build();
     }

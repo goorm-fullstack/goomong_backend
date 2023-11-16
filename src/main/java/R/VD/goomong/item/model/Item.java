@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +35,16 @@ public class Item extends BaseTimeEntity {
     private Status status;//상태값 -> RequestDto를 상황별로 만들고, 상태를 지정해야겠다.
 
     @OneToMany
+    @JoinColumn(name = "item_option_id")
+    private List<ItemOption> itemOptions = new ArrayList<>();
+
+    @OneToMany
     @JoinColumn(name = "image_id")
     @Builder.Default
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션
-    private String describe;//설명
+    private String description;//설명
 
     @OneToMany
     @JoinColumn(name = "item_category_id")
@@ -58,7 +62,7 @@ public class Item extends BaseTimeEntity {
     @Builder.Default
     private Float rate = 0F;//평점
 
-    private LocalDateTime delDate;
+    private ZonedDateTime delDate;
 
     public void setMember(Member member) {
         this.member = member;
@@ -67,12 +71,12 @@ public class Item extends BaseTimeEntity {
     public void update(int price, String title, String describe) {
         this.price = price;
         this.title = title;
-        this.describe = describe;
+        this.description = describe;
     }
 
     public void update(String title, String describe) {
         this.title = title;
-        this.describe = describe;
+        this.description = describe;
     }
 
     public void setThumbNailList(List<Image> thumbNailList) {
@@ -83,8 +87,12 @@ public class Item extends BaseTimeEntity {
         this.itemCategories = itemCategories;
     }
 
+    public void setItemOptions(List<ItemOption> itemOptions) {
+        this.itemOptions = itemOptions;
+    }
+
     public void deleteItem() {
-        delDate = LocalDateTime.now();
+        delDate = ZonedDateTime.now();
     }
 
     // 평점 계산

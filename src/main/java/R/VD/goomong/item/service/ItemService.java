@@ -12,8 +12,10 @@ import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.item.repository.ItemCategoryRepository;
+import R.VD.goomong.item.repository.ItemOptionRepository;
 import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
@@ -39,6 +41,7 @@ public class ItemService {
     private final ImageService imageService;
     private final ItemCategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final ItemOptionRepository itemOptionRepository;
 
     // 판매 상태의 값을 페이징처리해서 반환하는 함수
     private static ResponseItemPageDto<List<ResponseItemDto>> getListResponseItemPageDto(int page, int pageSize, Page<Item> items) {
@@ -144,9 +147,16 @@ public class ItemService {
         if (member.isEmpty())
             throw new NotFoundMember();
 
+        List<ItemOption> options = new ArrayList<>();
+        for (ItemOption option : entity.getItemOptions()) {
+            ItemOption save = itemOptionRepository.save(option);
+            options.add(save);
+        }
+
         item.setMember(member.get());
         item.setItemCategories(categories);
         item.setThumbNailList(imageList);
+        item.setItemOptions(options);
         itemRepository.save(item);
     }
 
@@ -155,7 +165,7 @@ public class ItemService {
      */
     private void propertyUpdate(Item item, UpdateItemDto itemDto) {
         String title = item.getTitle();
-        String describe = item.getDescribe();
+        String describe = item.getDescription();
         int price = item.getPrice();
 
         if (!itemDto.getDescribe().isEmpty())

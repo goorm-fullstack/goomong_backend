@@ -42,7 +42,7 @@ public class ResponseNonSaleItemDto {
         this.title = item.getTitle();
         this.member = item.getMember();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescribe();
+        this.describe = item.getDescription();
         this.itemCategories = item.getItemCategories();
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();
