@@ -27,6 +27,9 @@ public class ResponsePostDto {
     @Schema(description = "작성자 아이디", example = "아이디")
     private String memberId;
 
+    @Schema(description = "작성자 지역 정보", example = "지역")
+    private String memberAddress;
+
     @ArraySchema(schema = @Schema(description = "게시글 이미지 리스트", implementation = Image.class))
     private List<Image> imageList;
 
@@ -35,6 +38,9 @@ public class ResponsePostDto {
 
     @ArraySchema(schema = @Schema(description = "게시글 댓글 리스트", implementation = ResponseCommentDto.class))
     private List<ResponseCommentDto> commentList;
+
+    @Schema(description = "댓글 갯수", example = "1")
+    private int commentNo;
 
     @ArraySchema(schema = @Schema(description = "게시글 신고 id 리스트", implementation = Long.class))
     private List<Long> reportIdList;

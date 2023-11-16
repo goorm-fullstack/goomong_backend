@@ -72,6 +72,7 @@ public class CategoryController {
     @PostMapping(value = "/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
         log.info("requestCategoryDto={}", requestCategoryDto);
+        log.info("images={}", images.length);
         categoryService.saveCategory(requestCategoryDto, images);
         return ResponseEntity.ok().build();
     }

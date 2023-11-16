@@ -88,6 +88,7 @@ public class Post extends BaseTimeEntity {
         return ResponsePostDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
+                .memberAddress(member.getSimpleAddress())
                 .postCategory(postCategory.getCategoryName())
                 .postLikeNo(postLikeNo)
                 .imageList(imageList)
@@ -98,6 +99,7 @@ public class Post extends BaseTimeEntity {
                 .reportIdList(reports)
                 .postType(postType)
                 .commentList(comments)
+                .commentNo(commentList.size())
                 .delDate(delDate)
                 .filesList(fileList)
                 .build();
