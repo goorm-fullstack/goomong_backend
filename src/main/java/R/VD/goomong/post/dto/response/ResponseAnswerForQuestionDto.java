@@ -1,5 +1,6 @@
 package R.VD.goomong.post.dto.response;
 
+import R.VD.goomong.global.model.PageInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -23,4 +24,7 @@ public class ResponseAnswerForQuestionDto {
 
     @Schema(description = "삭제 날짜", implementation = LocalDateTime.class)
     private LocalDateTime delDate;
+
+    @Schema(description = "페이징 정보", implementation = PageInfo.class)
+    private PageInfo pageInfo;
 }

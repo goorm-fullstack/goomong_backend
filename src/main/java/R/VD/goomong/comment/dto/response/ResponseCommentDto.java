@@ -1,5 +1,6 @@
 package R.VD.goomong.comment.dto.response;
 
+import R.VD.goomong.global.model.PageInfo;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -37,4 +38,7 @@ public class ResponseCommentDto {
 
     @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private LocalDateTime delDate;
+
+    @Schema(description = "페이징 정보", implementation = PageInfo.class)
+    private PageInfo pageInfo;
 }

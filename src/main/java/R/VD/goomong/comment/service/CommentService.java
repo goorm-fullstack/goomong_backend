@@ -12,6 +12,10 @@ import R.VD.goomong.post.exception.AlreadyDeletePostException;
 import R.VD.goomong.post.exception.NotExistPostException;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.repository.PostRepository;
+import R.VD.goomong.review.exception.AlreadyDeletedReviewException;
+import R.VD.goomong.review.exception.NotFoundReview;
+import R.VD.goomong.review.model.Review;
+import R.VD.goomong.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +35,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final ReviewRepository reviewRepository;
 
     // 댓글 저장
     public void saveComment(RequestCommentDto requestCommentDto) {
@@ -39,9 +44,19 @@ public class CommentService {
         Member member = memberRepository.findById(requestCommentDto.getMemberId()).orElseThrow(() -> new RuntimeException("해당 id의 회원을 찾을 수 없습니다. id = " + requestCommentDto.getMemberId()));
         if (member.getDelDate() != null) throw new RuntimeException("해당 id의 회원은 삭제된 회원입니다. id = " + member.getId());
 
-        Post post = postRepository.findById(requestCommentDto.getPostId()).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + requestCommentDto.getPostId()));
-        if (post.getDelDate() != null)
-            throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 글입니다. id = " + post.getId());
+        Post post = null;
+        if (requestCommentDto.getPostId() != null) {
+            post = postRepository.findById(requestCommentDto.getPostId()).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + requestCommentDto.getPostId()));
+            if (post.getDelDate() != null)
+                throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 글입니다. id = " + post.getId());
+        }
+
+        Review review = null;
+        if (requestCommentDto.getReviewId() != null) {
+            review = reviewRepository.findById(requestCommentDto.getReviewId()).orElseThrow(() -> new NotFoundReview("해당 id의 리뷰를 찾을 수 없습니다. id = " + requestCommentDto.getReviewId()));
+            if (review.getDelDate() != null)
+                throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + review.getId());
+        }
 
         Comment parent = null;
         if (requestCommentDto.getParentCommentId() != null) {
@@ -53,6 +68,7 @@ public class CommentService {
         Comment build = entity.toBuilder()
                 .member(member)
                 .post(post)
+                .review(review)
                 .parentComment(parent)
                 .build();
         commentRepository.save(build);

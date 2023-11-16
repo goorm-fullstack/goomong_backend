@@ -1,5 +1,6 @@
 package R.VD.goomong.post.controller;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,19 +44,27 @@ public class PostController {
 
     private final PostService postService;
 
-    private static ResponseEntity<List<ResponsePostDto>> getListResponseEntity(Page<Post> posts) {
-        List<ResponsePostDto> list = new ArrayList<>();
-
-        for (Post post : posts) {
-            list.add(post.toResponsePostDto());
-        }
-
+    private static List<ResponsePostDto> getResponsePostDtos(Pageable pageable, Page<Post> posts) {
         long totalElements = posts.getTotalElements();
         int totalPages = posts.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(list);
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponsePostDto> list = new ArrayList<>();
+        for (Post post : posts.getContent()) {
+            ResponsePostDto responsePostDto = post.toResponsePostDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponsePostDto build1 = responsePostDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
     }
 
     /**
@@ -206,16 +214,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedtype/{type}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
         Page<Post> posts = postService.listOfNotDeletedAndType(type, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -232,16 +238,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/deletedtype/{type}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
         Page<Post> posts = postService.listOfDeletedAndType(type, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -258,16 +262,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/alltype/{type}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
         Page<Post> posts = postService.listOfAllAndType(type, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -284,16 +286,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedcategory/{category}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
         Page<Post> posts = postService.listOfNotDeletedAndCategory(category, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -310,16 +310,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/deletedcategory/{category}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
         Page<Post> posts = postService.listOfDeletedAndCategory(category, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -336,16 +334,14 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/allcategory/{category}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
         Page<Post> posts = postService.listOfAllAndCategory(category, pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -362,11 +358,7 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction, Pageable pageable) {
 
@@ -378,7 +370,9 @@ public class PostController {
         }
 
         Page<Post> posts = postService.listOfNotDeleted(pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -393,15 +387,13 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/deleted")
     public ResponseEntity<List<ResponsePostDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> posts = postService.listOfDeleted(pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -416,15 +408,13 @@ public class PostController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/all")
     public ResponseEntity<List<ResponsePostDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Post> posts = postService.allList(pageable);
-        return getListResponseEntity(posts);
+        List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
+
+        return ResponseEntity.ok(list);
     }
 
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {

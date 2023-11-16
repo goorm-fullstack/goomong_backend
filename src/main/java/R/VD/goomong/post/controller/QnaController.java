@@ -1,5 +1,6 @@
 package R.VD.goomong.post.controller;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.post.dto.request.RequestAnswerForQuestionDto;
 import R.VD.goomong.post.dto.request.RequestQuestionDto;
 import R.VD.goomong.post.dto.response.ResponseAnswerForQuestionDto;
@@ -9,7 +10,6 @@ import R.VD.goomong.post.service.QnaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +36,52 @@ import java.util.List;
 public class QnaController {
 
     private final QnaService qnaService;
+
+    private static List<ResponseQuestionDto> getResponseQuestionDtos(Pageable pageable, Page<Qna> qnas) {
+        long totalElements = qnas.getTotalElements();
+        int totalPages = qnas.getTotalPages();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponseQuestionDto> list = new ArrayList<>();
+        for (Qna qna : qnas.getContent()) {
+            ResponseQuestionDto responseQuestionDto = qna.toResponseQuestionDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseQuestionDto build1 = responseQuestionDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
+    }
+
+    private static List<ResponseAnswerForQuestionDto> getResponseAnswerForQuestionDtos(Pageable pageable, Page<Qna> qnas) {
+        long totalElements = qnas.getTotalElements();
+        int totalPages = qnas.getTotalPages();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponseAnswerForQuestionDto> list = new ArrayList<>();
+        for (Qna qna : qnas.getContent()) {
+            ResponseAnswerForQuestionDto responseAnswerForQuestionDto = qna.toResponseAnswerForQuestionDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseAnswerForQuestionDto build1 = responseAnswerForQuestionDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
+    }
 
     /**
      * 질문 생성
@@ -165,21 +211,13 @@ public class QnaController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))))
     @GetMapping("/questions")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseQuestionDto>> listOfNotDeletedQuestions(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Qna> qnas = qnaService.listOfNotDeletedQuestion(pageable);
+        List<ResponseQuestionDto> list = getResponseQuestionDtos(pageable, qnas);
 
-        long totalElements = qnas.getTotalElements();
-        int totalPages = qnas.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(qnas.getContent().stream().map(Qna::toResponseQuestionDto).toList());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -194,21 +232,13 @@ public class QnaController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))))
     @GetMapping("/answers")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAnswerForQuestionDto>> listOfNotDeletedAnswers(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Qna> qnas = qnaService.listOfNotDeletedAnswer(pageable);
+        List<ResponseAnswerForQuestionDto> list = getResponseAnswerForQuestionDtos(pageable, qnas);
 
-        long totalElements = qnas.getTotalElements();
-        int totalPages = qnas.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(qnas.getContent().stream().map(Qna::toResponseAnswerForQuestionDto).toList());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -223,21 +253,13 @@ public class QnaController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))))
     @GetMapping("/deleted/questions")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseQuestionDto>> listOfDeletedQuestions(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Qna> qnas = qnaService.listOfDeletedQuestion(pageable);
+        List<ResponseQuestionDto> list = getResponseQuestionDtos(pageable, qnas);
 
-        long totalElements = qnas.getTotalElements();
-        int totalPages = qnas.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(qnas.getContent().stream().map(Qna::toResponseQuestionDto).toList());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -252,21 +274,13 @@ public class QnaController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))))
     @GetMapping("/deleted/answers")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAnswerForQuestionDto>> listOfDeletedAnswers(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Qna> qnas = qnaService.listOfDeletedAnswer(pageable);
+        List<ResponseAnswerForQuestionDto> list = getResponseAnswerForQuestionDtos(pageable, qnas);
 
-        long totalElements = qnas.getTotalElements();
-        int totalPages = qnas.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(qnas.getContent().stream().map(Qna::toResponseAnswerForQuestionDto).toList());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -281,26 +295,39 @@ public class QnaController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAnswerForQuestionDto.class))))
     @GetMapping("/all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<Object>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Qna> qnas = qnaService.allList(pageable);
 
-        List<Object> list = new ArrayList<>();
-        for (Qna qna : qnas.getContent()) {
-            if (qna.getQna() == null) list.add(qna.toResponseAnswerForQuestionDto());
-            else list.add(qna.toResponseQuestionDto());
-        }
-
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
         long totalElements = qnas.getTotalElements();
         int totalPages = qnas.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(list);
+
+        PageInfo pageInfo = PageInfo.builder()
+                .size(pageSize)
+                .page(pageNumber)
+                .totalElements(totalElements)
+                .totalPage(totalPages)
+                .build();
+
+        List<Object> list = new ArrayList<>();
+        for (Qna qna : qnas.getContent()) {
+            if (qna.getQna() == null) {
+                ResponseQuestionDto responseQuestionDto = qna.toResponseQuestionDto();
+                ResponseQuestionDto build = responseQuestionDto.toBuilder()
+                        .pageInfo(pageInfo)
+                        .build();
+                list.add(build);
+            } else {
+                ResponseAnswerForQuestionDto responseAnswerForQuestionDto = qna.toResponseAnswerForQuestionDto();
+                ResponseAnswerForQuestionDto build = responseAnswerForQuestionDto.toBuilder()
+                        .pageInfo(pageInfo)
+                        .build();
+                list.add(build);
+            }
+        }
+        return ResponseEntity.ok(list);
     }
 }

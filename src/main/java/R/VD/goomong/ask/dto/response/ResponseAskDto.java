@@ -1,6 +1,7 @@
 package R.VD.goomong.ask.dto.response;
 
 import R.VD.goomong.file.model.Files;
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,4 +46,7 @@ public class ResponseAskDto {
 
     @Schema(description = "삭제 날짜", example = "2023-11-03T18:14:49.792+09:00")
     private LocalDateTime delDate; // 삭제 날짜
+
+    @Schema(description = "페이징 정보", implementation = PageInfo.class)
+    private PageInfo pageInfo;
 }
