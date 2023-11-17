@@ -46,7 +46,7 @@ public class AskService {
         if (item.getDelDate() != null) throw new RuntimeException("해당 id의 상품은 삭제된 상품입니다. id = " + item.getId());
 
         List<Files> filesList = new ArrayList<>();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Ask build = ask.toBuilder()
                 .member(member)
@@ -71,7 +71,7 @@ public class AskService {
         Item item = parent.getItem();
 
         List<Files> filesList = new ArrayList<>();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Ask build = ask.toBuilder()
                 .member(member)
@@ -88,7 +88,7 @@ public class AskService {
         if (origin.getDelDate() != null) throw new AlreadyDeletedAskException("해당 id의 문의글은 삭제된 문의글입니다. id = " + askId);
 
         List<Files> filesList = origin.getFilesList();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Ask build = origin.toBuilder()
                 .title(requestAskDto.getTitle())
@@ -105,7 +105,7 @@ public class AskService {
             throw new AlreadyDeletedAskException("해당 id의 답변글은 삭제된 답변글입니다. id = " + answerId);
 
         List<Files> filesList = origin.getFilesList();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Ask build = origin.toBuilder()
                 .title(requestAnswerDto.getTitle())

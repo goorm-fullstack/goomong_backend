@@ -70,9 +70,8 @@ public class CategoryController {
     @Parameter(name = "images", description = "카테고리 이미지", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
+    public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile images) {
         log.info("requestCategoryDto={}", requestCategoryDto);
-        log.info("images={}", images.length);
         categoryService.saveCategory(requestCategoryDto, images);
         return ResponseEntity.ok().build();
     }
@@ -92,7 +91,7 @@ public class CategoryController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCategoryDto.class)))
     @PutMapping(value = "/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseCategoryDto> modifyCategory(@PathVariable Long categoryId, @Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
+    public ResponseEntity<ResponseCategoryDto> modifyCategory(@PathVariable Long categoryId, @Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile images) {
         log.info("categoryId={}", categoryId);
         log.info("requestCategoryDto={}", requestCategoryDto);
         Category category = categoryService.updateCategory(categoryId, requestCategoryDto, images);
