@@ -4,11 +4,11 @@ import R.VD.goomong.comment.dto.request.RequestCommentDto;
 import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.comment.service.CommentService;
+import R.VD.goomong.global.model.PageInfo;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,13 +36,27 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    private static ResponseEntity<List<ResponseCommentDto>> getListResponseEntity(Page<Comment> comments) {
+    private static List<ResponseCommentDto> getResponseCommentDtos(Pageable pageable, Page<Comment> comments) {
         long totalElements = comments.getTotalElements();
         int totalPages = comments.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(comments.getContent().stream().map(Comment::toResponseCommentDto).toList());
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponseCommentDto> list = new ArrayList<>();
+        for (Comment comment : comments.getContent()) {
+            ResponseCommentDto responseCommentDto = comment.toResponseCommentDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseCommentDto build1 = responseCommentDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
     }
 
     /**
@@ -151,15 +166,13 @@ public class CommentController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))))
     @GetMapping
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Comment> comments = commentService.listOfNotDeletedComment(pageable);
-        return getListResponseEntity(comments);
+
+        List<ResponseCommentDto> list = getResponseCommentDtos(pageable, comments);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -174,15 +187,12 @@ public class CommentController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))))
     @GetMapping("/deleted")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Comment> comments = commentService.listOfDeletedComment(pageable);
-        return getListResponseEntity(comments);
+        List<ResponseCommentDto> list = getResponseCommentDtos(pageable, comments);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -197,14 +207,11 @@ public class CommentController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))))
     @GetMapping("/all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCommentDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Comment> comments = commentService.allList(pageable);
-        return getListResponseEntity(comments);
+        List<ResponseCommentDto> list = getResponseCommentDtos(pageable, comments);
+        return ResponseEntity.ok(list);
     }
 }

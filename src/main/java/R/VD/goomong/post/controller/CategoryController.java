@@ -1,5 +1,6 @@
 package R.VD.goomong.post.controller;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.post.dto.request.RequestCategoryDto;
 import R.VD.goomong.post.dto.response.ResponseCategoryDto;
 import R.VD.goomong.post.model.Category;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,8 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,13 +36,27 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    private static ResponseEntity<List<ResponseCategoryDto>> getListResponseEntity(Page<Category> categories, Stream<Category> categories1) {
+    private static List<ResponseCategoryDto> getResponseCategoryDtos(Pageable pageable, Page<Category> categories) {
         long totalElements = categories.getTotalElements();
         int totalPages = categories.getTotalPages();
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(categories1.map(Category::toResponseCategoryDto).toList());
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponseCategoryDto> list = new ArrayList<>();
+        for (Category category : categories.getContent()) {
+            ResponseCategoryDto responseCategoryDto = category.toResponseCategoryDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseCategoryDto build1 = responseCategoryDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
     }
 
     /**
@@ -58,6 +72,7 @@ public class CategoryController {
     @PostMapping(value = "/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
         log.info("requestCategoryDto={}", requestCategoryDto);
+        log.info("images={}", images.length);
         categoryService.saveCategory(requestCategoryDto, images);
         return ResponseEntity.ok().build();
     }
@@ -160,16 +175,13 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/notdeleted/name/{categoryName}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeletedAndName(@PathVariable String categoryName, Pageable pageable) {
         Page<Category> categories = categoryService.listOfNotDeletedAndName(categoryName, pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.getContent().stream());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -186,16 +198,13 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/deleted/name/{categoryName}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> listOfDeletedAndName(@PathVariable String categoryName, Pageable pageable) {
         Page<Category> categories = categoryService.listOfDeletedAndName(categoryName, pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.getContent().stream());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -212,16 +221,13 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/name/{categoryName}")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> listOfAllAndName(@PathVariable String categoryName, Pageable pageable) {
         Page<Category> categories = categoryService.listOfAllAndName(categoryName, pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.getContent().stream());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -235,16 +241,13 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeleted(Pageable pageable) {
         Page<Category> categories = categoryService.listOfNotDeleted(pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.getContent().stream());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -258,16 +261,13 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/deleted")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> listOfDeleted(Pageable pageable) {
         Page<Category> categories = categoryService.listOfDeleted(pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.stream());
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -281,15 +281,12 @@ public class CategoryController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseCategoryDto>> allList(Pageable pageable) {
         Page<Category> categories = categoryService.allList(pageable);
+        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
-        return getListResponseEntity(categories, categories.stream());
+        return ResponseEntity.ok(list);
     }
 }

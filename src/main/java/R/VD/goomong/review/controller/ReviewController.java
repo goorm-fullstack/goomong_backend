@@ -1,5 +1,6 @@
 package R.VD.goomong.review.controller;
 
+import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.review.dto.request.RequestReviewDto;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import R.VD.goomong.review.model.Review;
@@ -7,7 +8,6 @@ import R.VD.goomong.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,14 +36,27 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    private static ResponseEntity<List<ResponseReviewDto>> getListResponseEntity(Page<Review> reviews) {
+    private static ResponseEntity<List<ResponseReviewDto>> getListResponseEntity(Pageable pageable, Page<Review> reviews) {
         long totalElements = reviews.getTotalElements();
         int totalPages = reviews.getTotalPages();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
 
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(reviews.getContent().stream().map(Review::toResponseReviewDto).toList());
+        List<ResponseReviewDto> list = new ArrayList<>();
+        for (Review review : reviews.getContent()) {
+            ResponseReviewDto responseReviewDto = review.toResponseReviewDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseReviewDto build1 = responseReviewDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -132,16 +146,11 @@ public class ReviewController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
     @GetMapping
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReviewDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Review> reviews = reviewService.listOfNotDeleted(pageable);
-
-        return getListResponseEntity(reviews);
+        return getListResponseEntity(pageable, reviews);
     }
 
     /**
@@ -156,16 +165,11 @@ public class ReviewController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
     @GetMapping("/deleted")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReviewDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Review> reviews = reviewService.listOfDeleted(pageable);
-
-        return getListResponseEntity(reviews);
+        return getListResponseEntity(pageable, reviews);
     }
 
     /**
@@ -180,15 +184,47 @@ public class ReviewController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
     @GetMapping("/all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseReviewDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Review> reviews = reviewService.allList(pageable);
+        return getListResponseEntity(pageable, reviews);
+    }
 
-        return getListResponseEntity(reviews);
+    /**
+     * 전체 리뷰의 평균 평점 구하기
+     *
+     * @return 전체 리뷰의 평균 평점
+     */
+    @Operation(summary = "전체 리뷰 평균 평점 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Float.class)))
+    @GetMapping("/aveRate")
+    public ResponseEntity<Float> aveRate() {
+        return ResponseEntity.ok(reviewService.aveReview());
+    }
+
+    /**
+     * 고객 만족도
+     *
+     * @return 고객 만족도
+     */
+    @Operation(summary = "고객 만족도 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Integer.class)))
+    @GetMapping("/customerSatisfaction")
+    public ResponseEntity<Float> customerSatisfaction() {
+        return ResponseEntity.ok(reviewService.customerSatisfaction());
+    }
+
+    /**
+     * 베스트 리뷰 리스트
+     *
+     * @return 베스트 리뷰 리스트
+     */
+    @Operation(summary = "베스트 리뷰 리스트 구하기")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
+    @GetMapping("/best")
+    public ResponseEntity<List<ResponseReviewDto>> bestReview() {
+        Page<ResponseReviewDto> responseReviewDtos = reviewService.bestReview(0, 9);
+        return ResponseEntity.ok(responseReviewDtos.getContent());
     }
 }

@@ -10,7 +10,7 @@ spring:
     url: jdbc:h2:tcp://localhost/~/test
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     defer-datasource-initialization: true
     properties:
       hibernate:
@@ -28,8 +28,8 @@ spring:
   mail: # smtp
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${ email.username }
+    password: ${ email.password }
     properties:
       mail:
         smtp:
@@ -51,3 +51,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+cos:
+  key: cos12345!

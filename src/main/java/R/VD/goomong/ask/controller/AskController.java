@@ -6,11 +6,11 @@ import R.VD.goomong.ask.dto.response.ResponseAnswerDto;
 import R.VD.goomong.ask.dto.response.ResponseAskDto;
 import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.ask.service.AskService;
+import R.VD.goomong.global.model.PageInfo;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,14 +40,27 @@ public class AskController {
 
     private final AskService askService;
 
-    private static ResponseEntity<List<ResponseAskDto>> getListResponseEntity(Page<Ask> asks) {
+    private static List<ResponseAskDto> getResponseAskDtos(Pageable pageable, Page<Ask> asks) {
         long totalElements = asks.getTotalElements();
         int totalPages = asks.getTotalPages();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
 
-        return ResponseEntity.ok()
-                .header("TotalPages", String.valueOf(totalPages))
-                .header("TotalData", String.valueOf(totalElements))
-                .body(asks.getContent().stream().map(Ask::toResponseAskDto).toList());
+        List<ResponseAskDto> list = new ArrayList<>();
+        for (Ask ask : asks.getContent()) {
+            ResponseAskDto responseAskDto = ask.toResponseAskDto();
+            PageInfo build = PageInfo.builder()
+                    .page(pageNumber)
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .build();
+            ResponseAskDto build1 = responseAskDto.toBuilder()
+                    .pageInfo(build)
+                    .build();
+            list.add(build1);
+        }
+        return list;
     }
 
     /**
@@ -207,16 +221,12 @@ public class AskController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))))
     @GetMapping
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.listOfNotDeleted(pageable);
-
-        return getListResponseEntity(asks);
+        List<ResponseAskDto> list = getResponseAskDtos(pageable, asks);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -231,16 +241,12 @@ public class AskController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))))
     @GetMapping("/del")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> listOfDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.listOfDeleted(pageable);
-
-        return getListResponseEntity(asks);
+        List<ResponseAskDto> list = getResponseAskDtos(pageable, asks);
+        return ResponseEntity.ok(list);
     }
 
     /**
@@ -255,15 +261,11 @@ public class AskController {
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))), headers = {
-            @Header(name = "TotalPages", description = "전체 페이지 개수", schema = @Schema(type = "string")),
-            @Header(name = "TotalData", description = "전체 데이터 개수", schema = @Schema(type = "string"))
-    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))))
     @GetMapping("all")
-    @CrossOrigin(exposedHeaders = {"TotalPages", "TotalData"})
     public ResponseEntity<List<ResponseAskDto>> allList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ask> asks = askService.allList(pageable);
-
-        return getListResponseEntity(asks);
+        List<ResponseAskDto> list = getResponseAskDtos(pageable, asks);
+        return ResponseEntity.ok(list);
     }
 }
