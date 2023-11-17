@@ -21,7 +21,7 @@ public class ResponseCategoryDto {
     private Long id;
 
     @Schema(description = "카테고리 이미지", implementation = Image.class)
-    private Image image;
+    private String imagePath;
 
     @Schema(description = "카테고리 그룹", implementation = Type.class)
     @Enumerated(EnumType.STRING)

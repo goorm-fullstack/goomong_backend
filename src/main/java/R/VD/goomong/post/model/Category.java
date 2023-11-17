@@ -38,7 +38,7 @@ public class Category extends BaseTimeEntity {
 
         return ResponseCategoryDto.builder()
                 .id(id)
-                .image(image)
+                .imagePath(image.getPath())
                 .categoryName(categoryName)
                 .regDate(this.getRegDate())
                 .delDate(delDate)

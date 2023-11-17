@@ -415,6 +415,19 @@ public class PostController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * hot 커뮤니티 게시글 기능
+     *
+     * @return hot 커뮤니티 게시글 리스트
+     */
+    @Operation(summary = "hot 커뮤니티 게시글 리스트")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/hot")
+    public ResponseEntity<List<ResponsePostDto>> hotPost() {
+        Page<ResponsePostDto> responsePostDtos = postService.hotPost(0, 6);
+        return ResponseEntity.ok(responsePostDtos.getContent());
+    }
+
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         return ResponseEntity.ok(findPost.toResponsePostDto());
