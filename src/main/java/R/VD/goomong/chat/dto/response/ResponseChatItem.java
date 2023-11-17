@@ -14,7 +14,7 @@ public class ResponseChatItem {
 
     private Long id;//DB 인덱스
     private String title;//제목
-    private String member;//작성자
+    private String memberName;//작성자
     private int price;//가격
     private List<Image> thumbNailList;//썸네일 리스트
     private String describe;//설명
@@ -26,7 +26,7 @@ public class ResponseChatItem {
     public ResponseChatItem(Item item) {
         this.id = item.getId();
         this.title = item.getTitle();
-        this.member = item.getMember().getMemberName();
+        this.memberName = item.getMember().getMemberName();
         this.price = item.getPrice();
         this.thumbNailList = item.getThumbNailList();
         this.describe = item.getDescribe();
