@@ -199,7 +199,7 @@ public class ReviewController {
     @Operation(summary = "전체 리뷰 평균 평점 구하기")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Float.class)))
     @GetMapping("/aveRate")
-    public ResponseEntity<Float> aveRate() {
+    public ResponseEntity<String> aveRate() {
         return ResponseEntity.ok(reviewService.aveReview());
     }
 
@@ -211,7 +211,7 @@ public class ReviewController {
     @Operation(summary = "고객 만족도 구하기")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = Integer.class)))
     @GetMapping("/customerSatisfaction")
-    public ResponseEntity<Float> customerSatisfaction() {
+    public ResponseEntity<String> customerSatisfaction() {
         return ResponseEntity.ok(reviewService.customerSatisfaction());
     }
 

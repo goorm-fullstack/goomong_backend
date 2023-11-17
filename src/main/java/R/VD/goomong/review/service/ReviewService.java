@@ -125,29 +125,28 @@ public class ReviewService {
     }
 
     // 전체 리뷰 평균 평점 구하기
-    public float aveReview() {
+    public String aveReview() {
         List<Review> all = reviewRepository.findAll();
 
         if (all.size() > 0) {
             float result = 0;
             for (Review review : all) {
                 if (review.getDelDate() == null) result += review.getRate();
-                log.info("reviewRate={}", review.getRate());
             }
 
-            log.info("result={}", result);
-            log.info("size={}", all.size());
-            return result / all.size();
+            log.info("ave={}", String.format("%.1f", result / all.size()));
+
+            return String.format("%.1f", result / all.size());
         }
-        return 0;
+        return String.valueOf(0);
     }
 
     // 고객 만족도 구하기
-    public float customerSatisfaction() {
-        float ave = aveReview();
+    public String customerSatisfaction() {
+        float ave = Float.parseFloat(aveReview());
         float total = 5.0F;
         log.info("ave={}, total={}, ave/total={}, result={}", ave, total, ave / total, (ave / total) * 100);
-        return (ave / total) * 100;
+        return String.format("%.1f", (ave / total) * 100);
     }
 
     // 베스트 후기 구하기
