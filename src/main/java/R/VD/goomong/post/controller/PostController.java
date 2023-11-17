@@ -214,8 +214,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedtype/{type}")
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                         @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfNotDeletedAndType(type, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -262,8 +266,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/alltype/{type}")
-    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                  @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfAllAndType(type, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -286,8 +294,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedcategory/{category}")
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfNotDeletedAndCategory(category, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -334,8 +346,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/allcategory/{category}")
-    public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                      @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfAllAndCategory(category, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -358,14 +374,10 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction, Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        if (orderBy.isPresent() && direction.isPresent()) {
-            Sort.Direction dir = Sort.Direction.fromString(direction.get());
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
-        } else {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        }
+        pageable = getPageable(orderBy, direction, pageable);
 
         Page<Post> posts = postService.listOfNotDeleted(pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
@@ -431,5 +443,14 @@ public class PostController {
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         return ResponseEntity.ok(findPost.toResponsePostDto());
+    }
+
+    // 정렬에 따른 pageable settings
+    private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        }
+        return pageable;
     }
 }
