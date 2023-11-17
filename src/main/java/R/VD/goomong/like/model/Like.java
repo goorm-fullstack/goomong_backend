@@ -2,6 +2,7 @@ package R.VD.goomong.like.model;
 
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.global.model.BaseTimeEntity;
+import R.VD.goomong.like.dto.response.ResponseLikeDto;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
@@ -35,4 +36,13 @@ public class Like extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+    public ResponseLikeDto toResponseLikeDto() {
+        return ResponseLikeDto.builder()
+                .id(id)
+                .postId(post != null ? post.getId() : null)
+                .reviewId(review != null ? review.getId() : null)
+                .commentId(comment != null ? comment.getId() : null)
+                .build();
+    }
 }

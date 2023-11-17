@@ -6,7 +6,6 @@ import R.VD.goomong.post.dto.request.RequestCategoryDto;
 import R.VD.goomong.post.exception.AlreadyDeleteCategoryException;
 import R.VD.goomong.post.exception.NotDeletedCategoryException;
 import R.VD.goomong.post.exception.NotExistCategoryException;
-import R.VD.goomong.post.exception.NotExistCategoryInfoException;
 import R.VD.goomong.post.model.Category;
 import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.CategoryRepository;
@@ -33,9 +32,7 @@ public class CategoryService {
     private final ImageService imageService;
 
     // 게시글 카테고리 생성
-    public void saveCategory(RequestCategoryDto requestCategoryDto, MultipartFile[] categoryImage) {
-
-        if (categoryImage.length > 1) throw new NotExistCategoryInfoException("카테고리 이미지는 대표 이미지 1장만 가능합니다.");
+    public void saveCategory(RequestCategoryDto requestCategoryDto, MultipartFile categoryImage) {
 
         Category entity = requestCategoryDto.toEntity();
 
@@ -43,8 +40,10 @@ public class CategoryService {
         categoryGroup = categoryGroup.toType(requestCategoryDto.getCategoryGroup());
 
         Image image = null;
-        if (categoryImage.length != 0) {
-            List<Image> images = imageService.saveImage(categoryImage);
+        if (categoryImage != null) {
+            MultipartFile[] imageArray = new MultipartFile[1];
+            imageArray[0] = categoryImage;
+            List<Image> images = imageService.saveImage(imageArray);
             image = images.get(0);
         }
 
@@ -56,9 +55,7 @@ public class CategoryService {
     }
 
     // 게시글 카테고리 수정
-    public Category updateCategory(Long categoryId, RequestCategoryDto requestCategoryDto, MultipartFile[] categoryImage) {
-
-        if (categoryImage.length > 1) throw new NotExistCategoryInfoException("카테고리 이미지는 대표 이미지 1장만 가능합니다.");
+    public Category updateCategory(Long categoryId, RequestCategoryDto requestCategoryDto, MultipartFile categoryImage) {
 
         Category onePostCategory = findOneCategory(categoryId);
         if (onePostCategory.getDelDate() != null)
@@ -68,8 +65,10 @@ public class CategoryService {
         categoryGroup = categoryGroup.toType(requestCategoryDto.getCategoryGroup());
 
         Image image = null;
-        if (categoryImage.length != 0) {
-            List<Image> images = imageService.saveImage(categoryImage);
+        if (categoryImage != null) {
+            MultipartFile[] imageArray = new MultipartFile[1];
+            imageArray[0] = categoryImage;
+            List<Image> images = imageService.saveImage(imageArray);
             image = images.get(0);
         }
 

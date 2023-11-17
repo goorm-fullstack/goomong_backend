@@ -4,6 +4,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
+import R.VD.goomong.like.model.Like;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
@@ -90,6 +91,11 @@ public class Member extends BaseTimeEntity {
     @OneToMany
     private List<Ask> askList = new ArrayList<>();
 
+    // responseMember 정보에 추가 부탁드립니다. ResponseLikeDto로 추가하시면 될 것 같습니다. (진환)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Like> likeList = new ArrayList<>();
+
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
@@ -109,7 +115,7 @@ public class Member extends BaseTimeEntity {
         this.saleInfo = saleInfo;
     }
 
-    public void changePassword(String memberId, String memberPassword){
+    public void changePassword(String memberId, String memberPassword) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
     }

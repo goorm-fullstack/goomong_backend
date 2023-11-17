@@ -54,11 +54,11 @@ public class PostService {
         Type type = Type.EVENT;
         type = type.toType(requestPostDto.getPostType());
 
-        List<Image> imageList = entity.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        List<Image> imageList = new ArrayList<>();
+        if (images != null) imageList = imageService.saveImage(images);
 
-        List<Files> fileList = entity.getFileList();
-        if (files.length != 0) fileList = filesService.saveFiles(files);
+        List<Files> fileList = new ArrayList<>();
+        if (files != null) fileList = filesService.saveFiles(files);
 
         Post build = entity.toBuilder()
                 .member(member)
@@ -87,10 +87,10 @@ public class PostService {
         type = type.toType(requestPostDto.getPostType());
 
         List<Image> imageList = origin.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        if (images != null) imageList = imageService.saveImage(images);
 
         List<Files> filesList = origin.getFileList();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Post build = origin.toBuilder()
                 .postCategory(originCategory)

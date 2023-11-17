@@ -47,7 +47,7 @@ public class ReviewService {
             throw new RuntimeException("해당 id의 상품은 이미 삭제된 상품입니다. id = " + requestReviewDto.getItemId());
 
         List<Image> imageList = null;
-        if (multipartFiles.length != 0) imageList = imageService.saveImage(multipartFiles);
+        if (multipartFiles != null) imageList = imageService.saveImage(multipartFiles);
 
         Review build = entity.toBuilder()
                 .member(member)
@@ -64,7 +64,7 @@ public class ReviewService {
             throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + reviewId);
 
         List<Image> imageList = origin.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        if (images != null) imageList = imageService.saveImage(images);
 
         Review build = origin.toBuilder()
                 .title(requestReviewDto.getTitle())
