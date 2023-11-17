@@ -30,15 +30,13 @@ public class PostSearchRepository {
             case "title":
                 query.orderBy(post.postTitle.asc());
                 break;
-            case "time":
-                query.orderBy(post.regDate.desc());
-                break;
             case "views":
                 query.orderBy(post.postViews.desc());
                 break;
             case "likes":
                 query.orderBy(post.postLikeNo.desc());
                 break;
+            case "time":
             default:
                 query.orderBy(post.regDate.desc());
                 break;
@@ -56,7 +54,6 @@ public class PostSearchRepository {
 
     public JPAQuery<Post> getPostQuery(String keyword, String categoryName) {
 
-        // todo: 정우님께 확인부탁
         JPAQuery<Post> query = jpaQueryFactory
                 .selectFrom(post)
                 .leftJoin(post.postCategory, category)
