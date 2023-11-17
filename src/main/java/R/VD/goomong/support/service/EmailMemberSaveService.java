@@ -48,8 +48,6 @@ public class EmailMemberSaveService {
             e.printStackTrace();
         }
 
-
-
         return message;
     }
 
