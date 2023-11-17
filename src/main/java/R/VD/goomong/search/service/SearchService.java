@@ -5,6 +5,7 @@ import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestPostSearchDTO;
@@ -60,15 +61,12 @@ public class SearchService {
         searchRepository.save(search);
     }
 
-    public ResponseSearchDTO searchItem(RequestItemSearchDTO searchDTO) {
-        int page = searchDTO.getPage() - 1;
-        int pageSize = searchDTO.getPageSize();
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public ResponseSearchDTO searchItem(Pageable pageable, RequestItemSearchDTO searchDTO) {
         Page<Item> itemPage = itemSearchRepository.itemSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getCategory(), pageable);
 
         PageInfo pageinfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
+                .page(pageable.getPageNumber())
+                .size(pageable.getPageNumber())
                 .totalElements(itemPage.getTotalElements())
                 .totalPage(itemPage.getTotalPages())
                 .build();
@@ -78,26 +76,18 @@ public class SearchService {
         return new ResponseSearchDTO(items, pageinfo);
     }
 
-    public ResponseSearchDTO searchPost(RequestPostSearchDTO searchDTO) {
-        int page = searchDTO.getPage() - 1;
-        int pageSize = searchDTO.getPageSize();
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public ResponseSearchDTO searchPost(Pageable pageable, RequestPostSearchDTO searchDTO) {
         Page<Post> postPage = postSearchRepository.postSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getOrder(), pageable);
 
         PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
+                .page(pageable.getPageNumber())
+                .size(pageable.getPageSize())
                 .totalElements(postPage.getTotalElements())
                 .totalPage(postPage.getTotalPages())
                 .build();
 
         List<Post> postList = postPage.getContent();
-        // todo: 정우님께 확인 부탁
-//        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
-        List<Object> posts = new ArrayList<>();
-        for (Post post : postList) {
-            posts.add(post.toResponsePostDto());
-        }
+        List<ResponsePostDto> posts = postList.stream().map(Post::toResponsePostDto).toList();
         return new ResponseSearchDTO(posts, pageInfo);
     }
 
