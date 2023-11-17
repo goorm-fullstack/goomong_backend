@@ -2,9 +2,13 @@ package R.VD.goomong.post.service;
 
 import R.VD.goomong.post.dto.request.RequestAnswerForQuestionDto;
 import R.VD.goomong.post.dto.request.RequestQuestionDto;
+import R.VD.goomong.post.exception.AlreadyDeleteCategoryException;
 import R.VD.goomong.post.exception.AlreadyDeletedQnaException;
+import R.VD.goomong.post.exception.NotExistCategoryException;
 import R.VD.goomong.post.exception.NotExistQnaException;
+import R.VD.goomong.post.model.Category;
 import R.VD.goomong.post.model.Qna;
+import R.VD.goomong.post.repository.CategoryRepository;
 import R.VD.goomong.post.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,11 +27,23 @@ import java.util.List;
 public class QnaService {
 
     private final QnaRepository qnaRepository;
+    private final CategoryRepository categoryRepository;
 
     // 질문 생성
     public void saveQuestion(RequestQuestionDto requestQuestionDto) {
         Qna entity = requestQuestionDto.toEntity();
-        qnaRepository.save(entity);
+
+        Category category = null;
+        if (requestQuestionDto.getCategoryId() != null) {
+            category = categoryRepository.findById(requestQuestionDto.getCategoryId()).orElseThrow(() -> new NotExistCategoryException("해당 id의 카테고리를 찾을 수 없습니다. id = " + requestQuestionDto.getCategoryId()));
+            if (category.getDelDate() != null)
+                throw new AlreadyDeleteCategoryException("해당 id의 카테고리는 이미 삭제된 카테고리입니다. id = " + category.getId());
+        }
+
+        Qna build = entity.toBuilder()
+                .category(category)
+                .build();
+        qnaRepository.save(build);
     }
 
     // 답변 생성
@@ -84,6 +100,19 @@ public class QnaService {
     public Qna findOneQna(Long qnaId) {
         return qnaRepository.findById(qnaId).orElseThrow(() -> new NotExistQnaException("해당 id의 QnA를 찾을 수 없습니다. id = " + qnaId));
     }
+
+    // 삭제되지 않은 질문 리스트 중 카테고리 이름으로 질문 리스트 조회
+    public Page<Qna> listOfNotDeletedAndCategory(String categoryName, Pageable pageable) {
+        Page<Qna> all = qnaRepository.findAll(pageable);
+        List<Qna> list = new ArrayList<>();
+
+        for (Qna qna : all) {
+            if (qna.getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName)) list.add(qna);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // todo: 카테고리 이름으로 질문 리스트 조회 기능 만들기
 
     // 삭제되지 않은 질문 리스트 조회
     public Page<Qna> listOfNotDeletedQuestion(Pageable pageable) {
