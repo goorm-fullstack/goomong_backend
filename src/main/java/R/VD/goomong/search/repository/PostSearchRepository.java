@@ -23,8 +23,8 @@ public class PostSearchRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<Post> postSearch(String keyword, String category, String orderBy, Pageable pageable) {
-        JPAQuery<Post> query = getPostQuery(keyword, category);
+    public Page<Post> postSearch(String keyword, String orderBy, String categoryName, Pageable pageable) {
+        JPAQuery<Post> query = getPostQuery(keyword, categoryName);
 
         switch (orderBy) {
             case "title":
@@ -46,7 +46,7 @@ public class PostSearchRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> countQuery = getPostQuery(keyword, category).select(post.count());
+        JPAQuery<Long> countQuery = getPostQuery(keyword, categoryName).select(post.count());
         Long total = countQuery.fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
