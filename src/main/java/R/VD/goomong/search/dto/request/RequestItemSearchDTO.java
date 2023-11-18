@@ -11,5 +11,5 @@ public class RequestItemSearchDTO {
     private Long memberId;
     private String keyword;
     private String order;
-    private String category;
+    private String categoryTitle;
 }
