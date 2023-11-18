@@ -37,7 +37,7 @@ public class PostService {
     private final FilesService filesService;
 
     // 게시글 생성
-    public void savePost(RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public void savePost(RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, Boolean isFix) {
 
         Post entity = requestPostDto.toEntity();
 
@@ -67,11 +67,24 @@ public class PostService {
                 .imageList(imageList)
                 .fileList(fileList)
                 .build();
+        if (isFix != null) {
+            if (findFixedPost() != null) {
+                Post currentFixed = findFixedPost().toBuilder()
+                        .isFix(false)
+                        .build();
+                postRepository.save(currentFixed);
+            }
+            Post fixed = build.toBuilder()
+                    .isFix(true)
+                    .build();
+            postRepository.save(fixed);
+            return;
+        }
         postRepository.save(build);
     }
 
     // 게시글 수정
-    public Post updatePost(Long postId, RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public Post updatePost(Long postId, RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, Boolean isFix) {
         Post origin = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
         if (origin.getDelDate() != null)
             throw new AlreadyDeletePostException("해당 id의 게시글은 이미 삭제된 게시글입니다. id = " + postId);
@@ -100,6 +113,18 @@ public class PostService {
                 .fileList(filesList)
                 .imageList(imageList)
                 .build();
+        if (isFix != null) {
+            if (findFixedPost() != null) {
+                Post currentFixed = findFixedPost().toBuilder()
+                        .isFix(false)
+                        .build();
+                postRepository.save(currentFixed);
+            }
+            Post fixed = build.toBuilder()
+                    .isFix(true)
+                    .build();
+            return postRepository.save(fixed);
+        }
         return postRepository.save(build);
     }
 
@@ -146,6 +171,11 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
         if (post.getDelDate() != null) throw new AlreadyDeletePostException("해당 id의 게시글은 삭제된 게시글입니다. id = " + postId);
         return post;
+    }
+
+    // 고정된 게시글 조회
+    public Post findFixedPost() {
+        return postRepository.findByIsFix(true).orElse(null);
     }
 
     // 삭제되지 않은 게시글 조회

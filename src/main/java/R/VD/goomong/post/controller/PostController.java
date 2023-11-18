@@ -80,10 +80,10 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("requestPostDto={}", requestPostDto);
 
-        postService.savePost(requestPostDto, images, files);
+        postService.savePost(requestPostDto, images, files, isFix);
         return ResponseEntity.ok().build();
     }
 
@@ -104,11 +104,11 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
     @PutMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("postId={}", postId);
         log.info("requestPostDto={}", requestPostDto);
 
-        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files).toResponsePostDto();
+        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files, isFix).toResponsePostDto();
         return ResponseEntity.ok(responsePostDto);
     }
 
@@ -196,6 +196,19 @@ public class PostController {
         log.info("postId={}", postId);
 
         return getResponseEntity(postId);
+    }
+
+    /**
+     * 고정 게시글 조회
+     *
+     * @return 조회된 게시글
+     */
+    @Operation(summary = "고정된 게시글 조회")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
+    @GetMapping("/post/fixed")
+    public ResponseEntity<?> fixedPost() {
+        Post fixedPost = postService.findFixedPost();
+        return ResponseEntity.ok(fixedPost != null ? fixedPost.toResponsePostDto() : null);
     }
 
     /**
