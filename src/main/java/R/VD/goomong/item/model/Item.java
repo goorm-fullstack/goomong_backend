@@ -40,7 +40,6 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany
     @JoinColumn(name = "image_id")
-    @Builder.Default
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션
@@ -48,18 +47,14 @@ public class Item extends BaseTimeEntity {
 
     @OneToMany
     @JoinColumn(name = "item_category_id")
-    @Builder.Default
     private List<ItemCategory> itemCategories = new ArrayList<>();//카테고리 목록
 
     @OneToMany(mappedBy = "item")
-    @Builder.Default
     private List<Review> reviewList = new ArrayList<>();//리뷰 목록
 
     @OneToMany(mappedBy = "item")
-    @Builder.Default
     private List<Ask> askList = new ArrayList<>();
 
-    @Builder.Default
     private Float rate = 0F;//평점
 
     private ZonedDateTime delDate;

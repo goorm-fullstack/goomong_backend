@@ -8,6 +8,7 @@ import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.request.RequestPostDto;
+import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.exception.*;
 import R.VD.goomong.post.model.Category;
 import R.VD.goomong.post.model.Post;
@@ -15,9 +16,7 @@ import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.repository.CategoryRepository;
 import R.VD.goomong.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,11 +54,11 @@ public class PostService {
         Type type = Type.EVENT;
         type = type.toType(requestPostDto.getPostType());
 
-        List<Image> imageList = entity.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        List<Image> imageList = new ArrayList<>();
+        if (images != null) imageList = imageService.saveImage(images);
 
-        List<Files> fileList = entity.getFileList();
-        if (files.length != 0) fileList = filesService.saveFiles(files);
+        List<Files> fileList = new ArrayList<>();
+        if (files != null) fileList = filesService.saveFiles(files);
 
         Post build = entity.toBuilder()
                 .member(member)
@@ -88,10 +87,10 @@ public class PostService {
         type = type.toType(requestPostDto.getPostType());
 
         List<Image> imageList = origin.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        if (images != null) imageList = imageService.saveImage(images);
 
         List<Files> filesList = origin.getFileList();
-        if (files.length != 0) filesList = filesService.saveFiles(files);
+        if (files != null) filesList = filesService.saveFiles(files);
 
         Post build = origin.toBuilder()
                 .postCategory(originCategory)
@@ -252,5 +251,24 @@ public class PostService {
     // 전체 게시글 조회
     public Page<Post> allList(Pageable pageable) {
         return postRepository.findAll(pageable);
+    }
+
+    // hot 커뮤니티 게시판 기능
+    public Page<ResponsePostDto> hotPost(int pageNumber, int pageSize) {
+        Sort sort = Sort.by(
+                Sort.Order.desc("postLikeNo"),
+                Sort.Order.desc("commentNo"),
+                Sort.Order.desc("postViews")
+        );
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        List<Post> all = postRepository.findAll();
+        List<ResponsePostDto> list = new ArrayList<>();
+
+        for (Post post : all) {
+            if (post.getDelDate() == null && post.getPostType().equals(Type.COMMUNITY))
+                list.add(post.toResponsePostDto());
+        }
+        return new PageImpl<>(list, pageRequest, list.size());
     }
 }

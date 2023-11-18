@@ -21,9 +21,9 @@ public class ItemSearchRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<Item> itemSearch(String keyword, String orderBy, String category, Pageable pageable) {
+    public Page<Item> itemSearch(String keyword, String orderBy, String categoryTitle, Pageable pageable) {
 
-        JPAQuery<Item> query = getItemQuery(keyword, category);
+        JPAQuery<Item> query = getItemQuery(keyword, categoryTitle);
 
         switch (orderBy) {
             case "title":
@@ -47,13 +47,13 @@ public class ItemSearchRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> countQuery = getItemQuery(keyword, category).select(item.count());
+        JPAQuery<Long> countQuery = getItemQuery(keyword, categoryTitle).select(item.count());
         Long total = countQuery.fetchOne();
 
         return new PageImpl<>(items, pageable, total);
     }
 
-    private JPAQuery<Item> getItemQuery(String keyword, String category) {
+    private JPAQuery<Item> getItemQuery(String keyword, String categoryTitle) {
         JPAQuery<Item> query = jpaQueryFactory
                 .selectFrom(item)
                 .leftJoin(item.itemCategories, itemCategory)
@@ -65,8 +65,8 @@ public class ItemSearchRepository {
                                 .or(item.member.memberName.contains(keyword))
                                 .and(item.regDate.isNull())
                 );
-        if (category != null && !category.isEmpty())
-            query.where(itemCategory.title.eq(category));
+        if (categoryTitle != null && !categoryTitle.isEmpty())
+            query.where(itemCategory.title.eq(categoryTitle));
 
         return query;
     }

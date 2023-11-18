@@ -31,6 +31,7 @@ public class ResponseItemDto {
     private Status status;
 
     public ResponseItemDto(Item item) {
+
         this.id = item.getId();
         this.title = item.getTitle();
         this.member = new ResponseMember(item.getMember());

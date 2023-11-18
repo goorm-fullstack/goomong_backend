@@ -10,18 +10,27 @@ public class RequestUpdateDto{
     private String memberPassword;
     private String memberName;
     private String memberEmail;
-    private Long zipCode;
-    private String simpleAddress;
-    private String detailAddress;
+    private Long buyZipCode;
+    private String buySimpleAddress;
+    private String buyDetailAddress;
+    private Long saleZipCode;
+    private String saleSimpleAddress;
+    private String saleDetailAddress;
+    private String saleInfo;
+
 
     @Builder
-    public RequestUpdateDto(String memberId, String memberPassword, String memberName, String memberEmail, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestUpdateDto(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
-        this.zipCode = zipCode;
-        this.simpleAddress = simpleAddress;
-        this.detailAddress = detailAddress;
+        this.buyZipCode = buyZipCode;
+        this.buySimpleAddress = buySimpleAddress;
+        this.buyDetailAddress = buyDetailAddress;
+        this.saleZipCode = saleZipCode;
+        this.saleSimpleAddress = saleSimpleAddress;
+        this.saleDetailAddress = saleDetailAddress;
+        this.saleInfo = saleInfo;
     }
 }

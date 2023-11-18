@@ -14,9 +14,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Item", description = "아이템 API")
 @RestController
@@ -78,9 +84,11 @@ public class ItemController {
             }
     )
     @GetMapping("/list/sale")
-    public ResponseEntity<ResponseItemPageDto> getItemListBySale(int page, int pageSize) {
-        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
-        return ResponseEntity.ok(itemService.findAllBySale(searchDto));
+    public ResponseEntity<List<ResponseItemDto>> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                   Pageable pageable) {
+        pageable = getPageable(orderBy, direction, pageable);
+
+        return ResponseEntity.ok(itemService.findAllBySale(pageable));
     }
 
     @Operation(
@@ -93,10 +101,12 @@ public class ItemController {
                             content = @Content(schema = @Schema(implementation = ResponseNonSaleItemDto.class)))
             }
     )
-    @GetMapping("/list/give")
-    public ResponseEntity<ResponseItemPageDto> getItemListByGive(int page, int pageSize) {
-        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
-        return ResponseEntity.ok(itemService.findAllByGive(searchDto));
+    @GetMapping("/list/non-sale")
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                          Pageable pageable) {
+        pageable = getPageable(orderBy, direction, pageable);
+
+        return ResponseEntity.ok(itemService.findAllByGive(pageable));
     }
 
     @Operation(
@@ -110,9 +120,11 @@ public class ItemController {
             }
     )
     @GetMapping("/list/wanted")
-    public ResponseEntity<ResponseItemPageDto> getItemListByWanted(int page, int pageSize) {
-        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
-        return ResponseEntity.ok(itemService.findAllByWanted(searchDto));
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                            Pageable pageable) {
+        pageable = getPageable(orderBy, direction, pageable);
+
+        return ResponseEntity.ok(itemService.findAllByWanted(pageable));
     }
 
     @Operation(
@@ -126,9 +138,11 @@ public class ItemController {
             }
     )
     @GetMapping("/list/exchange")
-    public ResponseEntity<ResponseItemPageDto> getItemListByExchange(int page, int pageSize) {
-        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
-        return ResponseEntity.ok(itemService.findAllByExchange(searchDto));
+    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                              Pageable pageable) {
+        pageable = getPageable(orderBy, direction, pageable);
+
+        return ResponseEntity.ok(itemService.findAllByExchange(pageable));
     }
 
     @Operation(
@@ -149,5 +163,13 @@ public class ItemController {
     public ResponseEntity<String> updateItem(@RequestBody UpdateItemDto itemDto) {
         itemService.updateItem(itemDto);
         return ResponseEntity.ok("업데이트 완료");
+    }
+
+    private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        }
+        return pageable;
     }
 }

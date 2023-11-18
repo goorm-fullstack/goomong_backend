@@ -19,8 +19,12 @@ public class RequestCommentDto {
     private Long memberId;
 
     @Positive
-    @Schema(description = "댓글이 작성될 게시글 id", example = "1", required = true)
+    @Schema(description = "댓글이 작성될 게시글 id", example = "1")
     private Long postId;
+
+    @Positive
+    @Schema(description = "댓글이 작성될 리뷰 id", example = "1")
+    private Long reviewId;
 
     @Schema(description = "대댓글 작성 시 상위 댓글의 id", example = "1")
     private Long parentCommentId;

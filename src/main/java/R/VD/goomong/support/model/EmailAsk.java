@@ -31,7 +31,6 @@ public class EmailAsk extends BaseTimeEntity {
     private String content;
 
     @Column
-    @Builder.Default
     private Boolean isEmailOpened = false;
 
     @OneToMany(cascade = CascadeType.ALL)

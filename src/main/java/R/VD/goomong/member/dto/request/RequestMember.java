@@ -1,11 +1,13 @@
 package R.VD.goomong.member.dto.request;
 
+import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,28 +23,46 @@ public class RequestMember {
 
     private LocalDateTime memberSignupTime = LocalDateTime.now();
 
-    private Long zipCode;
+    private Long buyZipCode;
 
-    private String simpleAddress;
+    private String buySimpleAddress;
 
-    private String detailAddress;
+    private String buyDetailAddress;
+
+    private Long saleZipCode;
+
+    private String saleSimpleAddress;
+
+    private String saleDetailAddress;
 
     private String memberRole;
 
     private Long memberLoginFailed = 0L; // 기본값 0으로 설정
 
+    private Boolean isKakao = false;
+
+    private String saleInfo;
+
+    private List<Image> profileImage;
+
     @Builder(toBuilder = true)
-    public RequestMember(Long memberLoginFailed, String memberRole, String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long zipCode, String simpleAddress, String detailAddress) {
+    public RequestMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, String saleInfo, List<Image> profileImage) { // 'Image' 객체를 'List<Image>'로 수정
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.memberSignupTime = memberSignupTime;
-        this.zipCode = zipCode;
-        this.simpleAddress = simpleAddress;
-        this.detailAddress = detailAddress;
+        this.buyZipCode = buyZipCode;
+        this.buySimpleAddress = buySimpleAddress;
+        this.buyDetailAddress = buyDetailAddress;
+        this.saleZipCode = saleZipCode;
+        this.saleSimpleAddress = saleSimpleAddress;
+        this.saleDetailAddress = saleDetailAddress;
         this.memberRole = memberRole;
         this.memberLoginFailed = memberLoginFailed;
+        this.isKakao = isKakao;
+        this.saleInfo = saleInfo;
+        this.profileImage = profileImage;
     }
 
     public Member toEntity(){
@@ -52,11 +72,17 @@ public class RequestMember {
                 .memberEmail(memberEmail)
                 .memberName(memberName)
                 .memberSignupTime(memberSignupTime)
-                .zipCode(zipCode)
-                .simpleAddress(simpleAddress)
-                .detailAddress(detailAddress)
+                .buyZipCode(buyZipCode)
+                .buySimpleAddress(buySimpleAddress)
+                .buyDetailAddress(buyDetailAddress)
+                .saleZipCode(saleZipCode)
+                .saleSimpleAddress(saleSimpleAddress)
+                .saleDetailAddress(saleDetailAddress)
                 .memberRole(memberRole)
                 .memberLoginFailed(memberLoginFailed)
+                .isKakao(isKakao)
+                .saleInfo(saleInfo)
+                .profileImages(profileImage)
                 .build();
     }
 }

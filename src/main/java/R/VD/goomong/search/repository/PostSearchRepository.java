@@ -23,15 +23,12 @@ public class PostSearchRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<Post> postSearch(String keyword, String category, String orderBy, Pageable pageable) {
-        JPAQuery<Post> query = getPostQuery(keyword, category);
+    public Page<Post> postSearch(String keyword, String orderBy, String categoryName, Pageable pageable) {
+        JPAQuery<Post> query = getPostQuery(keyword, categoryName);
 
         switch (orderBy) {
             case "title":
                 query.orderBy(post.postTitle.asc());
-                break;
-            case "time":
-                query.orderBy(post.regDate.desc());
                 break;
             case "views":
                 query.orderBy(post.postViews.desc());
@@ -39,6 +36,7 @@ public class PostSearchRepository {
             case "likes":
                 query.orderBy(post.postLikeNo.desc());
                 break;
+            case "time":
             default:
                 query.orderBy(post.regDate.desc());
                 break;
@@ -48,7 +46,7 @@ public class PostSearchRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> countQuery = getPostQuery(keyword, category).select(post.count());
+        JPAQuery<Long> countQuery = getPostQuery(keyword, categoryName).select(post.count());
         Long total = countQuery.fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
@@ -56,7 +54,6 @@ public class PostSearchRepository {
 
     public JPAQuery<Post> getPostQuery(String keyword, String categoryName) {
 
-        // todo: 정우님께 확인부탁
         JPAQuery<Post> query = jpaQueryFactory
                 .selectFrom(post)
                 .leftJoin(post.postCategory, category)

@@ -38,12 +38,16 @@ public class RankingSupportRepository {
         }
 
         switch (sortBy) {
-            case "totalSales":
+            case "totalSales": // 총 누적 금액 순으로 정렬
                 query.orderBy(order.price.sum().desc());
                 break;
-            case "reviewCount":
+            case "reviewCount": // 총 리뷰 순으로 정렬
                 query.orderBy(review.id.count().desc());
                 break;
+            case "reviewAvg": // 리뷰 평점 순으로 정렬
+                query.orderBy(review.rate.avg().desc());
+                break;
+            case "transaction" : // 총 거래 순으로 정렬
             default:
                 query.orderBy(item.countDistinct().desc());
         }

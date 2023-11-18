@@ -48,7 +48,7 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private List<Files> fileList = new ArrayList<>(); // 게시글 파일
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_category_id")
     private Category postCategory;
 
@@ -88,6 +88,8 @@ public class Post extends BaseTimeEntity {
         return ResponsePostDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
+                .memberAddress(member.getSaleSimpleAddress())
+                .memberImageList(member.getProfileImages())
                 .postCategory(postCategory.getCategoryName())
                 .postLikeNo(postLikeNo)
                 .imageList(imageList)
@@ -98,6 +100,7 @@ public class Post extends BaseTimeEntity {
                 .reportIdList(reports)
                 .postType(postType)
                 .commentList(comments)
+                .commentNo(commentList.size())
                 .delDate(delDate)
                 .filesList(fileList)
                 .build();
