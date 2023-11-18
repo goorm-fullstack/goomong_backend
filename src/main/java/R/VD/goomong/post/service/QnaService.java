@@ -107,12 +107,34 @@ public class QnaService {
         List<Qna> list = new ArrayList<>();
 
         for (Qna qna : all) {
-            if (qna.getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName)) list.add(qna);
+            if (qna.getQna() == null && qna.getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName))
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
 
-    // todo: 카테고리 이름으로 질문 리스트 조회 기능 만들기
+    // 삭제된 질문 리스트 중 카테고리 이름으로 질문 리스트 조회
+    public Page<Qna> listOfDeletedAndCategory(String categoryName, Pageable pageable) {
+        Page<Qna> all = qnaRepository.findAll(pageable);
+        List<Qna> list = new ArrayList<>();
+
+        for (Qna qna : all) {
+            if (qna.getQna() == null && qna.getDelDate() != null && qna.getCategory().getCategoryName().equals(categoryName))
+                list.add(qna);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 카테고리 이름으로 전체 질문 리스트 조회
+    public Page<Qna> listOfAllAndCategory(String categoryName, Pageable pageable) {
+        Page<Qna> all = qnaRepository.findAll(pageable);
+        List<Qna> list = new ArrayList<>();
+
+        for (Qna qna : all) {
+            if (qna.getQna() == null && qna.getCategory().getCategoryName().equals(categoryName)) list.add(qna);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
 
     // 삭제되지 않은 질문 리스트 조회
     public Page<Qna> listOfNotDeletedQuestion(Pageable pageable) {
