@@ -453,6 +453,20 @@ public class PostController {
         return ResponseEntity.ok(responsePostDtos.getContent());
     }
 
+    /**
+     * 특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기
+     *
+     * @param postId 제외할 데이터의 id
+     * @return 조회된 공지사항 게시글 리스트
+     */
+    @Operation(summary = "특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기")
+    @Parameter(name = "postId", description = "제외할 데이터의 id", example = "1")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/random/{postId}")
+    public ResponseEntity<List<ResponsePostDto>> random(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.random(postId).stream().map(Post::toResponsePostDto).toList());
+    }
+
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         return ResponseEntity.ok(findPost.toResponsePostDto());

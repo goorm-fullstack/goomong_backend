@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -300,5 +301,19 @@ public class PostService {
                 list.add(post.toResponsePostDto());
         }
         return new PageImpl<>(list, pageRequest, list.size());
+    }
+
+    // 특정 id의 데이터를 제외한 랜덤 5개의 공지사항 게시글 가져오기
+    public List<Post> random(Long postId) {
+        List<Post> all = postRepository.findAll();
+        Collections.shuffle(all);
+        List<Post> list = new ArrayList<>();
+
+        for (Post post : all) {
+            if (list.size() == 5) break;
+            if (post.getDelDate() == null && post.getPostType().equals(Type.NOTICE) && !post.getId().equals(postId))
+                list.add(post);
+        }
+        return list;
     }
 }
