@@ -60,7 +60,7 @@ public class ItemSearchRepository {
                 .leftJoin(order.orderItem, item)
                 .where(
                         item.title.contains(keyword)
-                                .or(item.description.contains(keyword))
+                                .or(item.describe.contains(keyword))
                                 .or(itemCategory.title.contains(keyword))
                                 .or(item.member.memberName.contains(keyword))
                                 .and(item.regDate.isNull())

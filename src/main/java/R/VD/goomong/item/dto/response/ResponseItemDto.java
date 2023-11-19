@@ -21,7 +21,7 @@ public class ResponseItemDto {
     private String title;//제목
     private ResponseMember member;//작성자
     private int price;//가격
-    private List<ItemOption> itemOptions;
+    private List<ItemOption> itemOptions;//아이템 옵션
     private List<Image> thumbNailList;//썸네일 리스트
     private String description;//설명
     private List<ResponseItemCategoryDto> itemCategories;//카테고리 목록
@@ -38,7 +38,7 @@ public class ResponseItemDto {
         this.price = item.getPrice();
         this.itemOptions = item.getItemOptions();
         this.thumbNailList = item.getThumbNailList();
-        this.description = item.getDescription();
+        this.description = item.getDescribe();
         this.itemCategories = getCategoryDto(item.getItemCategories());
         this.reviewList = getReviewDto(item.getReviewList());
         this.askList = getAskDto(item.getAskList());

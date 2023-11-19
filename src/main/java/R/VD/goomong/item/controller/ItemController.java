@@ -1,10 +1,8 @@
 package R.VD.goomong.item.controller;
 
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestSearchDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
-import R.VD.goomong.item.dto.response.ResponseItemPageDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,9 +40,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list")
-    public ResponseEntity<ResponseItemPageDto> getItemList(int page, int pageSize) {
-        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
-        return ResponseEntity.ok(itemService.findAll(searchDto));
+    public ResponseEntity<List<ResponseItemDto>> getItemList() {
+        return ResponseEntity.ok(itemService.findAll());
     }
 
     @Operation(
@@ -73,6 +70,12 @@ public class ItemController {
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
 
+    /**
+     *
+     * @param orderBy : title, price 같이 엔티티 기반 프로퍼티 명
+     * @param direction : asc, desc
+     * @param pageable : 페이지 번호
+     */
     @Operation(
             summary = "판매 아이템 리스트 출력",
             description = "판매 아이템 리스트 출력.",

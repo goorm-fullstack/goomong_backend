@@ -1,13 +1,10 @@
 package R.VD.goomong.item.service;
 
-import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.item.dto.request.RequestItemDto;
-import R.VD.goomong.item.dto.request.RequestSearchDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
-import R.VD.goomong.item.dto.response.ResponseItemPageDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
@@ -22,7 +19,6 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,24 +39,6 @@ public class ItemService {
     private final MemberRepository memberRepository;
     private final ItemOptionRepository itemOptionRepository;
 
-    // 판매 상태의 값을 페이징처리해서 반환하는 함수
-    private static ResponseItemPageDto<List<ResponseItemDto>> getListResponseItemPageDto(int page, int pageSize, Page<Item> items) {
-        List<ResponseItemDto> result = new ArrayList<>();
-        PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
-                .totalElements(items.getTotalElements())
-                .totalPage(items.getTotalPages())
-                .build();
-
-        List<Item> itemList = items.getContent();
-        for (Item item : itemList) {
-            result.add(new ResponseItemDto(item));
-        }
-
-        return new ResponseItemPageDto<>(result, pageInfo);
-    }
-
     // 아이템 저장
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
         saveItem(multipartFiles, itemDto, itemDto.getItemCategories());
@@ -72,49 +50,56 @@ public class ItemService {
         return new ResponseItemDto(item);
     }
 
-    // 재능 기부 조회
-
     // 전체 아이템 찾기
-    public ResponseItemPageDto<List<ResponseItemDto>> findAll(RequestSearchDto searchDto) {
-        int page = searchDto.getPage() - 1;
-        int pageSize = searchDto.getPageSize();
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Item> items = itemRepository.findAll(pageable);
-
-        PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
-                .totalElements(items.getTotalElements())
-                .totalPage(items.getTotalPages())
-                .build();
-
-
-        List<Item> itemList = items.getContent();
-        return new ResponseItemPageDto<>(itemList.stream().map(ResponseItemDto::new).toList(), pageInfo);
+    public List<ResponseItemDto> findAll() {
+        List<Item> items = itemRepository.findAll();
+        return items.stream().map(ResponseItemDto::new).toList();
     }
 
     // 판매 조회
-    public ResponseItemPageDto<List<ResponseItemDto>> findAllBySale(RequestSearchDto searchDto) {
-        int page = searchDto.getPage() - 1;
-        int pageSize = searchDto.getPageSize();
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public List<ResponseItemDto> findAllBySale(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE.toString(), pageable);
+        List<ResponseItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseItemDto(item));
+        }
 
-        return getListResponseItemPageDto(page, pageSize, items);
+        return result;
     }
 
-    public ResponseItemPageDto<List<ResponseNonSaleItemDto>> findAllByGive(RequestSearchDto searchDto) {
-        return getListResponseItemPageDto(searchDto, Status.GIVE.toString());
+    // 재능 기부 조회
+    public List<ResponseNonSaleItemDto> findAllByGive(Pageable pageable) {
+        Page<Item> items = itemRepository.findAllByStatus(Status.GIVE.toString(), pageable);
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+
+        return result;
     }
 
-    public ResponseItemPageDto<List<ResponseNonSaleItemDto>> findAllByExchange(RequestSearchDto searchDto) {
-        return getListResponseItemPageDto(searchDto, Status.EXCHANGE.toString());
+    // 구인 조회
+    public List<ResponseNonSaleItemDto> findAllByExchange(Pageable pageable) {
+        Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE.toString(), pageable);
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+        return result;
     }
 
-    public ResponseItemPageDto<List<ResponseNonSaleItemDto>> findAllByWanted(RequestSearchDto searchDto) {
-        return getListResponseItemPageDto(searchDto, Status.WANTED.toString());
+    // 구인 조회
+    public List<ResponseNonSaleItemDto> findAllByWanted(Pageable pageable) {
+        Page<Item> items = itemRepository.findAllByStatus(Status.WANTED.toString(), pageable);
+        List<ResponseNonSaleItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            result.add(new ResponseNonSaleItemDto(item));
+        }
+
+        return result;
     }
 
+    // 아이템 삭제
     public void deleteItem(Long id) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
@@ -125,6 +110,7 @@ public class ItemService {
         delItem.deleteItem();
     }
 
+    // 아이템 업데이트
     public void updateItem(UpdateItemDto itemDto) {
         Optional<Item> findItem = itemRepository.findById(itemDto.getId());
         if (findItem.isEmpty())
@@ -134,6 +120,7 @@ public class ItemService {
         propertyUpdate(item, itemDto);
     }
 
+    // 공통 아이템 저장 함수
     private void saveItem(MultipartFile[] multipartFiles, RequestItemDto entity, List<Long> itemCategories) {
         Item item = entity.toEntity();
         List<Image> imageList = imageService.saveImage(multipartFiles);
@@ -147,25 +134,23 @@ public class ItemService {
         if (member.isEmpty())
             throw new NotFoundMember();
 
-        List<ItemOption> options = new ArrayList<>();
-        for (ItemOption option : entity.getItemOptions()) {
-            ItemOption save = itemOptionRepository.save(option);
-            options.add(save);
+        List<ItemOption> itemOptions = new ArrayList<>();
+        for(ItemOption option : entity.getItemOptions()) {
+            ItemOption itemOption = itemOptionRepository.save(option);
+            itemOptions.add(itemOption);
         }
 
+        item.setItemOptions(itemOptions);
         item.setMember(member.get());
         item.setItemCategories(categories);
         item.setThumbNailList(imageList);
-        item.setItemOptions(options);
         itemRepository.save(item);
     }
 
-    /**
-     * 아이템의 데이터를 업데이트 합니다.
-     */
+    //수정된 데이터로 DB 업데이트
     private void propertyUpdate(Item item, UpdateItemDto itemDto) {
         String title = item.getTitle();
-        String describe = item.getDescription();
+        String describe = item.getDescribe();
         int price = item.getPrice();
 
         if (!itemDto.getDescribe().isEmpty())
@@ -178,26 +163,5 @@ public class ItemService {
             price = itemDto.getPrice();
 
         item.update(price, title, describe);
-    }
-
-    private ResponseItemPageDto<List<ResponseNonSaleItemDto>> getListResponseItemPageDto(RequestSearchDto searchDto, String status) {
-        int page = searchDto.getPage() - 1;
-        int pageSize = searchDto.getPageSize();
-        Pageable pageable = PageRequest.of(page, pageSize);
-
-        Page<Item> items = itemRepository.findAllByStatus(status, pageable);
-        List<ResponseNonSaleItemDto> result = new ArrayList<>();
-        PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
-                .totalElements(items.getTotalElements())
-                .totalPage(items.getTotalPages())
-                .build();
-        List<Item> itemList = items.getContent();
-        for (Item item : itemList) {
-            result.add(new ResponseNonSaleItemDto(item));
-        }
-
-        return new ResponseItemPageDto<>(result, pageInfo);
     }
 }

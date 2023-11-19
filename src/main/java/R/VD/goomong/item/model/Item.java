@@ -43,7 +43,7 @@ public class Item extends BaseTimeEntity {
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션
-    private String description;//설명
+    private String describe;//설명
 
     @OneToMany
     @JoinColumn(name = "item_category_id")
@@ -55,6 +55,7 @@ public class Item extends BaseTimeEntity {
     @OneToMany(mappedBy = "item")
     private List<Ask> askList = new ArrayList<>();
 
+    @Builder.Default
     private Float rate = 0F;//평점
 
     private ZonedDateTime delDate;
@@ -66,12 +67,12 @@ public class Item extends BaseTimeEntity {
     public void update(int price, String title, String describe) {
         this.price = price;
         this.title = title;
-        this.description = describe;
+        this.describe = describe;
     }
 
     public void update(String title, String describe) {
         this.title = title;
-        this.description = describe;
+        this.describe = describe;
     }
 
     public void setThumbNailList(List<Image> thumbNailList) {

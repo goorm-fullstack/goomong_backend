@@ -4,6 +4,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
@@ -26,6 +27,7 @@ public class ResponseNonSaleItemDto {
     private List<Image> thumbNailList;//썸네일 리스트
     @Schema(description = "아이템에 대한 설명")
     private String describe;//설명
+    private List<ItemOption> itemOptions;
     @Schema(description = "아이템 카테고리 목록")
     private List<ItemCategory> itemCategories;//카테고리 목록
     @Schema(description = "현재 아이템에 등록된 리뷰 목록")
@@ -41,8 +43,9 @@ public class ResponseNonSaleItemDto {
         this.id = item.getId();
         this.title = item.getTitle();
         this.member = item.getMember();
+        this.itemOptions = item.getItemOptions();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescription();
+        this.describe = item.getDescribe();
         this.itemCategories = item.getItemCategories();
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();

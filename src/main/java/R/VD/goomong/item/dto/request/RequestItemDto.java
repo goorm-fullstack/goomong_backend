@@ -38,7 +38,7 @@ public class RequestItemDto {
         return Item.builder()
                 .title(title)
                 .price(price)
-                .description(describe)
+                .describe(describe)
                 .status(status)
                 .build();
     }
