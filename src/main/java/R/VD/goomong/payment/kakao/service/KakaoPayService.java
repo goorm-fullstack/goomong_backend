@@ -42,8 +42,11 @@ public class KakaoPayService {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final MemberRepository memberRepository;
-//    @Value("${adminKey}")
+    private final RestTemplate restTemplate;
+
+    @Value("${ADMIN_KEY}")
     private String adminKey;
+
     private KakaoPayResponse kakaoPayResponse;
 
 
@@ -55,8 +58,6 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
         // 외부에 보낼 url
-        RestTemplate restTemplate = new RestTemplate();
-
         kakaoPayResponse = restTemplate.postForObject(
                 "https://kapi.kakao.com/v1/payment/ready",
                 requestEntity,
@@ -74,7 +75,6 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
         // 외부에 보낼 url
-        RestTemplate restTemplate = new RestTemplate();
         try {
             KakaoPayApproveResponse kakaoPayApproveResponse = restTemplate.postForObject(
                     "https://kapi.kakao.com/v1/payment/approve",
@@ -107,7 +107,6 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
         // 외부에 보낼 url
-        RestTemplate restTemplate = new RestTemplate();
         order.refundComplete();
         return restTemplate.postForObject(
                 "https://kapi.kakao.com/v1/payment/cancel",
