@@ -1,7 +1,9 @@
 package R.VD.goomong.order.controller;
 
 import R.VD.goomong.order.dto.request.RequestOrderDto;
+import R.VD.goomong.order.dto.request.RequestSearchDto;
 import R.VD.goomong.order.dto.response.ResponseOrderDto;
+import R.VD.goomong.order.dto.response.ResponsePageOrderDto;
 import R.VD.goomong.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,8 +49,9 @@ public class OrderController {
             }
     )
     @GetMapping("/member/{id}/list")
-    public ResponseEntity<List<ResponseOrderDto>> findByMemberOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.findByMemberOrderList(id));
+    public ResponseEntity<ResponsePageOrderDto> findByMemberOrder(@PathVariable Long id, int page, int pageSize) {
+        RequestSearchDto searchDto = new RequestSearchDto(page, pageSize);
+        return ResponseEntity.ok(orderService.findByMemberOrderList(id, searchDto));
     }
 
     @Operation(
