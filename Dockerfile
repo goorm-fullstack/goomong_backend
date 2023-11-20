@@ -16,4 +16,4 @@ RUN chmod +x gradlew
 
 RUN ./gradlew clean build
 
-CMD ["java", "-Dspring.profiles.active=prod", "/app/build/libs/goomong-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=prod", "/app/build/libs/goomong-0.0.1-SNAPSHOT.jar"]
