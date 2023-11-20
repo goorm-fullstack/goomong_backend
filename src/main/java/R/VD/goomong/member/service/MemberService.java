@@ -113,8 +113,16 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    //이메일로 회원 찾기
     public Member findByMemberEmail(String memberEmail){
         Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
+
+        return member.orElse(null);
+    }
+
+    //이름으로 회원 찾기
+    public Member findByMemberName(String memberName) {
+        Optional<Member> member = memberRepository.findByMemberName(memberName);
 
         return member.orElse(null);
     }
