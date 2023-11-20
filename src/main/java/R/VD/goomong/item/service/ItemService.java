@@ -141,11 +141,11 @@ public class ItemService {
     //수정된 데이터로 DB 업데이트
     private void propertyUpdate(Item item, UpdateItemDto itemDto) {
         String title = item.getTitle();
-        String describe = item.getDescribe();
+        String description = item.getDescription();
         int price = item.getPrice();
 
-        if (!itemDto.getDescribe().isEmpty())
-            describe = itemDto.getDescribe();
+        if (!itemDto.getDescription().isEmpty())
+            description = itemDto.getDescription();
 
         if (!itemDto.getTitle().isEmpty())
             title = itemDto.getTitle();
@@ -153,6 +153,6 @@ public class ItemService {
         if (itemDto.getPrice() > 0)
             price = itemDto.getPrice();
 
-        item.update(price, title, describe);
+        item.update(price, title, description);
     }
 }

@@ -18,7 +18,7 @@ public class RequestItemDto {
 
     @NotEmpty
     @NotNull
-    private String describe;//설명
+    private String description;//설명
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -35,7 +35,7 @@ public class RequestItemDto {
         return Item.builder()
                 .title(title)
                 .price(price)
-                .describe(describe)
+                .description(description)
                 .status(status)
                 .build();
     }

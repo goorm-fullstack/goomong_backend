@@ -17,7 +17,7 @@ public class ResponseChatItem {
     private String member;//작성자
     private int price;//가격
     private List<Image> thumbNailList;//썸네일 리스트
-    private String describe;//설명
+    private String description;//설명
     private List<ItemCategory> itemCategories;//카테고리 목록
     private List<Review> reviewList;//리뷰 목록
     private List<Ask> askList;
@@ -29,7 +29,7 @@ public class ResponseChatItem {
         this.member = item.getMember().getMemberName();
         this.price = item.getPrice();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescribe();
+        this.description = item.getDescription();
         this.itemCategories = item.getItemCategories();
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();

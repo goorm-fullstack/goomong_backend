@@ -25,7 +25,7 @@ public class ResponseNonSaleItemDto {
     @Schema(description = "등록한 이미지 리스트")
     private List<Image> thumbNailList;//썸네일 리스트
     @Schema(description = "아이템에 대한 설명")
-    private String describe;//설명
+    private String description;//설명
     @Schema(description = "아이템 카테고리 목록")
     private List<ItemCategory> itemCategories;//카테고리 목록
     @Schema(description = "현재 아이템에 등록된 리뷰 목록")
@@ -42,7 +42,7 @@ public class ResponseNonSaleItemDto {
         this.title = item.getTitle();
         this.member = item.getMember();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescribe();
+        this.description = item.getDescription();
         this.itemCategories = item.getItemCategories();
         this.reviewList = item.getReviewList();
         this.askList = item.getAskList();

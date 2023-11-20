@@ -39,7 +39,7 @@ public class Item extends BaseTimeEntity {
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션
-    private String describe;//설명
+    private String description;//설명
 
     @OneToMany
     @JoinColumn(name = "item_category_id")
@@ -59,15 +59,15 @@ public class Item extends BaseTimeEntity {
         this.member = member;
     }
 
-    public void update(int price, String title, String describe) {
+    public void update(int price, String title, String description) {
         this.price = price;
         this.title = title;
-        this.describe = describe;
+        this.description = description;
     }
 
-    public void update(String title, String describe) {
+    public void update(String title, String description) {
         this.title = title;
-        this.describe = describe;
+        this.description = description;
     }
 
     public void setThumbNailList(List<Image> thumbNailList) {
