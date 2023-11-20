@@ -10,6 +10,7 @@ import R.VD.goomong.post.model.Post;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
+import R.VD.goomong.search.dto.response.ResponseRecentKeword;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseTopSearchKeyword;
 import R.VD.goomong.search.exception.SearchNotFoundException;
@@ -39,6 +40,15 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final WordRepository wordRepository;
     private final MemberRepository memberRepository;
+
+    public List<ResponseRecentKeword> getRecentSearchKeywords(Long memberId) {
+        List<Search> recentSearch = searchRepository.findRecentSearchesByMemberId(memberId);
+
+        return recentSearch.stream()
+                .map(ResponseRecentKeword::new)
+                .distinct()
+                .toList();
+    }
 
     public List<ResponseTopSearchKeyword> getTopSearchKeywords() {
         LocalDateTime cutoff = LocalDateTime.now().minusHours(6);
