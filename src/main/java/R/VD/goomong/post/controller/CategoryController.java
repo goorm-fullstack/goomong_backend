@@ -165,23 +165,16 @@ public class CategoryController {
      * 삭제되지 않은 카테고리 중 게시글 종류로 카테고리 리스트 조회
      *
      * @param categoryGroup 조회할 게시글 종류
-     * @param pageable      페이징
      * @return 조회된 카테고리 리스트
      */
     @Operation(summary = "삭제되지 않은 카테고리 중 게시글 종류로 카테고리 리스트 조회")
-    @Parameters(value = {
-            @Parameter(name = "categoryGroup", description = "조회할 게시글 종류", schema = @Schema(implementation = Type.class)),
-            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
-            @Parameter(name = "pageable", hidden = true)
-    })
+    @Parameter(name = "categoryGroup", description = "조회할 게시글 종류", schema = @Schema(implementation = Type.class))
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
     @GetMapping("/notdeleted/name/{categoryGroup}")
-    public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeletedAndName(@PathVariable String categoryGroup, Pageable pageable) {
-        Page<Category> categories = categoryService.listOfNotDeletedAndName(categoryGroup, pageable);
-        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
+    public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeletedAndName(@PathVariable String categoryGroup) {
+        List<Category> categories = categoryService.listOfNotDeletedAndName(categoryGroup);
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(categories.stream().map(Category::toResponseCategoryDto).toList());
     }
 
     /**

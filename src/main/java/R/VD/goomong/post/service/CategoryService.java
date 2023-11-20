@@ -122,8 +122,8 @@ public class CategoryService {
     }
 
     // 삭제되지 않은 카테고리 중 게시글 종류로 카테고리 리스트 조회
-    public Page<Category> listOfNotDeletedAndName(String categoryGroup, Pageable pageable) {
-        Page<Category> all = categoryRepository.findAll(pageable);
+    public List<Category> listOfNotDeletedAndName(String categoryGroup) {
+        List<Category> all = categoryRepository.findAll();
         List<Category> list = new ArrayList<>();
         Type type = Type.COMMUNITY;
         type = type.toType(categoryGroup);
@@ -131,7 +131,7 @@ public class CategoryService {
         for (Category category : all) {
             if (category.getCategoryGroup().equals(type) && category.getDelDate() == null) list.add(category);
         }
-        return new PageImpl<>(list, pageable, list.size());
+        return list;
     }
 
     // 삭제된 카테고리 중 게시글 종류로 카테고리 리스트 조회

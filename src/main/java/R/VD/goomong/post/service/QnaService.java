@@ -107,7 +107,7 @@ public class QnaService {
         List<Qna> list = new ArrayList<>();
 
         for (Qna qna : all) {
-            if (qna.getQna() == null && qna.getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName))
+            if (qna.getQna() == null && qna.getDelDate() == null && qna.getCategory().getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName))
                 list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -119,7 +119,7 @@ public class QnaService {
         List<Qna> list = new ArrayList<>();
 
         for (Qna qna : all) {
-            if (qna.getQna() == null && qna.getDelDate() != null && qna.getCategory().getCategoryName().equals(categoryName))
+            if (qna.getQna() == null && qna.getDelDate() != null && qna.getCategory().getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName))
                 list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -131,7 +131,8 @@ public class QnaService {
         List<Qna> list = new ArrayList<>();
 
         for (Qna qna : all) {
-            if (qna.getQna() == null && qna.getCategory().getCategoryName().equals(categoryName)) list.add(qna);
+            if (qna.getQna() == null && qna.getCategory().getDelDate() == null && qna.getCategory().getCategoryName().equals(categoryName))
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -142,7 +143,8 @@ public class QnaService {
 
         List<Qna> list = new ArrayList<>();
         for (Qna qna : all) {
-            if (qna.getQna() == null && qna.getDelDate() == null) list.add(qna);
+            if (qna.getQna() == null && qna.getCategory().getDelDate() == null && qna.getDelDate() == null)
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -153,7 +155,8 @@ public class QnaService {
 
         List<Qna> list = new ArrayList<>();
         for (Qna qna : all) {
-            if (qna.getQna() != null && qna.getDelDate() == null) list.add(qna);
+            if (qna.getQna() != null && qna.getCategory().getDelDate() == null && qna.getDelDate() == null)
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -164,7 +167,8 @@ public class QnaService {
 
         List<Qna> list = new ArrayList<>();
         for (Qna qna : all) {
-            if (qna.getQna() == null && qna.getDelDate() != null) list.add(qna);
+            if (qna.getQna() == null && qna.getCategory().getDelDate() == null && qna.getDelDate() != null)
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -175,7 +179,8 @@ public class QnaService {
 
         List<Qna> list = new ArrayList<>();
         for (Qna qna : all) {
-            if (qna.getQna() != null && qna.getDelDate() != null) list.add(qna);
+            if (qna.getQna() != null && qna.getCategory().getDelDate() == null && qna.getDelDate() != null)
+                list.add(qna);
         }
         return new PageImpl<>(list, pageable, list.size());
     }

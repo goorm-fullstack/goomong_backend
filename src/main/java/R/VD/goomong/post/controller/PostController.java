@@ -71,12 +71,14 @@ public class PostController {
      * @param requestPostDto 생성 request
      * @param images         업로드한 이미지 리스트
      * @param files          업로드한 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 생성 성공 시 200
      */
     @Operation(summary = "게시글 생성")
     @Parameters(value = {
             @Parameter(name = "images", description = "업로드한 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -94,13 +96,15 @@ public class PostController {
      * @param requestPostDto 수정 내용
      * @param images         수정할 이미지 리스트
      * @param files          수정할 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 수정된 게시글
      */
     @Operation(summary = "게시글 수정")
     @Parameters(value = {
             @Parameter(name = "postId", description = "수정할 게시글 id"),
             @Parameter(name = "images", description = "수정할 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
     @PutMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
