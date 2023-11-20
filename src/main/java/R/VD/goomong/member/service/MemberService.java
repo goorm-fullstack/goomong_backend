@@ -6,7 +6,6 @@ import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
-import R.VD.goomong.support.model.EmailMemberSave;
 import R.VD.goomong.support.repository.EmailMemberSaveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
