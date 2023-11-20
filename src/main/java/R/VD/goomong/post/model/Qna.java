@@ -19,6 +19,10 @@ public class Qna extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_category_id")
+    private Category category;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_qna_id")
     private Qna qna; // 부모 qna
@@ -39,6 +43,7 @@ public class Qna extends BaseTimeEntity {
     public ResponseQuestionDto toResponseQuestionDto() {
         return ResponseQuestionDto.builder()
                 .id(id)
+                .categoryName(category.getCategoryName())
                 .children(children != null ? children.toResponseAnswerForQuestionDto() : null)
                 .title(title)
                 .content(content)

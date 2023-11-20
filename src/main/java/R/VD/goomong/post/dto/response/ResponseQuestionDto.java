@@ -16,6 +16,9 @@ public class ResponseQuestionDto {
     @Schema(description = "조회한 질문 id", example = "1")
     private Long id;
 
+    @Schema(description = "조회한 질문 카테고리", example = "카테고리 이름")
+    private String categoryName;
+
     @Schema(description = "조회한 질문의 답변", implementation = ResponseAnswerForQuestionDto.class)
     private ResponseAnswerForQuestionDto children;
 

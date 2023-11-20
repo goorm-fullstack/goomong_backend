@@ -1,5 +1,6 @@
 package R.VD.goomong.review.model;
 
+import R.VD.goomong.comment.dto.response.ResponseCommentDto;
 import R.VD.goomong.comment.model.Comment;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
@@ -63,13 +64,17 @@ public class Review extends BaseTimeEntity {
     public ResponseReviewDto toResponseReviewDto() {
 
         List<Long> reports = new ArrayList<>();
-        for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.getId());
+        if (!reportList.isEmpty()) {
+            for (Report report : reportList) {
+                if (report.getDelDate() == null) reports.add(report.getId());
+            }
         }
 
-        List<Comment> comments = new ArrayList<>();
-        for (Comment comment : commentList) {
-            if (comment.getParentComment() == null) comments.add(comment);
+        List<ResponseCommentDto> comments = new ArrayList<>();
+        if (!commentList.isEmpty()) {
+            for (Comment comment : commentList) {
+                if (comment.getParentComment() == null) comments.add(comment.toResponseCommentDto());
+            }
         }
 
         return ResponseReviewDto.builder()
@@ -81,7 +86,7 @@ public class Review extends BaseTimeEntity {
                 .imageList(imageList)
                 .reportIdList(reports)
                 .commentNo(commentList.size())
-                .commentList(comments.stream().map(Comment::toResponseCommentDto).toList())
+                .commentList(comments)
                 .title(title)
                 .content(content)
                 .regDate(this.getRegDate())

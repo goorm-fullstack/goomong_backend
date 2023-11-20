@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -37,7 +38,7 @@ public class PostService {
     private final FilesService filesService;
 
     // 게시글 생성
-    public void savePost(RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public void savePost(RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, Boolean isFix) {
 
         Post entity = requestPostDto.toEntity();
 
@@ -67,11 +68,24 @@ public class PostService {
                 .imageList(imageList)
                 .fileList(fileList)
                 .build();
+        if (isFix != null) {
+            if (findFixedPost() != null) {
+                Post currentFixed = findFixedPost().toBuilder()
+                        .isFix(false)
+                        .build();
+                postRepository.save(currentFixed);
+            }
+            Post fixed = build.toBuilder()
+                    .isFix(true)
+                    .build();
+            postRepository.save(fixed);
+            return;
+        }
         postRepository.save(build);
     }
 
     // 게시글 수정
-    public Post updatePost(Long postId, RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public Post updatePost(Long postId, RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, Boolean isFix) {
         Post origin = postRepository.findById(postId).orElseThrow(() -> new NotExistPostException("해당 id의 게시글을 찾을 수 없습니다. id = " + postId));
         if (origin.getDelDate() != null)
             throw new AlreadyDeletePostException("해당 id의 게시글은 이미 삭제된 게시글입니다. id = " + postId);
@@ -100,6 +114,18 @@ public class PostService {
                 .fileList(filesList)
                 .imageList(imageList)
                 .build();
+        if (isFix != null) {
+            if (findFixedPost() != null) {
+                Post currentFixed = findFixedPost().toBuilder()
+                        .isFix(false)
+                        .build();
+                postRepository.save(currentFixed);
+            }
+            Post fixed = build.toBuilder()
+                    .isFix(true)
+                    .build();
+            return postRepository.save(fixed);
+        }
         return postRepository.save(build);
     }
 
@@ -148,12 +174,17 @@ public class PostService {
         return post;
     }
 
+    // 고정된 게시글 조회
+    public Post findFixedPost() {
+        return postRepository.findByIsFix(true).orElse(null);
+    }
+
     // 삭제되지 않은 게시글 조회
     public Page<Post> listOfNotDeleted(Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
         for (Post post : all) {
-            if (post.getDelDate() == null) list.add(post);
+            if (post.getDelDate() == null && post.getPostCategory().getDelDate() == null) list.add(post);
         }
 
         return new PageImpl<>(list, pageable, list.size());
@@ -164,7 +195,7 @@ public class PostService {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
         for (Post post : all) {
-            if (post.getDelDate() != null) list.add(post);
+            if (post.getDelDate() != null && post.getPostCategory().getDelDate() == null) list.add(post);
         }
 
         return new PageImpl<>(list, pageable, list.size());
@@ -179,7 +210,8 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t) && post.getDelDate() == null) list.add(post);
+            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null && post.getDelDate() == null)
+                list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -193,7 +225,8 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t) && post.getDelDate() != null) list.add(post);
+            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null && post.getDelDate() != null)
+                list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -207,7 +240,7 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t)) list.add(post);
+            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -218,7 +251,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(category) && post.getDelDate() == null)
+            if (post.getPostCategory().getCategoryName().equals(category) && post.getPostCategory().getDelDate() == null && post.getDelDate() == null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -230,7 +263,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getDelDate() != null)
+            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getPostCategory().getDelDate() == null && post.getDelDate() != null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -242,7 +275,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(categoryName))
+            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getPostCategory().getDelDate() == null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -270,5 +303,19 @@ public class PostService {
                 list.add(post.toResponsePostDto());
         }
         return new PageImpl<>(list, pageRequest, list.size());
+    }
+
+    // 특정 id의 데이터를 제외한 랜덤 5개의 공지사항 게시글 가져오기
+    public List<Post> random(Long postId) {
+        List<Post> all = postRepository.findAll();
+        Collections.shuffle(all);
+        List<Post> list = new ArrayList<>();
+
+        for (Post post : all) {
+            if (list.size() == 5) break;
+            if (post.getDelDate() == null && post.getPostType().equals(Type.NOTICE) && post.getPostCategory().getDelDate() == null && !post.getId().equals(postId))
+                list.add(post);
+        }
+        return list;
     }
 }
