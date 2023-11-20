@@ -1,5 +1,7 @@
 package R.VD.goomong.support.service;
 
+import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.service.MemberService;
 import R.VD.goomong.member.service.VerificationService;
 import R.VD.goomong.support.dto.request.RequestCheckCode;
 import R.VD.goomong.support.dto.request.RequestEmailMemberSaveDTO;
@@ -27,7 +29,7 @@ public class EmailMemberSaveService {
     private final JavaMailSender javaMailSender;
     private final VerificationService verificationService;
     private final EmailMemberSaveRepository emailMemberSaveRepository;
-    private static final String senderEmail = "";       //이메일 입력
+    private final MemberService memberService;
 
     //메일 작성
     public MimeMessage CreateMail(String email){
@@ -36,7 +38,7 @@ public class EmailMemberSaveService {
         EmailMemberSave emailMemberSave = byEmail.get();
 
         try {
-            message.setFrom(senderEmail);
+//            message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, emailMemberSave.getEmail());
             message.setSubject("이메일 인증");
             String body = "";
@@ -54,10 +56,14 @@ public class EmailMemberSaveService {
     //인증 메일 전송
     public EmailMemberSave sendMail(String email){
 
-        Optional<EmailMemberSave> byEmail = emailMemberSaveRepository.findByEmail(email);
-        if(byEmail.isPresent()){
-            EmailMemberSave emailMemberSave = byEmail.get();
-            CreateMail(emailMemberSave.getEmail());
+        Member byEmail = memberService.findByMemberEmail(email);
+        if(byEmail == null){            //이미 존재할 때
+            throw new SupportNotFoundException("이미 존재하는 이메일입니다.");
+        }
+
+        Optional<EmailMemberSave> byEmail1 = emailMemberSaveRepository.findByEmail(email);
+        if(byEmail1.isPresent()) {
+            emailMemberSaveRepository.deleteByEmail(email);
         }
 
         RequestEmailMemberSaveDTO requestEmailMemberSaveDTO = new RequestEmailMemberSaveDTO();

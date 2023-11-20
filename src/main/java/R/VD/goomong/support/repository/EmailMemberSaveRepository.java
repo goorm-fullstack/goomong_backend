@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface EmailMemberSaveRepository extends JpaRepository<EmailMemberSave, Long> {
 
     Optional<EmailMemberSave> findByEmail(String email);
+
+    void deleteByEmail(String email);
 }
