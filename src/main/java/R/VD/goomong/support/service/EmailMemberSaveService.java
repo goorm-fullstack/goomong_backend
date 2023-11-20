@@ -10,6 +10,7 @@ import R.VD.goomong.support.model.EmailMemberSave;
 import R.VD.goomong.support.repository.EmailMemberSaveRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -54,10 +55,11 @@ public class EmailMemberSaveService {
     }
 
     //인증 메일 전송
+    @Transactional
     public EmailMemberSave sendMail(String email){
 
         Member byEmail = memberService.findByMemberEmail(email);
-        if(byEmail == null){            //이미 존재할 때
+        if(byEmail != null){            //이미 존재할 때
             throw new SupportNotFoundException("이미 존재하는 이메일입니다.");
         }
 

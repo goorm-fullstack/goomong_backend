@@ -12,4 +12,5 @@ public interface EmailMemberSaveRepository extends JpaRepository<EmailMemberSave
     Optional<EmailMemberSave> findByEmail(String email);
 
     void deleteByEmail(String email);
+
 }
