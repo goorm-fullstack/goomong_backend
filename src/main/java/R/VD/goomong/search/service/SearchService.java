@@ -11,6 +11,7 @@ import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
+import R.VD.goomong.search.dto.response.ResponseTopSearchKeyword;
 import R.VD.goomong.search.exception.SearchNotFoundException;
 import R.VD.goomong.search.model.Search;
 import R.VD.goomong.search.model.Word;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +39,13 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final WordRepository wordRepository;
     private final MemberRepository memberRepository;
+
+    public List<ResponseTopSearchKeyword> getTopSearchKeywords() {
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(6);
+        return wordRepository.findTopWords(cutoff).stream()
+                .map(ResponseTopSearchKeyword::new)
+                .toList();
+    }
 
     public void saveKeyword(RequestItemSearchDTO requestItemSearchDTO) {
         Long memberId = requestItemSearchDTO.getMemberId();
