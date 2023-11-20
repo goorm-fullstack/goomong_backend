@@ -7,6 +7,7 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
 import R.VD.goomong.order.model.Order;
+import R.VD.goomong.point.model.Point;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -86,6 +87,9 @@ public class Member extends BaseTimeEntity {
     @JsonIgnore
     private List<Order> orderList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Point> points = new ArrayList<>();
+
     @OneToMany
     private List<Review> reviewList = new ArrayList<>();
 
@@ -101,6 +105,11 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime delDate; // 삭제 날짜
 
     private Boolean emailChecked;       //이메일 인증 확인 여부
+
+    public void addPoints(Point point) { // 포인트
+        points.add(point);
+        point.setMember(this);
+    }
 
     public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
