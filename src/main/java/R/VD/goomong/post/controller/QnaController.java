@@ -200,6 +200,69 @@ public class QnaController {
     }
 
     /**
+     * 삭제되지 않은 질문 리스트 중 카테고리 이름으로 질문 리스트 조회
+     *
+     * @param categoryName 조회할 카테고리 이름
+     * @param pageable     페이징
+     * @return 조회된 질문 리스트
+     */
+    @Operation(summary = "삭제되지 않은 질문 리스트 중 카테고리 이름으로 질문 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))))
+    @GetMapping("notdeleted/category/{categoryName}")
+    public ResponseEntity<List<ResponseQuestionDto>> listOfNotDeletedAndCategory(@PathVariable String categoryName, Pageable pageable) {
+        Page<Qna> qnas = qnaService.listOfNotDeletedAndCategory(categoryName, pageable);
+        return ResponseEntity.ok(qnas.getContent().stream().map(Qna::toResponseQuestionDto).toList());
+    }
+
+    /**
+     * 삭제된 질문 리스트 중 카테고리 이름으로 질문 리스트 조회
+     *
+     * @param categoryName 조회할 카테고리 이름
+     * @param pageable     페이징
+     * @return 조회된 질문 리스트
+     */
+    @Operation(summary = "삭제된 질문 리스트 중 카테고리 이름으로 질문 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))))
+    @GetMapping("deleted/category/{categoryName}")
+    public ResponseEntity<List<ResponseQuestionDto>> listOfDeletedAndCategory(@PathVariable String categoryName, Pageable pageable) {
+        Page<Qna> qnas = qnaService.listOfDeletedAndCategory(categoryName, pageable);
+        return ResponseEntity.ok(qnas.getContent().stream().map(Qna::toResponseQuestionDto).toList());
+    }
+
+    /**
+     * 전체 질문 리스트 중 카테고리 이름으로 질문 리스트 조회
+     *
+     * @param categoryName 조회할 카테고리 이름
+     * @param pageable     페이징
+     * @return 조회된 카테고리 이름
+     */
+    @Operation(summary = "전체 질문 리스트 중 카테고리 이름으로 질문 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseQuestionDto.class))))
+    @GetMapping("/all/category/{categoryName}")
+    public ResponseEntity<List<ResponseQuestionDto>> listOfAllAndCategory(@PathVariable String categoryName, Pageable pageable) {
+        Page<Qna> qnas = qnaService.listOfAllAndCategory(categoryName, pageable);
+        return ResponseEntity.ok(qnas.getContent().stream().map(Qna::toResponseQuestionDto).toList());
+    }
+
+    /**
      * 삭제되지 않은 질문 리스트 조회
      *
      * @param pageable 페이징

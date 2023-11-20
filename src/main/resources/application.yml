@@ -10,7 +10,7 @@ spring:
     url: jdbc:h2:tcp://localhost/~/test
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
     properties:
       hibernate:
@@ -28,8 +28,8 @@ spring:
   mail: # smtp
     host: smtp.gmail.com
     port: 587
-    username: ehdrb141@gmail.com
-    password: vufd jiid tygj jprw
+    username: ${ email.username }
+    password: ${ email.password }
     properties:
       mail:
         smtp:

@@ -156,7 +156,7 @@ public class ReportService {
         }
 
         List<Files> files = new ArrayList<>();
-        if (reportFiles.length != 0) files = filesService.saveFiles(reportFiles);
+        if (reportFiles != null) files = filesService.saveFiles(reportFiles);
 
         Report build = entity.toBuilder()
                 .member(member)
@@ -175,8 +175,8 @@ public class ReportService {
         if (origin.getDelDate() != null)
             throw new AlreadyDeletedReportException("해당 id의 신고글은 삭제된 신고글입니다. id = " + reportId);
 
-        List<Files> files = null;
-        if (reportFiles.length != 0) files = filesService.saveFiles(reportFiles);
+        List<Files> files = origin.getFilesList();
+        if (reportFiles != null) files = filesService.saveFiles(reportFiles);
 
         Report build = origin.toBuilder()
                 .reportReason(requestReportDto.getReportReason())

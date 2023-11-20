@@ -8,14 +8,14 @@ import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.review.dto.request.RequestReviewDto;
+import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import R.VD.goomong.review.exception.AlreadyDeletedReviewException;
 import R.VD.goomong.review.exception.NotFoundReview;
 import R.VD.goomong.review.model.Review;
 import R.VD.goomong.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
@@ -46,7 +47,7 @@ public class ReviewService {
             throw new RuntimeException("해당 id의 상품은 이미 삭제된 상품입니다. id = " + requestReviewDto.getItemId());
 
         List<Image> imageList = null;
-        if (multipartFiles.length != 0) imageList = imageService.saveImage(multipartFiles);
+        if (multipartFiles != null) imageList = imageService.saveImage(multipartFiles);
 
         Review build = entity.toBuilder()
                 .member(member)
@@ -63,7 +64,7 @@ public class ReviewService {
             throw new AlreadyDeletedReviewException("해당 id의 리뷰는 이미 삭제된 리뷰입니다. id = " + reviewId);
 
         List<Image> imageList = origin.getImageList();
-        if (images.length != 0) imageList = imageService.saveImage(images);
+        if (images != null) imageList = imageService.saveImage(images);
 
         Review build = origin.toBuilder()
                 .title(requestReviewDto.getTitle())
@@ -123,4 +124,42 @@ public class ReviewService {
         return reviewRepository.findAll(pageable);
     }
 
+    // 전체 리뷰 평균 평점 구하기
+    public String aveReview() {
+        List<Review> all = reviewRepository.findAll();
+
+        if (all.size() > 0) {
+            float result = 0;
+            for (Review review : all) {
+                if (review.getDelDate() == null) result += review.getRate();
+            }
+
+            log.info("ave={}", String.format("%.1f", result / all.size()));
+
+            return String.format("%.1f", result / all.size());
+        }
+        return String.valueOf(0);
+    }
+
+    // 고객 만족도 구하기
+    public String customerSatisfaction() {
+        float ave = Float.parseFloat(aveReview());
+        float total = 5.0F;
+        log.info("ave={}, total={}, ave/total={}, result={}", ave, total, ave / total, (ave / total) * 100);
+        return String.format("%.1f", (ave / total) * 100);
+    }
+
+    // 베스트 후기 구하기
+    public Page<ResponseReviewDto> bestReview(int pageNumber, int pageSize) {
+        Sort sort = Sort.by(
+                Sort.Order.desc("rate"),
+                Sort.Order.desc("likeNo"),
+                Sort.Order.desc("commentNo")
+        );
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        List<ResponseReviewDto> all = reviewRepository.findAll().stream().map(Review::toResponseReviewDto).toList();
+
+        return new PageImpl<>(all, pageRequest, all.size());
+    }
 }

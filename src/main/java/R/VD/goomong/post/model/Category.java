@@ -19,7 +19,7 @@ public class Category extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image; // 카테고리 썸네일(커뮤니티 카테고리의 경우)
 
@@ -38,7 +38,7 @@ public class Category extends BaseTimeEntity {
 
         return ResponseCategoryDto.builder()
                 .id(id)
-                .image(image)
+                .imagePath(image != null ? image.getPath() : null)
                 .categoryName(categoryName)
                 .regDate(this.getRegDate())
                 .delDate(delDate)

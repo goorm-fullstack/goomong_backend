@@ -4,6 +4,7 @@ import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.post.dto.request.RequestCategoryDto;
 import R.VD.goomong.post.dto.response.ResponseCategoryDto;
 import R.VD.goomong.post.model.Category;
+import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.service.CategoryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,7 +71,7 @@ public class CategoryController {
     @Parameter(name = "images", description = "카테고리 이미지", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
+    public ResponseEntity<Object> initCategory(@Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile images) {
         log.info("requestCategoryDto={}", requestCategoryDto);
         categoryService.saveCategory(requestCategoryDto, images);
         return ResponseEntity.ok().build();
@@ -91,7 +92,7 @@ public class CategoryController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseCategoryDto.class)))
     @PutMapping(value = "/category/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseCategoryDto> modifyCategory(@PathVariable Long categoryId, @Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile[] images) {
+    public ResponseEntity<ResponseCategoryDto> modifyCategory(@PathVariable Long categoryId, @Validated @ModelAttribute RequestCategoryDto requestCategoryDto, @RequestParam(required = false) MultipartFile images) {
         log.info("categoryId={}", categoryId);
         log.info("requestCategoryDto={}", requestCategoryDto);
         Category category = categoryService.updateCategory(categoryId, requestCategoryDto, images);
@@ -161,69 +162,62 @@ public class CategoryController {
     }
 
     /**
-     * 삭제되지 않은 카테고리 중 카테고리 이름으로 카테고리 리스트 조회
+     * 삭제되지 않은 카테고리 중 게시글 종류로 카테고리 리스트 조회
      *
-     * @param categoryName 조회할 카테고리 이름
-     * @param pageable     페이징
+     * @param categoryGroup 조회할 게시글 종류
      * @return 조회된 카테고리 리스트
      */
-    @Operation(summary = "삭제되지 않은 카테고리 중 카테고리 이름으로 카테고리 리스트 조회")
+    @Operation(summary = "삭제되지 않은 카테고리 중 게시글 종류로 카테고리 리스트 조회")
+    @Parameter(name = "categoryGroup", description = "조회할 게시글 종류", schema = @Schema(implementation = Type.class))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
+    @GetMapping("/notdeleted/name/{categoryGroup}")
+    public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeletedAndName(@PathVariable String categoryGroup) {
+        List<Category> categories = categoryService.listOfNotDeletedAndName(categoryGroup);
+
+        return ResponseEntity.ok(categories.stream().map(Category::toResponseCategoryDto).toList());
+    }
+
+    /**
+     * 삭제된 카테고리 중 게시글 종류로 카테고리 리스트 조회
+     *
+     * @param categoryGroup 조회할 게시글 종류
+     * @param pageable      페이징
+     * @return 조회된 카테고리 리스트
+     */
+    @Operation(summary = "삭제된 카테고리 중 게시글 종류로 카테고리 리스트 조회")
     @Parameters(value = {
-            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름"),
+            @Parameter(name = "categoryGroup", description = "조회할 게시글 종류", schema = @Schema(implementation = Type.class)),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
-    @GetMapping("/notdeleted/name/{categoryName}")
-    public ResponseEntity<List<ResponseCategoryDto>> listOfNotDeletedAndName(@PathVariable String categoryName, Pageable pageable) {
-        Page<Category> categories = categoryService.listOfNotDeletedAndName(categoryName, pageable);
+    @GetMapping("/deleted/name/{categoryGroup}")
+    public ResponseEntity<List<ResponseCategoryDto>> listOfDeletedAndName(@PathVariable String categoryGroup, Pageable pageable) {
+        Page<Category> categories = categoryService.listOfDeletedAndName(categoryGroup, pageable);
         List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
         return ResponseEntity.ok(list);
     }
 
     /**
-     * 삭제된 카테고리 중 카테고리 이름으로 카테고리 리스트 조회
+     * 게시글 종류로 전체 카테고리 리스트 조회
      *
-     * @param categoryName 조회할 카테고리 이름
-     * @param pageable     페이징
+     * @param categoryGroup 조회할 게시글 종류
+     * @param pageable      페이징
      * @return 조회된 카테고리 리스트
      */
-    @Operation(summary = "삭제된 카테고리 중 카테고리 이름으로 카테고리 리스트 조회")
+    @Operation(summary = "게시글 종류로 전체 카테고리 리스트 조회")
     @Parameters(value = {
-            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름"),
+            @Parameter(name = "categoryGroup", description = "조회할 게시글 종류", schema = @Schema(implementation = Type.class)),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
             @Parameter(name = "pageable", hidden = true)
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
-    @GetMapping("/deleted/name/{categoryName}")
-    public ResponseEntity<List<ResponseCategoryDto>> listOfDeletedAndName(@PathVariable String categoryName, Pageable pageable) {
-        Page<Category> categories = categoryService.listOfDeletedAndName(categoryName, pageable);
-        List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
-
-        return ResponseEntity.ok(list);
-    }
-
-    /**
-     * 카테고리 이름으로 전체 카테고리 리스트 조회
-     *
-     * @param categoryName 조회할 카테고리 이름
-     * @param pageable     페이징
-     * @return 조회된 카테고리 리스트
-     */
-    @Operation(summary = "카테고리 이름으로 전체 카테고리 리스트 조회")
-    @Parameters(value = {
-            @Parameter(name = "categoryName", description = "조회할 카테고리 이름", example = "카테고리 이름"),
-            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
-            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
-            @Parameter(name = "pageable", hidden = true)
-    })
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCategoryDto.class))))
-    @GetMapping("/name/{categoryName}")
-    public ResponseEntity<List<ResponseCategoryDto>> listOfAllAndName(@PathVariable String categoryName, Pageable pageable) {
-        Page<Category> categories = categoryService.listOfAllAndName(categoryName, pageable);
+    @GetMapping("/name/{categoryGroup}")
+    public ResponseEntity<List<ResponseCategoryDto>> listOfAllAndName(@PathVariable String categoryGroup, Pageable pageable) {
+        Page<Category> categories = categoryService.listOfAllAndName(categoryGroup, pageable);
         List<ResponseCategoryDto> list = getResponseCategoryDtos(pageable, categories);
 
         return ResponseEntity.ok(list);

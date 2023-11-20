@@ -6,11 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RequestPostSearchDTO {
-    private int page;
-    private int pageSize;
-    private Long memberId;
+public class RequestSearchDTO {
     private String keyword;
     private String order;
-    private Category category;
+    private String categoryTitle;
 }

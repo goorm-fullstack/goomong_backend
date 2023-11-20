@@ -4,7 +4,6 @@ import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.global.validation.EnumValue;
 import R.VD.goomong.post.dto.request.RequestPostDto;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
-import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.post.model.Type;
 import R.VD.goomong.post.service.PostService;
@@ -33,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,19 +71,21 @@ public class PostController {
      * @param requestPostDto 생성 request
      * @param images         업로드한 이미지 리스트
      * @param files          업로드한 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 생성 성공 시 200
      */
     @Operation(summary = "게시글 생성")
     @Parameters(value = {
             @Parameter(name = "images", description = "업로드한 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("requestPostDto={}", requestPostDto);
 
-        postService.savePost(requestPostDto, images, files);
+        postService.savePost(requestPostDto, images, files, isFix);
         return ResponseEntity.ok().build();
     }
 
@@ -96,21 +96,23 @@ public class PostController {
      * @param requestPostDto 수정 내용
      * @param images         수정할 이미지 리스트
      * @param files          수정할 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 수정된 게시글
      */
     @Operation(summary = "게시글 수정")
     @Parameters(value = {
             @Parameter(name = "postId", description = "수정할 게시글 id"),
             @Parameter(name = "images", description = "수정할 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
     @PutMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("postId={}", postId);
         log.info("requestPostDto={}", requestPostDto);
 
-        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files).toResponsePostDto();
+        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files, isFix).toResponsePostDto();
         return ResponseEntity.ok(responsePostDto);
     }
 
@@ -201,6 +203,19 @@ public class PostController {
     }
 
     /**
+     * 고정 게시글 조회
+     *
+     * @return 조회된 게시글
+     */
+    @Operation(summary = "고정된 게시글 조회")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
+    @GetMapping("/post/fixed")
+    public ResponseEntity<?> fixedPost() {
+        Post fixedPost = postService.findFixedPost();
+        return ResponseEntity.ok(fixedPost != null ? fixedPost.toResponsePostDto() : null);
+    }
+
+    /**
      * 삭제되지 않은 게시글 중 게시글 종류에 따라 리스트 조회(커뮤니티/공지사항/이벤트)
      *
      * @param type     게시글 종류
@@ -216,8 +231,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedtype/{type}")
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                         @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfNotDeletedAndType(type, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -264,8 +283,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/alltype/{type}")
-    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfAllAndType(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                  @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("type={}", type);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfAllAndType(type, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -288,8 +311,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedcategory/{category}")
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfNotDeletedAndCategory(category, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -336,8 +363,12 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/allcategory/{category}")
-    public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfAllAndCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                      @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("category={}", category);
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Post> posts = postService.listOfAllAndCategory(category, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
@@ -360,14 +391,10 @@ public class PostController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping
-    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction, Pageable pageable) {
+    public ResponseEntity<List<ResponsePostDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        if (orderBy.isPresent() && direction.isPresent()) {
-            Sort.Direction dir = Sort.Direction.fromString(direction.get());
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
-        } else {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        }
+        pageable = getPageable(orderBy, direction, pageable);
 
         Page<Post> posts = postService.listOfNotDeleted(pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
@@ -417,9 +444,44 @@ public class PostController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * hot 커뮤니티 게시글 기능
+     *
+     * @return hot 커뮤니티 게시글 리스트
+     */
+    @Operation(summary = "hot 커뮤니티 게시글 리스트")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/hot")
+    public ResponseEntity<List<ResponsePostDto>> hotPost() {
+        Page<ResponsePostDto> responsePostDtos = postService.hotPost(0, 6);
+        return ResponseEntity.ok(responsePostDtos.getContent());
+    }
+
+    /**
+     * 특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기
+     *
+     * @param postId 제외할 데이터의 id
+     * @return 조회된 공지사항 게시글 리스트
+     */
+    @Operation(summary = "특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기")
+    @Parameter(name = "postId", description = "제외할 데이터의 id", example = "1")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/random/{postId}")
+    public ResponseEntity<List<ResponsePostDto>> random(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.random(postId).stream().map(Post::toResponsePostDto).toList());
+    }
+
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {
         Post findPost = postService.findOnePost(postId);
         return ResponseEntity.ok(findPost.toResponsePostDto());
     }
 
+    // 정렬에 따른 pageable settings
+    private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        }
+        return pageable;
+    }
 }

@@ -68,6 +68,10 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private int postLikeNo; // 게시글 좋아요수
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isFix = false; // 고정 글 여부
+
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
@@ -88,7 +92,9 @@ public class Post extends BaseTimeEntity {
         return ResponsePostDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .postCategory(postCategory.getCategoryName())
+                .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSimpleAddress() : null)
+                .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
+                .postCategory(postCategory != null ? postCategory.getCategoryName() : null)
                 .postLikeNo(postLikeNo)
                 .imageList(imageList)
                 .postContent(postContent)
@@ -98,6 +104,7 @@ public class Post extends BaseTimeEntity {
                 .reportIdList(reports)
                 .postType(postType)
                 .commentList(comments)
+                .commentNo(commentList.size())
                 .delDate(delDate)
                 .filesList(fileList)
                 .build();
