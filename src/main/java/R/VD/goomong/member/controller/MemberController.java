@@ -1,6 +1,7 @@
 package R.VD.goomong.member.controller;
 
 import R.VD.goomong.member.dto.request.*;
+import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
@@ -144,13 +145,10 @@ public class MemberController {
 
     //로그인
     @PostMapping("/login")
-    public String login(@RequestBody RequestLogin requestLogin, HttpServletResponse response){
-        memberService.memberLogin(requestLogin);
-        Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
-        cookie.setMaxAge(60*30);
-        response.addCookie(cookie);
+    public ResponseEntity<ResponseLogin> login(@RequestBody RequestLogin requestLogin, HttpServletResponse response){
+        Member member = memberService.memberLogin(requestLogin);
 
-        return "login";
+        return ResponseEntity.ok().body(member.toResponseLoginDto());
     }
 
     //로그아웃

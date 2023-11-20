@@ -71,19 +71,21 @@ public class PostController {
      * @param requestPostDto 생성 request
      * @param images         업로드한 이미지 리스트
      * @param files          업로드한 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 생성 성공 시 200
      */
     @Operation(summary = "게시글 생성")
     @Parameters(value = {
             @Parameter(name = "images", description = "업로드한 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "업로드한 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<Object> initPost(@Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("requestPostDto={}", requestPostDto);
 
-        postService.savePost(requestPostDto, images, files);
+        postService.savePost(requestPostDto, images, files, isFix);
         return ResponseEntity.ok().build();
     }
 
@@ -94,21 +96,23 @@ public class PostController {
      * @param requestPostDto 수정 내용
      * @param images         수정할 이미지 리스트
      * @param files          수정할 파일 리스트
+     * @param isFix          고정 게시글 여부
      * @return 수정된 게시글
      */
     @Operation(summary = "게시글 수정")
     @Parameters(value = {
             @Parameter(name = "postId", description = "수정할 게시글 id"),
             @Parameter(name = "images", description = "수정할 이미지 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
-            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile")))
+            @Parameter(name = "files", description = "수정할 파일 리스트", array = @ArraySchema(schema = @Schema(type = "MultipartFile"))),
+            @Parameter(name = "isFix", description = "고정 게시글 여부", schema = @Schema(implementation = Boolean.class))
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
     @PutMapping(value = "/post/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files) {
+    public ResponseEntity<ResponsePostDto> updatePost(@PathVariable Long postId, @Validated @ModelAttribute RequestPostDto requestPostDto, MultipartFile[] images, MultipartFile[] files, @RequestParam(required = false) Boolean isFix) {
         log.info("postId={}", postId);
         log.info("requestPostDto={}", requestPostDto);
 
-        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files).toResponsePostDto();
+        ResponsePostDto responsePostDto = postService.updatePost(postId, requestPostDto, images, files, isFix).toResponsePostDto();
         return ResponseEntity.ok(responsePostDto);
     }
 
@@ -196,6 +200,19 @@ public class PostController {
         log.info("postId={}", postId);
 
         return getResponseEntity(postId);
+    }
+
+    /**
+     * 고정 게시글 조회
+     *
+     * @return 조회된 게시글
+     */
+    @Operation(summary = "고정된 게시글 조회")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponsePostDto.class)))
+    @GetMapping("/post/fixed")
+    public ResponseEntity<?> fixedPost() {
+        Post fixedPost = postService.findFixedPost();
+        return ResponseEntity.ok(fixedPost != null ? fixedPost.toResponsePostDto() : null);
     }
 
     /**
@@ -438,6 +455,20 @@ public class PostController {
     public ResponseEntity<List<ResponsePostDto>> hotPost() {
         Page<ResponsePostDto> responsePostDtos = postService.hotPost(0, 6);
         return ResponseEntity.ok(responsePostDtos.getContent());
+    }
+
+    /**
+     * 특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기
+     *
+     * @param postId 제외할 데이터의 id
+     * @return 조회된 공지사항 게시글 리스트
+     */
+    @Operation(summary = "특정 id의 데이터를 제외하고 랜덤 공지사항 게시글 리스트 가져오기")
+    @Parameter(name = "postId", description = "제외할 데이터의 id", example = "1")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/random/{postId}")
+    public ResponseEntity<List<ResponsePostDto>> random(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.random(postId).stream().map(Post::toResponsePostDto).toList());
     }
 
     private ResponseEntity<ResponsePostDto> getResponseEntity(Long postId) {

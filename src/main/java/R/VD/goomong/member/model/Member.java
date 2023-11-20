@@ -4,6 +4,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
+import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
@@ -145,8 +146,23 @@ public class Member extends BaseTimeEntity {
 //                .build();
 //    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, memberId, itemList, postList, orderList, reviewList, askList);
+    public void incrementLoginFailed() {
+        if (memberLoginFailed == null) {
+            memberLoginFailed = 1L;
+        } else {
+            memberLoginFailed++;
+        }
+    }
+
+    public void resetLoginFailed() {
+        memberLoginFailed = 0L;
+    }
+
+    public ResponseLogin toResponseLoginDto() {
+        return ResponseLogin.builder()
+                .id(id)
+                .memberId(memberId)
+                .memberPassword(memberPassword)
+                .build();
     }
 }
