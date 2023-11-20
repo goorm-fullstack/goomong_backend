@@ -16,4 +16,4 @@ RUN chmod +x gradlew
 
 RUN ./gradlew clean build
 
-CMD ["java", "-jar", "-Dspring.profiles.active=prod", "/app/build/libs/goomong-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-Dhttp.proxyHost=krmp-proxy.9rum.cc", "-Dhttp.proxyPort=3128","-Dhttps.proxyHost=krmp-proxy.9rum.cc", "-Dhttps.proxyPort=3128", "-jar", "-Dspring.profiles.active=prod", "/app/build/libs/goomong-0.0.1-SNAPSHOT.jar"]
