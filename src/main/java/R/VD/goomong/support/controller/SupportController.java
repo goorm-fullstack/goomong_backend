@@ -98,7 +98,7 @@ public class SupportController {
             })
     @PostMapping("/sendCode")
     public ResponseEntity<Object> MailTest(@RequestBody RequestOnlyEmail requestOnlyEmail){
-        emailMemberSaveService.sendMail(requestOnlyEmail.getEmail());
+        emailMemberSaveService.sendMail(requestOnlyEmail.getMemberEmail());
 
         return ResponseEntity.ok("send success");
     }
