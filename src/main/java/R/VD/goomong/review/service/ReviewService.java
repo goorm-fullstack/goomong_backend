@@ -123,16 +123,4 @@ public class ReviewService {
         return reviewRepository.findAll(pageable);
     }
 
-    // MemberId로 리뷰 조회
-    public Page<Review> findReviewsByMemberId(Long id, Pageable pageable){
-        Page<Review> all = reviewRepository.findAllByMemberId(id, pageable);
-        List<Review> list = new ArrayList<>();
-
-        for(Review review : all){
-            if(review.getDelDate() != null)
-                list.add(review);
-        }
-
-        return new PageImpl<>(list, pageable, list.size());
-    }
 }

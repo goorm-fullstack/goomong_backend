@@ -422,11 +422,4 @@ public class PostController {
         return ResponseEntity.ok(findPost.toResponsePostDto());
     }
 
-    // MemberId로 게시글 조회
-    @GetMapping("/memberId/{memberId}")
-    private ResponseEntity<List<ResponsePostDto>> findByMemberId(@PathVariable Long memberId ,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-
-        Page<Post> posts = postService.findByMemberId(memberId, pageable);
-        return getListResponseEntity(posts);
-    }
 }

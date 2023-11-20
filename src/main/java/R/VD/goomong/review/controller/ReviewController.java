@@ -192,16 +192,5 @@ public class ReviewController {
         return getListResponseEntity(pageable, reviews);
     }
 
-    /**
-     * memberId로 리뷰 조회
-     * @param memberId
-     * @param pageable
-     * @return
-     */
-    @GetMapping("/memberId/{memberId}")
-    public ResponseEntity<List<ResponseReviewDto>> findReviewsByMemberId(@PathVariable Long memberId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Review> reviews = reviewService.findReviewsByMemberId(memberId, pageable);
 
-        return getListResponseEntity(reviews);
-    }
 }

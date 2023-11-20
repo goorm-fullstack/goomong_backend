@@ -3,11 +3,13 @@ package R.VD.goomong.member.service;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.member.dto.request.*;
+import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -257,38 +259,33 @@ public class MemberService {
     }
 
     //로그인
-    @Transactional(noRollbackFor = NotFoundMember.class)
-    public Member memberLogin(RequestLogin requestLogin){
+    @Transactional(rollbackFor = Exception.class) // 예외가 발생하면 롤백하도록 설정
+    public Member memberLogin(RequestLogin requestLogin) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestLogin.getMemberId());
 
-        if(byMemberId.isEmpty()){                                               //아이디 없음
+        if (byMemberId.isEmpty()) { // 아이디 없음
             throw new NotFoundMember("아이디 없음.");
         }
 
         Member member = byMemberId.get();
-        if(!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())){                 //비밀번호 틀림
-            try{
-                LoginFail fail = new LoginFail(memberRepository);
-                fail.extracted(member);
-            }
-            catch (Exception e){
-                throw new NotFoundMember("비밀번호 불일치");
+        System.out.println(member.getMemberPassword());
+        System.out.println(requestLogin.getMemberPassword());
+        if (!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())) { // 비밀번호 틀림
+            member.incrementLoginFailed(); // 로그인 실패 횟수 증가
+            memberRepository.save(member); // 실패 횟수를 저장
 
-            }
-
-        }
-
-        else{                                                                       //아이디, 비밀번호 모두 맞췄을 때
-            if(member.getMemberLoginFailed() == 5L){                                //이미 로그인 5회 실패일 때
+            if (member.getMemberLoginFailed() >= 5L) { // 5회 이상 로그인 실패 시
                 throw new NotFoundMember("회원 잠김");
+            } else {
+                throw new NotFoundMember("비밀번호 불일치");
             }
-            else{
-                member.setMemberLoginFailed(0L);                                    //로그인 성공
-                memberRepository.save(member);
-            }
+        } else { // 아이디, 비밀번호 모두 맞췄을 때
+            member.resetLoginFailed(); // 로그인 실패 횟수 초기화
+            memberRepository.save(member); // 초기화된 실패 횟수를 저장
         }
         return member;
     }
+
 
 
 

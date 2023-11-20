@@ -153,16 +153,4 @@ public class CommentService {
         return commentRepository.findAll(pageable);
     }
 
-    // memberId 댓글 조회
-    public Page<Comment> getAllByMemberId(Long memberId, Pageable pageable){
-        Page<Comment> all = commentRepository.getAllByMemberId(memberId, pageable);
-        List<Comment> list = new ArrayList<>();
-
-        for (Comment comment : all) {
-            if(comment.getDelDate() != null)
-                list.add(comment);
-        }
-
-        return new PageImpl<>(list, pageable, list.size());
-    }
 }

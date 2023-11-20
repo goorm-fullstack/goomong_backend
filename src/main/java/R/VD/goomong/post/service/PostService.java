@@ -258,16 +258,4 @@ public class PostService {
         return postRepository.findAll(pageable);
     }
 
-    //회원 아이디로 게시글 조회
-    public Page<Post> findByMemberId(Long id, Pageable pageable){
-        Page<Post> all = postRepository.findAllByMemberId(id, pageable);
-        List<Post> list = new ArrayList<>();
-
-        for(Post post : all){
-            if(post.getDelDate()!= null)
-                list.add(post);
-        }
-
-        return new PageImpl<>(list, pageable, list.size());
-    }
 }
