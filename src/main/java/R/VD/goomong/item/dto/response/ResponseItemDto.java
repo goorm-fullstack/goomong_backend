@@ -5,6 +5,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.member.dto.response.ResponseMember;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
@@ -20,8 +21,9 @@ public class ResponseItemDto {
     private String title;//제목
     private ResponseMember member;//작성자
     private int price;//가격
+    private List<ItemOption> itemOptions;//아이템 옵션
     private List<Image> thumbNailList;//썸네일 리스트
-    private String describe;//설명
+    private String description;//설명
     private List<ResponseItemCategoryDto> itemCategories;//카테고리 목록
     private List<ResponseReviewDto> reviewList;//리뷰 목록
     private List<ResponseAskDto> askList;
@@ -34,8 +36,9 @@ public class ResponseItemDto {
         this.title = item.getTitle();
         this.member = new ResponseMember(item.getMember());
         this.price = item.getPrice();
+        this.itemOptions = item.getItemOptions();
         this.thumbNailList = item.getThumbNailList();
-        this.describe = item.getDescribe();
+        this.description = item.getDescribe();
         this.itemCategories = getCategoryDto(item.getItemCategories());
         this.reviewList = getReviewDto(item.getReviewList());
         this.askList = getAskDto(item.getAskList());

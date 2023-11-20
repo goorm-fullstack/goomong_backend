@@ -1,6 +1,5 @@
 package R.VD.goomong.support.controller;
 
-import R.VD.goomong.chat.dto.response.ResponseChatRoomDTO;
 import R.VD.goomong.global.model.ErrorResponseDTO;
 import R.VD.goomong.support.dto.request.*;
 import R.VD.goomong.support.dto.response.ResponseEmailAsk;
@@ -64,8 +63,8 @@ public class SupportController {
     @Operation(summary = "고객 문의 저장",
             description = "이메일(email, String), 제목(title, String), 내용(content, String), 파일(files)을 이용해 문의 메일 저장",
             responses = {
-            @ApiResponse(responseCode = "200", description = "문의 조회 성공")
-    })
+                    @ApiResponse(responseCode = "200", description = "문의 조회 성공")
+            })
     @PostMapping("/email-asks")
     public ResponseEntity<Object> saveEmailAsk(@ModelAttribute RequestEmailAskDTO requestEmailAskDTO) {
 
@@ -80,9 +79,9 @@ public class SupportController {
     @Operation(summary = "고객 문의 답변",
             description = "문의 (Long, emailAskId), 관리자 (Long, adminId), 제목 (title, String), 내용(content, String), 파일(files)을 이용해 답변 메일",
             responses = {
-            @ApiResponse(responseCode = "200", description = "답변 메일 작성 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
-    })
+                    @ApiResponse(responseCode = "200", description = "답변 메일 작성 성공"),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            })
     @PostMapping("/email-answer")
     public ResponseEntity<Object> createEmailAnswer(@RequestBody RequestEmailAnswerDTO emailAnswerDTO) {
         EmailAnswer emailAnswer = emailAnswerService.saveEmailAnswer(emailAnswerDTO);

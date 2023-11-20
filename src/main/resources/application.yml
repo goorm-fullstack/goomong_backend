@@ -28,16 +28,15 @@ spring:
   mail: # smtp
     host: smtp.gmail.com
     port: 587
-    username: ${email.username}
-    password: ${email.password}
-#    username: ehdrb141@gmail.com
-#    password: vufdjiidtygjjprw
+    username: goomongshop
+    password: ${mail-password}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+          timeout: 5000
 
 File:
   upload:

@@ -33,7 +33,7 @@ public class EmailMemberSaveService {
     private final MemberService memberService;
 
     //메일 작성
-    public MimeMessage CreateMail(String email){
+    public MimeMessage CreateMail(String email) {
         MimeMessage message = javaMailSender.createMimeMessage();
         Optional<EmailMemberSave> byEmail = emailMemberSaveRepository.findByMemberEmail(email);
         EmailMemberSave emailMemberSave = byEmail.get();
@@ -46,7 +46,7 @@ public class EmailMemberSaveService {
             body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
             body += "<h1>" + emailMemberSave.getCode() + "</h1>";
             body += "<h3>" + "감사합니다." + "</h3>";
-            message.setText(body,"UTF-8", "html");
+            message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -92,11 +92,11 @@ public class EmailMemberSaveService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime regDate = emailMemberSave.getRegDate();
         long secondsDifference = ChronoUnit.SECONDS.between(regDate, now);
-        if(secondsDifference > 300){                     //만료 시간 5분이 지났을 때
+        if (secondsDifference > 300) {                     //만료 시간 5분이 지났을 때
             throw new SupportNotFoundException("인증 시간이 지났습니다. 인증 메일을 재전송해주세요.");
         }
 
-        if(!emailMemberSave.getCode().equals(requestCheckCode.getCode())){              //인증 코드가 같지 않을 때
+        if (!emailMemberSave.getCode().equals(requestCheckCode.getCode())) {              //인증 코드가 같지 않을 때
             throw new SupportNotFoundException("인증 코드가 같지 않습니다. 코드를 다시 확인해주세요.");
         }
 
