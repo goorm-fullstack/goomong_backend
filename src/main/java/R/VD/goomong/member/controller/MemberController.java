@@ -2,6 +2,7 @@ package R.VD.goomong.member.controller;
 
 import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.dto.response.ResponseLogin;
+import R.VD.goomong.member.dto.response.ResponseMember;
 import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
@@ -53,7 +54,7 @@ public class MemberController {
 
     //회원 아이디로 회원 정보 찾기
     @GetMapping("/memberId/{memberId}")
-    public ResponseEntity<Member> findByMemberId(@PathVariable String memberId){
+    public ResponseEntity<Member> findByMemberId(@PathVariable String memberId) {
         Member member = memberService.findByMemberId(memberId);
 
         return ResponseEntity.ok(member);
@@ -61,15 +62,22 @@ public class MemberController {
 
     //회원 인덱스로 회원 정보 찾기
     @GetMapping("/id/{id}")
-    public ResponseEntity<Member> findById(@PathVariable Long id){
+    public ResponseEntity<Member> findById(@PathVariable Long id) {
         Member member = memberService.findById(id);
 
         return ResponseEntity.ok(member);
     }
 
+    // 추가 - @배진환
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseMember> findMember(@PathVariable Long id) {
+        Member byId = memberService.findById(id);
+        return ResponseEntity.ok(new ResponseMember(byId));
+    }
+
     //회원 이메일로 회원 정보 찾기
     @GetMapping("/email/{email}")
-    public ResponseEntity<Member> findByMemberEmail(@PathVariable String email){
+    public ResponseEntity<Member> findByMemberEmail(@PathVariable String email) {
         Member member = memberService.findByMemberEmail(email);
 
         return ResponseEntity.ok(member);
@@ -100,7 +108,7 @@ public class MemberController {
 
     //memberId로 비밀번호 변경
     @PutMapping("/update/password")
-    public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword){
+    public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword) {
         Member member = memberService.changePasswordByMemberId(requestChangePassword);
 
         return ResponseEntity.ok(member);
@@ -125,19 +133,19 @@ public class MemberController {
     //DELETE
     //회원 memberId로 삭제
     @DeleteMapping("/memberId/{memberId}")
-    public void deleteByMemberId(@PathVariable String memberId){
+    public void deleteByMemberId(@PathVariable String memberId) {
         memberService.deleteByMemberId(memberId);
     }
 
     //회원 index로 삭제
     @DeleteMapping("/id/{id}")
-    public void deleteById(@PathVariable Long id){
+    public void deleteById(@PathVariable Long id) {
         memberService.deleteById(id);
     }
 
     //회원 index로 softdelete
     @PutMapping("/softDelete/id/{id}")
-    public ResponseEntity<Member> softDeleteById(@PathVariable Long id){
+    public ResponseEntity<Member> softDeleteById(@PathVariable Long id) {
         Member member = memberService.softDeleteById(id);
 
         return ResponseEntity.ok(member);
@@ -145,7 +153,7 @@ public class MemberController {
 
     //회원 memberId로 softdelete
     @PutMapping("/softDelete/memberId/{memberId}")
-    public ResponseEntity<Member> softDeleteByMemberId(@PathVariable String memberId){
+    public ResponseEntity<Member> softDeleteByMemberId(@PathVariable String memberId) {
         Member member = memberService.softDeleteByMemberId(memberId);
 
         return ResponseEntity.ok(member);
@@ -153,7 +161,7 @@ public class MemberController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<ResponseLogin> login(@RequestBody RequestLogin requestLogin, HttpServletResponse response){
+    public ResponseEntity<ResponseLogin> login(@RequestBody RequestLogin requestLogin, HttpServletResponse response) {
         Member member = memberService.memberLogin(requestLogin);
 
         return ResponseEntity.ok().body(member.toResponseLoginDto());
@@ -161,7 +169,7 @@ public class MemberController {
 
     //로그아웃
     @PostMapping("/logout")
-    public String logout(HttpServletResponse response){
+    public String logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("memberId", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
@@ -191,9 +199,9 @@ public class MemberController {
         KakaoOAuthToken kakaoOAuthToken = null;
         try {
             kakaoOAuthToken = objectMapper.readValue(response.getBody(), KakaoOAuthToken.class);
-        } catch(JsonMappingException e) {
+        } catch (JsonMappingException e) {
             e.printStackTrace();
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -201,7 +209,7 @@ public class MemberController {
 
         RestTemplate restTemplate2 = new RestTemplate();
         HttpHeaders headers2 = new HttpHeaders();
-        headers2.add("Authorization", "Bearer "+kakaoOAuthToken.getAccess_token());
+        headers2.add("Authorization", "Bearer " + kakaoOAuthToken.getAccess_token());
         headers2.add("Content-Type", "application/x-www-form-urlencoded");
 
         HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers2);
@@ -218,15 +226,15 @@ public class MemberController {
         KakaoProfile kakaoProfile = null;
         try {
             kakaoProfile = objectMapper2.readValue(response2.getBody(), KakaoProfile.class);
-        } catch(JsonMappingException e) {
+        } catch (JsonMappingException e) {
             e.printStackTrace();
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         System.out.println("카카오 회원번호: " + kakaoProfile.getId());
         System.out.println("카카오 이메일: " + kakaoProfile.getKakao_account().getEmail());
-        System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId());
+        System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail() + "_" + kakaoProfile.getId());
         System.out.println("블로그서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
         System.out.println("블로그서버 패스워드: " + cosKey);
 
@@ -259,7 +267,7 @@ public class MemberController {
         memberService.memberLogin(requestLogin);
 
         Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
-        cookie.setMaxAge(60*30);
+        cookie.setMaxAge(60 * 30);
         response3.addCookie(cookie);
 
         return "자동 회원가입 및 로그인 진행 완료";
