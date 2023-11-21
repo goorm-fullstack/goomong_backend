@@ -34,7 +34,6 @@ public class ResponseChatRoomDTO {
             this.lastMessage = lastChatMessage.getMessage();
             this.lastDate = lastChatMessage.getRegDate();
         }
-
     }
 
     private ChatMessage findLastMessage(List<ChatMessage> messages) {
