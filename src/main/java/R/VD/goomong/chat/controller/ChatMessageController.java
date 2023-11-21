@@ -33,6 +33,7 @@ public class ChatMessageController {
     @MessageMapping("/api/chat/sendMessage")
     public void sendMessage(@Payload RequestChatMessageDTO requestChatMessageDTO) {
 
+        log.info("sendMessage : {}", requestChatMessageDTO);
         ResponseChatMessageDTO responseChatMessageDTO = chatMessageService.saveMessage(requestChatMessageDTO);
 
         template.convertAndSend("/sub/chat/room/" + requestChatMessageDTO.getRoomId(), responseChatMessageDTO);
