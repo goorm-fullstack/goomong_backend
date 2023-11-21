@@ -96,8 +96,8 @@ public class SupportController {
                     @ApiResponse(responseCode = "200", description = "이메일 전송 성공")
             })
     @PostMapping("/sendCode")
-    public ResponseEntity<Object> MailTest(@RequestBody RequestOnlyEmail requestOnlyEmail) {
-        emailMemberSaveService.sendMail(requestOnlyEmail.getEmail());
+    public ResponseEntity<Object> MailTest(@RequestBody RequestOnlyEmail requestOnlyEmail){
+        emailMemberSaveService.sendMail(requestOnlyEmail.getMemberEmail());
 
         return ResponseEntity.ok("send success");
     }

@@ -75,6 +75,14 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+    //회원 이름으로 회원 정보 찾기
+    @GetMapping("/memberName/{memberName}")
+    public ResponseEntity<Member> findByMemberName(@PathVariable String memberName) {
+        Member member = memberService.findByMemberName(memberName);
+
+        return ResponseEntity.ok(member);
+    }
+
     //UPDATE
     // 회원 memberId로 회원 정보 수정
     @PutMapping("/update/memberId/{memberId}")

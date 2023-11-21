@@ -18,14 +18,14 @@ public class EmailMemberSave extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
+    private String memberEmail;
 
     private String code;
 
     private Boolean emailChecked;
 
-    public void emailUpdate(String email, String code, Boolean emailChecked) {
-        this.email = email;
+    public void emailUpdate(String memberEmail, String code, Boolean emailChecked) {
+        this.memberEmail = memberEmail;
         this.code = code;
         this.emailChecked = emailChecked;
     }

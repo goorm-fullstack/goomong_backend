@@ -6,14 +6,14 @@ import lombok.Data;
 
 @Data
 public class ResponseEmailMemberSave {
-    private String email;
+    private String memberEmail;
 
     private String code;
 
     private Boolean emailChecked;
 
     public ResponseEmailMemberSave(EmailMemberSave emailMemberSave) {
-        this.email = emailMemberSave.getEmail();
+        this.memberEmail = emailMemberSave.getMemberEmail();
         this.code = emailMemberSave.getCode();
         this.emailChecked = emailMemberSave.getEmailChecked();
     }

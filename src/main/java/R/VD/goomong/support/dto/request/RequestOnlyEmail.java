@@ -8,5 +8,5 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class RequestOnlyEmail {
-    private String email;
+    private String memberEmail;
 }
