@@ -230,6 +230,28 @@ public class AskController {
     }
 
     /**
+     * 상품 id로 문의 리스트 조회
+     *
+     * @param pageable 페이징
+     * @param itemId   상품 id
+     * @return 조회된 문의 리스트
+     */
+    @Operation(summary = "상품 id로 문의 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "itemId", description = "상품 id", example = "1")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseAskDto.class))))
+    @GetMapping("/{itemId}")
+    public ResponseEntity<List<ResponseAskDto>> listOfNotDeletedAndItemId(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long itemId) {
+        Page<Ask> asks = askService.listOfNotDeletedAndItemId(itemId, pageable);
+        List<ResponseAskDto> responseAskDtos = getResponseAskDtos(pageable, asks);
+        return ResponseEntity.ok(responseAskDtos);
+    }
+
+    /**
      * 삭제된 문의글 조회
      *
      * @param pageable 페이징
