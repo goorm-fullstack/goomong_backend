@@ -3,13 +3,12 @@ package R.VD.goomong.member.service;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
 import R.VD.goomong.member.dto.request.*;
-import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.support.repository.EmailMemberSaveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
     private final ImageService imageService;
+    private final EmailMemberSaveRepository emailMemberSaveRepository;
 
     //CREATE
     //아이디 중복 체크
@@ -89,6 +89,7 @@ public class MemberService {
         String rawPassword = member.getMemberPassword();
         String encodePassword = encoder.encode(rawPassword);
         member.setMemberPassword(encodePassword);
+        emailMemberSaveRepository.deleteByMemberEmail(member.getMemberEmail());
 
         memberRepository.save(member);
     }
@@ -113,8 +114,16 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    //이메일로 회원 찾기
     public Member findByMemberEmail(String memberEmail){
         Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
+
+        return member.orElse(null);
+    }
+
+    //이름으로 회원 찾기
+    public Member findByMemberName(String memberName) {
+        Optional<Member> member = memberRepository.findByMemberName(memberName);
 
         return member.orElse(null);
     }

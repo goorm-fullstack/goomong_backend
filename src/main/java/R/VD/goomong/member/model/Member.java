@@ -39,10 +39,10 @@ public class Member extends BaseTimeEntity {
     private String memberPassword;
 
     @Column(nullable = false)
-    private String memberName;
+    private String memberEmail;
 
     @Column(nullable = false)
-    private String memberEmail;
+    private String memberName;
 
     @Column(nullable = false)
     @JsonFormat(timezone = "Asia/Seoul")

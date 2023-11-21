@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RequestCheckCode {
-    private String email;
+    private String memberEmail;
     private String code;
 
     @Builder
-    public RequestCheckCode(String email, String code) {
-        this.email = email;
+    public RequestCheckCode(String memberEmail, String code) {
+        this.memberEmail = memberEmail;
         this.code = code;
     }
 }
