@@ -11,7 +11,6 @@ import java.util.List;
 
 @Data
 public class ResponseChatItem {
-
     private Long id;//DB 인덱스
     private String title;//제목
     private String memberName;//작성자
