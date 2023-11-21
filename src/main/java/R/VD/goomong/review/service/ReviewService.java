@@ -107,6 +107,17 @@ public class ReviewService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // 상품 id로 리뷰 리스트 조회
+    public Page<Review> listOfNotDeletedAndItemId(Pageable pageable, Long itemId) {
+        Page<Review> all = reviewRepository.findAll(pageable);
+        List<Review> list = new ArrayList<>();
+
+        for (Review review : all) {
+            if (review.getDelDate() == null && review.getItem().getId().equals(itemId)) list.add(review);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 삭제된 리뷰 조회
     public Page<Review> listOfDeleted(Pageable pageable) {
         Page<Review> all = reviewRepository.findAll(pageable);
