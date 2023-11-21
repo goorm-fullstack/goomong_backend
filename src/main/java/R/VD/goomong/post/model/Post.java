@@ -95,6 +95,7 @@ public class Post extends BaseTimeEntity {
                 .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSimpleAddress() : null)
                 .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
                 .postCategory(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getCategoryName() : null)
+                .postCategoryId(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getId() : null)
                 .postLikeNo(postLikeNo)
                 .imageList(imageList)
                 .postContent(postContent)
