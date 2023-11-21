@@ -2,10 +2,13 @@ package R.VD.goomong.point.service;
 
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.point.dto.request.RequestEarnPoint;
+import R.VD.goomong.point.dto.request.RequestSpentPoint;
+import R.VD.goomong.point.dto.response.ResponsePointHistory;
+import R.VD.goomong.point.exception.PointNotFoundException;
 import R.VD.goomong.point.model.Point;
 import R.VD.goomong.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,32 +23,6 @@ public class PointService {
     private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public void earnPoints(Long memberId, int amount, String itemDescription, String orderNumber) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberId));
-
-        int earnAmount = (int)(amount * EARN_PERCENTAGE); // 주문 금액의 1%를 포인트로 적립
-        Point point = new Point();
-        point.earnPoints(earnAmount, itemDescription, orderNumber);
-        point.setMember(member);
-        member.addPoints(point);
-        pointRepository.save(point);
-    }
-
-    @Transactional
-    public void spendPoints(Long memberId, int amount, String itemDescription, String orderNumber) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberId));
-
-        Point point = new Point();
-        point.spendPoints(amount, itemDescription, orderNumber);
-        point.setMember(member);
-        member.addPoints(point);
-        pointRepository.save(point);
-
-    }
-
     @Transactional(readOnly = true)
     public int getTotalPoints(Long memberId) {
         Integer totalPoints = pointRepository.sumPointsByMember_Id(memberId);
@@ -54,9 +31,38 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public List<Point> getPointHistory(Long memberId) {
+    public List<ResponsePointHistory> getPointHistory(Long memberId) {
 
-        List<Point> points = pointRepository.findByMember_Id(memberId);
-        return points;
+        return pointRepository.findByMember_Id(memberId).stream()
+                .map(ResponsePointHistory::new)
+                .toList();
     }
+
+    @Transactional
+    public void earnPoints(RequestEarnPoint requestEarnPoint) {
+        Long memberId = requestEarnPoint.getMemberId();
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PointNotFoundException("멤버 " + memberId + " 는 찾을 수 없습니다."));
+
+        int earnAmount = (int) (requestEarnPoint.getPrice() * EARN_PERCENTAGE); // 주문 금액의 1%를 포인트로 적립
+        Point point = new Point();
+        point.earnPoints(earnAmount, requestEarnPoint.getDescription(), requestEarnPoint.getOrderNumber());
+        point.setMember(member);
+        pointRepository.save(point);
+    }
+
+    @Transactional
+    public void spendPoints(RequestSpentPoint requestSpentPoint) {
+        Long memberId = requestSpentPoint.getMemberId();
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PointNotFoundException("멤버 " + memberId + " 는 찾을 수 없습니다."));
+
+        Point point = new Point();
+        point.spendPoints(requestSpentPoint.getPoint(), requestSpentPoint.getDescription(), requestSpentPoint.getOrderNumber());
+        point.setMember(member);
+        pointRepository.save(point);
+    }
+
 }

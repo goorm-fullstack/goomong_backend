@@ -35,6 +35,9 @@ public class Order extends BaseTimeEntity {
     private Member member;
 
     private int price;
+
+    private int point;
+
     private String orderNumber;
 
     @Embedded
