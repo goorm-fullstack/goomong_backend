@@ -4,6 +4,7 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.member.model.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Builder
@@ -11,6 +12,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE Point SET del_date = CURRENT_TIMESTAMP WHERE point_id = ?")
 public class Point extends BaseTimeEntity {
 
     @Id

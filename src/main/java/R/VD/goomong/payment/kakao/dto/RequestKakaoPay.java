@@ -14,6 +14,8 @@ public class RequestKakaoPay {
     @Positive
     private int price;
 
+    private int point;
+
     @NotNull
     @NotEmpty
     private String orderName;

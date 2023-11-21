@@ -69,7 +69,7 @@ public class Order extends BaseTimeEntity {
         for (Item item : orderItem) {
             result += item.getPrice();
         }
-
+        
         price = result;
     }
 

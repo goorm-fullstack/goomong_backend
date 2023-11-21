@@ -1,30 +1,50 @@
 package R.VD.goomong.point.controller;
 
-import R.VD.goomong.point.dto.request.RequestEarnPoint;
-import R.VD.goomong.point.dto.request.RequestSpentPoint;
+import R.VD.goomong.global.model.ErrorResponseDTO;
+import R.VD.goomong.point.dto.response.ResponsePoint;
 import R.VD.goomong.point.dto.response.ResponsePointHistory;
 import R.VD.goomong.point.service.PointService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "Point", description = "포인트 관련 API")
 @RestController
-@RequestMapping("/points")
+@RequestMapping("/api/point")
 @RequiredArgsConstructor
 public class PointController {
 
     private final PointService pointService;
 
-    @GetMapping("/{memberId}/total")
-    public ResponseEntity<Integer> getTotalPoints(@PathVariable Long memberId) {
+    @Operation(summary = "포인트 조회", description = "멤버 (memberId)를 이용해 총합, 만료예정 포인트 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "문의 조회 성공", content = @Content(schema = @Schema(implementation = ResponsePoint.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ResponsePoint> getTotalPoints(@PathVariable Long memberId) {
         int totalPoints = pointService.getTotalPoints(memberId);
+        int expiringPoints = pointService.getExpiringPoints(memberId);
 
-        return ResponseEntity.ok(totalPoints);
+        ResponsePoint responsePoint = new ResponsePoint(totalPoints, expiringPoints);
+
+        return new ResponseEntity<>(responsePoint, HttpStatus.OK);
     }
 
+    @Operation(summary = "포인트 내역 조회", description = "멤버 (memberId)를 이용해 포인트 내역 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "문의 조회 성공", content = @Content(schema = @Schema(implementation = ResponsePointHistory.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     @GetMapping("/{memberId}/history")
     public ResponseEntity<List<ResponsePointHistory>> getPointHistory(@PathVariable Long memberId) {
         List<ResponsePointHistory> history = pointService.getPointHistory(memberId);
@@ -32,17 +52,4 @@ public class PointController {
         return new ResponseEntity<>(history, HttpStatus.OK);
     }
 
-    @PostMapping("/earn")
-    public ResponseEntity<?> earnPoints(@RequestBody RequestEarnPoint requestEarnPoint) {
-        pointService.earnPoints(requestEarnPoint);
-
-        return ResponseEntity.ok("포인트 적립이 완료되었습니다..");
-    }
-
-    @PostMapping("/spend")
-    public ResponseEntity<?> spendPoints(@RequestBody RequestSpentPoint requestSpentPoint) {
-        pointService.spendPoints(requestSpentPoint);
-
-        return ResponseEntity.ok("포인트 사용이 완료되었습니다.");
-    }
 }
