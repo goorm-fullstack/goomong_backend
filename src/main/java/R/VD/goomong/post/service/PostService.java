@@ -190,6 +190,17 @@ public class PostService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // member id로 게시글 리스트 조회
+    public Page<Post> listOfNotDeletedAndMemberId(Pageable pageable, Long memberId) {
+        Page<Post> all = postRepository.findAll(pageable);
+        List<Post> list = new ArrayList<>();
+
+        for (Post post : all) {
+            if (post.getDelDate() == null && post.getMember().getId().equals(memberId)) list.add(post);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 삭제된 게시글 조회
     public Page<Post> listOfDeleted(Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
