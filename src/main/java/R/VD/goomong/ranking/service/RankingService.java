@@ -3,6 +3,7 @@ package R.VD.goomong.ranking.service;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.ranking.dto.response.ResponseMonthTopRanking;
 import R.VD.goomong.ranking.dto.response.ResponseTopRanking;
+import R.VD.goomong.ranking.exception.RankingIllegalArgumentException;
 import R.VD.goomong.ranking.model.Ranking;
 import R.VD.goomong.ranking.model.RankingType;
 import R.VD.goomong.ranking.repository.RankingRepository;
@@ -104,6 +105,9 @@ public class RankingService {
                 List<Tuple> salesRankings = rankingSupportRepository.calculateTop5SellersBySalesAmount(start, end);
                 salesRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.SALES)));
                 break;
+                
+            default:
+                throw new RankingIllegalArgumentException("알 수 없는 타입: " + type);
         }
 
         return rankings;
