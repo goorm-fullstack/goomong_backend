@@ -137,6 +137,17 @@ public class CommentService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // 회원 id로 댓글 리스트 조회
+    public Page<Comment> listOfNotDeletedAndMemberId(Pageable pageable, Long memberId) {
+        Page<Comment> all = commentRepository.findAll(pageable);
+        List<Comment> list = new ArrayList<>();
+
+        for (Comment comment : all) {
+            if (comment.getDelDate() == null && comment.getMember().getId().equals(memberId)) list.add(comment);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 삭제된 댓글 조회
     public Page<Comment> listOfDeletedComment(Pageable pageable) {
         Page<Comment> all = commentRepository.findAll(pageable);

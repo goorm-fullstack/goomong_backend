@@ -154,6 +154,27 @@ public class ReviewController {
     }
 
     /**
+     * 상품 id로 리뷰 리스트 조회
+     *
+     * @param pageable 페이징
+     * @param itemId   상품 id
+     * @return 조회된 리뷰 리스트
+     */
+    @Operation(summary = "상품 id로 리뷰 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "itemId", description = "상품 id", example = "1")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
+    @GetMapping("/{itemId}")
+    public ResponseEntity<List<ResponseReviewDto>> listOfNotDeletedAndItemId(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long itemId) {
+        Page<Review> reviews = reviewService.listOfNotDeletedAndItemId(pageable, itemId);
+        return getListResponseEntity(pageable, reviews);
+    }
+
+    /**
      * 삭제된 리뷰 조회
      *
      * @param pageable 페이징

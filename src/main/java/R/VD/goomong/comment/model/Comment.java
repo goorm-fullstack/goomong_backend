@@ -75,6 +75,8 @@ public class Comment extends BaseTimeEntity {
         return ResponseCommentDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
+                .postId(post.getId())
+                .postTitle(post.getPostTitle())
                 .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
                 .content(content)
                 .likeNo(likeNo)
