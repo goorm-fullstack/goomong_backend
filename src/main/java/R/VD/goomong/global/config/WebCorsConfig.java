@@ -11,7 +11,7 @@ public class WebCorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://k5fb919a75e08a.user-app.krampoline.com/")
+                .allowedOrigins("https://k5fb919a75e08a.user-app.krampoline.com/", "*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
