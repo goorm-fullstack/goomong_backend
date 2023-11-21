@@ -17,7 +17,10 @@ import R.VD.goomong.order.exception.InvalidOrderType;
 import R.VD.goomong.order.exception.NotExistOrder;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.order.repository.OrderRepository;
+import R.VD.goomong.point.model.EventType;
+import R.VD.goomong.point.model.PointEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +38,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<ResponseOrderDto> getAllOrderList() {
         return orderRepository.findAll().stream().map(ResponseOrderDto::new).toList();
@@ -90,10 +94,24 @@ public class OrderService {
         order.setOrderItem(itemList);
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+
+        // 포인트 이벤트 리스너
+        if (order.getPoint() != 0) {
+            eventPublisher.publishEvent(new PointEvent(member,
+                    save.getPoint(),
+                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderNumber(),
+                    EventType.POINT_SPENT)); // 포인트 사용
+        }
+
+        eventPublisher.publishEvent(new PointEvent(member,
+                save.getPrice(),
+                save.getOrderItem().get(0).getTitle(),
+                save.getOrderNumber(),
+                EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
 
     // 주문 생성
-
     public void createNewOrder(RequestPayOrderDto orderDto) {
         Order order = orderDto.toEntity();
         Optional<Member> customer = memberRepository.findById(orderDto.getMemberId());
@@ -115,6 +133,21 @@ public class OrderService {
         order.calculatePrice();
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+
+        // 포인트 이벤트 리스너
+        if (order.getPoint() != 0) {
+            eventPublisher.publishEvent(new PointEvent(member,
+                    save.getPoint(),
+                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderNumber(),
+                    EventType.POINT_SPENT)); // 포인트 사용
+        }
+
+        eventPublisher.publishEvent(new PointEvent(member,
+                save.getPrice(),
+                save.getOrderItem().get(0).getTitle(),
+                save.getOrderNumber(),
+                EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
 
     // 작업 시작
@@ -139,6 +172,20 @@ public class OrderService {
     public void refundComplete(Long id) {
         Order order = findOrder(id);
         order.refundComplete();
+
+        // 포인트 이벤트 리스너
+        eventPublisher.publishEvent(new PointEvent(order.getMember(),
+                order.getPrice(),
+                order.getOrderItem().get(0).getTitle(),
+                order.getOrderNumber(),
+                EventType.REFUND));
+        if (order.getPoint() != 0) {
+            eventPublisher.publishEvent(new PointEvent(order.getMember(),
+                    order.getPoint(),
+                    order.getOrderItem().get(0).getTitle(),
+                    order.getOrderNumber(),
+                    EventType.POINT_REDEMPTION_CANCELLATION));
+        }
     }
 
     // 주문한 아이템을 찾아서 주문에 반영

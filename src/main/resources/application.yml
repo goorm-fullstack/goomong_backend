@@ -6,8 +6,8 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     username: sa
-    #    url: jdbc:h2:mem:goomong
-    url: jdbc:h2:tcp://localhost/~/test
+    url: jdbc:h2:mem:goomong
+    #url: jdbc:h2:tcp://localhost/~/test
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,8 +28,8 @@ spring:
   mail: # smtp
     host: smtp.gmail.com
     port: 587
-    username: goomongshop
-    password: ${mail-password}
+    username: ${email.username}
+    password: ${email.password}
     properties:
       mail:
         smtp:

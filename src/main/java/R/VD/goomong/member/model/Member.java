@@ -7,6 +7,7 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
 import R.VD.goomong.order.model.Order;
+import R.VD.goomong.point.model.Point;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
