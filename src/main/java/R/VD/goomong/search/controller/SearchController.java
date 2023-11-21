@@ -3,7 +3,10 @@ package R.VD.goomong.search.controller;
 import R.VD.goomong.global.model.ErrorResponseDTO;
 import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
+import R.VD.goomong.search.dto.response.ResponseRecentKeword;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
+import R.VD.goomong.search.dto.response.ResponseTopSearchKeyword;
+import R.VD.goomong.search.model.Word;
 import R.VD.goomong.search.service.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Search", description = "검색 API")
 @Slf4j
@@ -27,6 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class SearchController {
 
     private final SearchService searchService;
+
+    @Operation(summary = "최근 검색어", description = "최근 검색어를 위해서 memberId를 받습니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "최근 검색어 불러오기 성공", content = @Content(schema = @Schema(implementation = ResponseRecentKeword.class))),
+    })
+    @GetMapping("/recent/{memberId}")
+    public ResponseEntity<List<ResponseRecentKeword>> getRecentSearchKeywords(@PathVariable Long memberId) {
+        List<ResponseRecentKeword> recentKeyword = searchService.getRecentSearchKeywords(memberId);
+        return new ResponseEntity<>(recentKeyword, HttpStatus.OK);
+    }
+
+    @Operation(summary = "인기 검색어", responses = {
+            @ApiResponse(responseCode = "200", description = "인기 검색어 불러오기 성공", content = @Content(schema = @Schema(implementation = ResponseTopSearchKeyword.class))),
+    })
+    @GetMapping("/top-keywords")
+    public ResponseEntity<List<ResponseTopSearchKeyword>> getTopSearchKeywords() {
+        List<ResponseTopSearchKeyword> topSearchKeywords = searchService.getTopSearchKeywords();
+        return new ResponseEntity<>(topSearchKeywords, HttpStatus.OK);
+    }
 
     @Operation(summary = "상품 검색", description = "검색을 위해 memberId와 keyword, order, category를 받습니다.", responses = {
             @ApiResponse(responseCode = "200", description = "검색 성공", content = @Content(schema = @Schema(implementation = ResponseSearchDTO.class))),

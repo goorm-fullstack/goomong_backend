@@ -9,8 +9,10 @@ import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
+import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
 import R.VD.goomong.item.repository.ItemCategoryRepository;
+import R.VD.goomong.item.repository.ItemOptionRepository;
 import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
@@ -35,7 +37,7 @@ public class ItemService {
     private final ImageService imageService;
     private final ItemCategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
-
+    private final ItemOptionRepository itemOptionRepository;
 
     // 아이템 저장
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
@@ -132,6 +134,13 @@ public class ItemService {
         if (member.isEmpty())
             throw new NotFoundMember();
 
+        List<ItemOption> itemOptions = new ArrayList<>();
+        for(ItemOption option : entity.getItemOptions()) {
+            ItemOption itemOption = itemOptionRepository.save(option);
+            itemOptions.add(itemOption);
+        }
+
+        item.setItemOptions(itemOptions);
         item.setMember(member.get());
         item.setItemCategories(categories);
         item.setThumbNailList(imageList);

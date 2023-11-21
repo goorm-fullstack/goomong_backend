@@ -70,6 +70,12 @@ public class ItemController {
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
 
+    /**
+     *
+     * @param orderBy : title, price 같이 엔티티 기반 프로퍼티 명
+     * @param direction : asc, desc
+     * @param pageable : 페이지 번호
+     */
     @Operation(
             summary = "판매 아이템 리스트 출력",
             description = "판매 아이템 리스트 출력.",

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ChatExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponseDTO> handleMemberNotFoundException(ChatNotFoundException e) {
+    public ResponseEntity<ErrorResponseDTO> handleChatNotFoundException(ChatNotFoundException e) {
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage());
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
