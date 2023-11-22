@@ -73,6 +73,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initReview(@Validated @ModelAttribute RequestReviewDto requestReviewDto, @RequestParam(required = false) MultipartFile[] images) {
+        System.out.println("Date : "+requestReviewDto.toString());
         log.info("requestReviewDto={}", requestReviewDto);
 
         reviewService.save(requestReviewDto, images);
