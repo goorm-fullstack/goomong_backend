@@ -1,6 +1,8 @@
 package R.VD.goomong.point.repository;
 
+import R.VD.goomong.member.model.Member;
 import R.VD.goomong.point.model.Point;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +15,7 @@ import java.util.List;
 @Repository
 public interface PointRepository extends JpaRepository<Point, Long> {
 
-    List<Point> findByMember_Id(Long MemberId, Pageable pageable);
+    Page<Point> findByMember(Member member, Pageable pageable);
 
     // 총합 포인트 계산
     @Query("SELECT SUM(p.amount) FROM Point p WHERE p.member.id = :memberId")

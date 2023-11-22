@@ -1,6 +1,7 @@
 package R.VD.goomong.point.controller;
 
 import R.VD.goomong.global.model.ErrorResponseDTO;
+import R.VD.goomong.global.model.ResponsePageWrap;
 import R.VD.goomong.point.dto.response.ResponsePoint;
 import R.VD.goomong.point.dto.response.ResponsePointHistory;
 import R.VD.goomong.point.service.PointService;
@@ -49,11 +50,11 @@ public class PointController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @GetMapping("/{memberId}/history")
-    public ResponseEntity<List<ResponsePointHistory>> getPointHistory(@PathVariable Long memberId,
+    public ResponseEntity<ResponsePageWrap<List<ResponsePointHistory>>> getPointHistory(@PathVariable Long memberId,
                                                                       @PageableDefault(sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<ResponsePointHistory> history = pointService.getPointHistory(memberId, pageable);
+        ResponsePageWrap<List<ResponsePointHistory>> pointHistory = pointService.getPointHistory(memberId, pageable);
 
-        return new ResponseEntity<>(history, HttpStatus.OK);
+        return new ResponseEntity<>(pointHistory, HttpStatus.OK);
     }
 
 }
