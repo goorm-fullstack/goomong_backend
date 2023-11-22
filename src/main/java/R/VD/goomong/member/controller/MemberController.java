@@ -47,7 +47,7 @@ public class MemberController {
 
     //READ
     //모든 회원 정보 불러오기
-    @GetMapping("list")
+    @GetMapping("/list")
     public List<Member> getAllMembers() {
         return memberService.getAll();
     }

@@ -75,10 +75,10 @@ public class ChatRoomService {
             return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getMemberName());
 
         ChatRoom chatRoom = ChatRoom.builder()
-                .item(item)
                 .build();
 
-        chatRoomRepository.save(chatRoom);
+        ChatRoom room = chatRoomRepository.save(chatRoom);
+        room.setItem(item);
 
         ChatRoomMember roomMember = ChatRoomMember.builder()
                 .chatRoom(chatRoom)

@@ -6,7 +6,7 @@ import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.support.dto.request.RequestEmailAskDTO;
 import R.VD.goomong.support.dto.response.ResponseEmailAsk;
 import R.VD.goomong.support.dto.response.ResponseEmailAskListDTO;
-import R.VD.goomong.support.dto.response.ResponsePageWrap;
+import R.VD.goomong.global.model.ResponsePageWrap;
 import R.VD.goomong.support.exception.SupportNotFoundException;
 import R.VD.goomong.support.model.EmailAsk;
 import R.VD.goomong.support.repository.EmailAskRepository;

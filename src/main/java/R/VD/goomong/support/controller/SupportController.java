@@ -4,7 +4,7 @@ import R.VD.goomong.global.model.ErrorResponseDTO;
 import R.VD.goomong.support.dto.request.*;
 import R.VD.goomong.support.dto.response.ResponseEmailAsk;
 import R.VD.goomong.support.dto.response.ResponseEmailAskListDTO;
-import R.VD.goomong.support.dto.response.ResponsePageWrap;
+import R.VD.goomong.global.model.ResponsePageWrap;
 import R.VD.goomong.support.model.EmailAnswer;
 import R.VD.goomong.support.service.EmailAnswerService;
 import R.VD.goomong.support.service.EmailAskService;

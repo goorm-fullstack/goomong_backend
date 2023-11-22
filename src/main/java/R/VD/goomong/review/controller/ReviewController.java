@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,6 +73,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initReview(@Validated @ModelAttribute RequestReviewDto requestReviewDto, @RequestParam(required = false) MultipartFile[] images) {
+        System.out.println("Date : "+requestReviewDto.toString());
         log.info("requestReviewDto={}", requestReviewDto);
 
         reviewService.save(requestReviewDto, images);
@@ -148,7 +151,11 @@ public class ReviewController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
     @GetMapping
-    public ResponseEntity<List<ResponseReviewDto>> listOfNotDeleted(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List<ResponseReviewDto>> listOfNotDeleted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                    @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Review> reviews = reviewService.listOfNotDeleted(pageable);
         return getListResponseEntity(pageable, reviews);
     }
@@ -247,5 +254,13 @@ public class ReviewController {
     public ResponseEntity<List<ResponseReviewDto>> bestReview() {
         Page<ResponseReviewDto> responseReviewDtos = reviewService.bestReview(0, 9);
         return ResponseEntity.ok(responseReviewDtos.getContent());
+    }
+
+    private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
+        if (orderBy.isPresent() && direction.isPresent()) {
+            Sort.Direction dir = Sort.Direction.fromString(direction.get());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, orderBy.get()));
+        }
+        return pageable;
     }
 }
