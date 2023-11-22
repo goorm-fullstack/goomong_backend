@@ -26,7 +26,7 @@ public class Item extends BaseTimeEntity {
     private Long id;//DB 인덱스
     private String title;//제목
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;//작성자
 
     private int price;//가격
