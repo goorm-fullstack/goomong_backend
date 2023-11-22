@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SearchRepository extends JpaRepository<Search, Long> {
 
-    @Query(value = "SELECT * FROM Search WHERE member_id = :memberId ORDER BY reg_date DESC LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT * FROM Search WHERE member_id = :memberId ORDER BY reg_date DESC LIMIT 3", nativeQuery = true)
     List<Search> findRecentSearchesByMemberId(@Param("memberId") Long memberId);
 
 }
