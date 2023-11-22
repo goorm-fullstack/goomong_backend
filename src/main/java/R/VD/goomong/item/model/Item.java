@@ -58,7 +58,15 @@ public class Item extends BaseTimeEntity {
     @Builder.Default
     private Float rate = 0F;//평점
 
+    @Column
+    @Builder.Default
+    private int reviewCnt = 0; // 리뷰 갯수 순으로 정렬을 위한 필드 추가 - @배진환
+
     private ZonedDateTime delDate;
+
+    public void setReviewCnt(Item item) {
+        this.reviewCnt = item.getReviewList().size();
+    }
 
     public void setMember(Member member) {
         this.member = member;
