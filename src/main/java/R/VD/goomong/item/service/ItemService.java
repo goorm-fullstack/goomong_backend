@@ -58,12 +58,21 @@ public class ItemService {
     }
 
     // 판매 조회
-    public List<ResponseItemPageDto> findAllBySale(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllBySale(Pageable pageable, String categoryName) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE, pageable);
         List<ResponseItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseItemDto(item));
         }
+
+        if (categoryName != null) {
+            result.clear();
+            for (Item item : items) {
+                if (item.getItemCategories().stream().anyMatch((category) -> category.getTitle().equals(categoryName)))
+                    result.add(new ResponseItemDto(item));
+            }
+        }
+
         List<ResponseItemPageDto> list = new ArrayList<>();
         for (ResponseItemDto responseItemDto : result) {
             list.add(new ResponseItemPageDto(responseItemDto, items.getTotalPages()));
@@ -73,12 +82,21 @@ public class ItemService {
     }
 
     // 재능 기부 조회
-    public List<ResponseItemPageDto> findAllByGive(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByGive(Pageable pageable, String categoryName) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+
+        if (categoryName != null) {
+            result.clear();
+            for (Item item : items) {
+                if (item.getItemCategories().stream().anyMatch((category) -> category.getTitle().equals(categoryName)))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+        }
+
         List<ResponseItemPageDto> list = new ArrayList<>();
         for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
             list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));
@@ -88,12 +106,21 @@ public class ItemService {
     }
 
     // 구인 조회
-    public List<ResponseItemPageDto> findAllByExchange(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByExchange(Pageable pageable, String categoryName) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+
+        if (categoryName != null) {
+            result.clear();
+            for (Item item : items) {
+                if (item.getItemCategories().stream().anyMatch((category) -> category.getTitle().equals(categoryName)))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+        }
+
         List<ResponseItemPageDto> list = new ArrayList<>();
         for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
             list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));
@@ -103,12 +130,21 @@ public class ItemService {
     }
 
     // 구인 조회
-    public List<ResponseItemPageDto> findAllByWanted(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByWanted(Pageable pageable, String categoryName) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+
+        if (categoryName != null) {
+            result.clear();
+            for (Item item : items) {
+                if (item.getItemCategories().stream().anyMatch((category) -> category.getTitle().equals(categoryName)))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+        }
+
         List<ResponseItemPageDto> list = new ArrayList<>();
         for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
             list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));

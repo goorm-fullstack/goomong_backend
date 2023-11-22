@@ -88,10 +88,10 @@ public class ItemController {
     )
     @GetMapping("/list/sale")
     public ResponseEntity<List<ResponseItemPageDto>> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                       Pageable pageable) {
+                                                                       Pageable pageable, @RequestParam(required = false) String categoryName) {
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllBySale(pageable));
+        return ResponseEntity.ok(itemService.findAllBySale(pageable, categoryName));
     }
 
     @Operation(
@@ -106,10 +106,10 @@ public class ItemController {
     )
     @GetMapping("/list/give")
     public ResponseEntity<List<ResponseItemPageDto>> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                       Pageable pageable) {
+                                                                       Pageable pageable, @RequestParam(required = false) String categoryName) {
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByGive(pageable));
+        return ResponseEntity.ok(itemService.findAllByGive(pageable, categoryName));
     }
 
     @Operation(
@@ -124,10 +124,10 @@ public class ItemController {
     )
     @GetMapping("/list/wanted")
     public ResponseEntity<List<ResponseItemPageDto>> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                         Pageable pageable) {
+                                                                         Pageable pageable, @RequestParam(required = false) String categoryName) {
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByWanted(pageable));
+        return ResponseEntity.ok(itemService.findAllByWanted(pageable, categoryName));
     }
 
     @Operation(
@@ -142,10 +142,10 @@ public class ItemController {
     )
     @GetMapping("/list/exchange")
     public ResponseEntity<List<ResponseItemPageDto>> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                           Pageable pageable) {
+                                                                           Pageable pageable, @RequestParam(required = false) String categoryName) {
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByExchange(pageable));
+        return ResponseEntity.ok(itemService.findAllByExchange(pageable, categoryName));
     }
 
     @Operation(
