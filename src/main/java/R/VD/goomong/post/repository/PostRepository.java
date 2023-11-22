@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
@@ -19,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     void increaseViewCount(@Param("postId") Long postId);
 
     Page<Post> findAllByMemberId(Long id, Pageable pageable);
+
+    Optional<Post> findByIsFix(boolean isFix);
 }

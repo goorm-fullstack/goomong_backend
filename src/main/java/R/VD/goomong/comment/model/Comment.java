@@ -59,19 +59,23 @@ public class Comment extends BaseTimeEntity {
     public ResponseCommentDto toResponseCommentDto() {
 
         List<ResponseCommentDto> list = new ArrayList<>();
-        for (Comment comment : childrenComment) {
-            if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
+        if (!childrenComment.isEmpty()) {
+            for (Comment comment : childrenComment) {
+                if (comment.getDelDate() == null) list.add(comment.toResponseCommentDto());
+            }
         }
 
         List<Long> reports = new ArrayList<>();
-        for (Report report : reportList) {
-            if (report.getDelDate() == null) reports.add(report.getId());
+        if (!reportList.isEmpty()) {
+            for (Report report : reportList) {
+                if (report.getDelDate() == null) reports.add(report.getId());
+            }
         }
 
         return ResponseCommentDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .memberImageList(member.getProfileImages())
+                .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
                 .content(content)
                 .likeNo(likeNo)
                 .parentId(parentComment != null ? parentComment.getId() : null)

@@ -3,6 +3,7 @@ package R.VD.goomong.post.dto.request;
 import R.VD.goomong.post.model.Qna;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Getter
@@ -20,6 +21,10 @@ public class RequestQuestionDto {
     @NotBlank
     @Schema(description = "질문 내용", example = "내용입니다")
     private String content;
+
+    @Positive
+    @Schema(description = "카테고리 id", example = "1", required = true)
+    private Long categoryId;
 
     public Qna toEntity() {
         return Qna.builder()
