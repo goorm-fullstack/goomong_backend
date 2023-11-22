@@ -72,10 +72,9 @@ public class ItemController {
     }
 
     /**
-     *
-     * @param orderBy : title, price 같이 엔티티 기반 프로퍼티 명
+     * @param orderBy   : title, price 같이 엔티티 기반 프로퍼티 명
      * @param direction : asc, desc
-     * @param pageable : 페이지 번호
+     * @param pageable  : 페이지 번호
      */
     @Operation(
             summary = "판매 아이템 리스트 출력",
@@ -88,8 +87,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list/sale")
-    public ResponseEntity<ResponseItemPageDto> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                 Pageable pageable) {
+    public ResponseEntity<List<ResponseItemPageDto>> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                       Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllBySale(pageable));
@@ -106,8 +105,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list/give")
-    public ResponseEntity<ResponseItemPageDto> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                          Pageable pageable) {
+    public ResponseEntity<List<ResponseItemPageDto>> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                       Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllByGive(pageable));
@@ -124,8 +123,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list/wanted")
-    public ResponseEntity<ResponseItemPageDto> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                            Pageable pageable) {
+    public ResponseEntity<List<ResponseItemPageDto>> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                         Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllByWanted(pageable));
@@ -142,8 +141,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list/exchange")
-    public ResponseEntity<ResponseItemPageDto> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                              Pageable pageable) {
+    public ResponseEntity<List<ResponseItemPageDto>> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                           Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllByExchange(pageable));

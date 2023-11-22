@@ -21,7 +21,6 @@ import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,47 +58,63 @@ public class ItemService {
     }
 
     // 판매 조회
-    public ResponseItemPageDto findAllBySale(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllBySale(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE, pageable);
         List<ResponseItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseItemDto(item));
         }
+        List<ResponseItemPageDto> list = new ArrayList<>();
+        for (ResponseItemDto responseItemDto : result) {
+            list.add(new ResponseItemPageDto(responseItemDto, items.getTotalPages()));
+        }
 
-        return new ResponseItemPageDto(result, items.getTotalPages());
+        return list;
     }
 
     // 재능 기부 조회
-    public ResponseItemPageDto findAllByGive(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByGive(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+        List<ResponseItemPageDto> list = new ArrayList<>();
+        for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
+            list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));
+        }
 
-        return new ResponseItemPageDto(result, items.getTotalPages());
+        return list;
     }
 
     // 구인 조회
-    public ResponseItemPageDto findAllByExchange(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByExchange(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+        List<ResponseItemPageDto> list = new ArrayList<>();
+        for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
+            list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));
+        }
 
-        return new ResponseItemPageDto(result, items.getTotalPages());
+        return list;
     }
 
     // 구인 조회
-    public ResponseItemPageDto findAllByWanted(Pageable pageable) {
+    public List<ResponseItemPageDto> findAllByWanted(Pageable pageable) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
         for (Item item : items) {
             result.add(new ResponseNonSaleItemDto(item));
         }
+        List<ResponseItemPageDto> list = new ArrayList<>();
+        for (ResponseNonSaleItemDto responseNonSaleItemDto : result) {
+            list.add(new ResponseItemPageDto(responseNonSaleItemDto, items.getTotalPages()));
+        }
 
-        return new ResponseItemPageDto(result, items.getTotalPages());
+        return list;
     }
 
     // 아이템 삭제
@@ -138,7 +153,7 @@ public class ItemService {
             throw new NotFoundMember();
 
         List<ItemOption> itemOptions = new ArrayList<>();
-        for(ItemOption option : entity.getItemOptions()) {
+        for (ItemOption option : entity.getItemOptions()) {
             ItemOption itemOption = itemOptionRepository.save(option);
             itemOptions.add(itemOption);
         }
