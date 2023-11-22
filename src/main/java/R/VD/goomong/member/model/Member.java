@@ -51,11 +51,15 @@ public class Member extends BaseTimeEntity {
 
     private Long buyZipCode;                                    //구매자 우편 번호
 
+    private String buySido;                                     //구매자 시/도
+
     private String buySimpleAddress;                            //구매자 간단 주소
 
     private String buyDetailAddress;                            //구매자 상세 주소
 
     private Long saleZipCode;                                    //판매자 우편 번호
+
+    private String saleSido;                                     //판매자 시/도
 
     private String saleSimpleAddress;                            //판매자 간단 주소
 
@@ -70,7 +74,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isKakao;                                    //카카오 아이디인가?
 
-    private String saleInfo;                                      //판매자 소개
+    private String saleInfo;                                    //판매자 소개
 
     @OneToMany
     @JoinColumn(name = "image_id")
@@ -102,15 +106,17 @@ public class Member extends BaseTimeEntity {
 
     private Boolean emailChecked;       //이메일 인증 확인 여부
 
-    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
+    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySido, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSido, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.buyZipCode = buyZipCode;
+        this.buySido = buySido;
         this.buySimpleAddress = buySimpleAddress;
         this.buyDetailAddress = buyDetailAddress;
         this.saleZipCode = saleZipCode;
+        this.saleSido = saleSido;
         this.saleSimpleAddress = saleSimpleAddress;
         this.saleDetailAddress = saleDetailAddress;
         this.saleInfo = saleInfo;
@@ -163,6 +169,7 @@ public class Member extends BaseTimeEntity {
                 .id(id)
                 .memberId(memberId)
                 .memberPassword(memberPassword)
+                .memberRole(memberRole)
                 .build();
     }
 }

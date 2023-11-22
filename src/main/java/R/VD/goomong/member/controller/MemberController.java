@@ -85,16 +85,16 @@ public class MemberController {
 
     //UPDATE
     // 회원 memberId로 회원 정보 수정
-    @PutMapping("/update/memberId/{memberId}")
-    public ResponseEntity<Member> updateByMemberId(@PathVariable String memberId, @RequestBody RequestUpdateDto requestUpdateDto, MultipartFile[] multipartFiles) {
-        Member updatedMember = memberService.updateMemberByMemberId(memberId, requestUpdateDto, multipartFiles);
+    @PutMapping("/update/memberId")
+    public ResponseEntity<Member> updateByMemberId(@RequestBody RequestUpdateDto requestUpdateDto) {
+        Member updatedMember = memberService.updateMemberByMemberId(requestUpdateDto);
         return ResponseEntity.ok(updatedMember);
     }
 
     // 회원 index로 회원 정보 수정
     @PutMapping("/update/id/{id}")
-    public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto, MultipartFile[] multipartFiles) {
-        Member updatedMember = memberService.updateMemberById(id, requestUpdateDto, multipartFiles);
+    public ResponseEntity<Member> updateById(@PathVariable Long id, @RequestBody RequestUpdateDto requestUpdateDto) {
+        Member updatedMember = memberService.updateMemberById(id, requestUpdateDto);
         return ResponseEntity.ok(updatedMember);
     }
 
