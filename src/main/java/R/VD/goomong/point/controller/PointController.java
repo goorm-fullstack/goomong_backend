@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,8 +49,9 @@ public class PointController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @GetMapping("/{memberId}/history")
-    public ResponseEntity<List<ResponsePointHistory>> getPointHistory(@PathVariable Long memberId) {
-        List<ResponsePointHistory> history = pointService.getPointHistory(memberId);
+    public ResponseEntity<List<ResponsePointHistory>> getPointHistory(@PathVariable Long memberId,
+                                                                      @PageableDefault(sort = "regDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        List<ResponsePointHistory> history = pointService.getPointHistory(memberId, pageable);
 
         return new ResponseEntity<>(history, HttpStatus.OK);
     }

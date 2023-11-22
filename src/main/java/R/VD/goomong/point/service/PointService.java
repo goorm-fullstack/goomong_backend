@@ -6,6 +6,7 @@ import R.VD.goomong.point.dto.response.ResponsePointHistory;
 import R.VD.goomong.point.model.Point;
 import R.VD.goomong.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +31,9 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResponsePointHistory> getPointHistory(Long memberId) {
+    public List<ResponsePointHistory> getPointHistory(Long memberId, Pageable pageable) {
 
-        return pointRepository.findByMember_Id(memberId).stream()
+        return pointRepository.findByMember_Id(memberId, pageable).stream()
                 .map(ResponsePointHistory::new)
                 .toList();
     }
