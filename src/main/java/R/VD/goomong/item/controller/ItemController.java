@@ -3,6 +3,7 @@ package R.VD.goomong.item.controller;
 import R.VD.goomong.item.dto.request.RequestItemDto;
 import R.VD.goomong.item.dto.request.UpdateItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemDto;
+import R.VD.goomong.item.dto.response.ResponseItemPageDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,8 +88,8 @@ public class ItemController {
             }
     )
     @GetMapping("/list/sale")
-    public ResponseEntity<List<ResponseItemDto>> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                   Pageable pageable) {
+    public ResponseEntity<ResponseItemPageDto> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+                                                                 Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllBySale(pageable));
@@ -96,7 +97,7 @@ public class ItemController {
 
     @Operation(
             summary = "판매 상태가 아닌 아이템 리스트 출력",
-            description = "기부, 교환, 구인 아이템 리스트를 출력합니다.",
+            description = "기부 아이템 리스트를 출력합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -104,8 +105,8 @@ public class ItemController {
                             content = @Content(schema = @Schema(implementation = ResponseNonSaleItemDto.class)))
             }
     )
-    @GetMapping("/list/non-sale")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+    @GetMapping("/list/give")
+    public ResponseEntity<ResponseItemPageDto> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
                                                                           Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
@@ -123,7 +124,7 @@ public class ItemController {
             }
     )
     @GetMapping("/list/wanted")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+    public ResponseEntity<ResponseItemPageDto> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
                                                                             Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
@@ -141,7 +142,7 @@ public class ItemController {
             }
     )
     @GetMapping("/list/exchange")
-    public ResponseEntity<List<ResponseNonSaleItemDto>> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
+    public ResponseEntity<ResponseItemPageDto> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
                                                                               Pageable pageable) {
         pageable = getPageable(orderBy, direction, pageable);
 
