@@ -55,6 +55,7 @@ public class ReviewService {
                 .imageList(imageList)
                 .build();
         reviewRepository.save(build);
+        target.calculateRate();
     }
 
     //리뷰 수정
