@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,7 @@ public class KakaoPayService {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final MemberRepository memberRepository;
-//    @Value("${adminKey}")
+    //    @Value("${adminKey}")
     private String adminKey;
     private KakaoPayResponse kakaoPayResponse;
 
@@ -131,7 +130,7 @@ public class KakaoPayService {
         parameters.add("partner_user_id", memberHashCode);
         parameters.add("item_name", requestKakaoPay.getOrderName());
         parameters.add("quantity", "1");//수량
-        parameters.add("total_amount", String.valueOf(requestKakaoPay.getPrice()));
+        parameters.add("total_amount", String.valueOf(requestKakaoPay.getPrice() - requestKakaoPay.getPoint()));
         parameters.add("vat_amount", "0");//부가세
         parameters.add("tax_free_amount", "0");//비과세
         parameters.add("approval_url", requestKakaoPay.getSuccessURL() + "?partner_order_id=" + orderNumber + "&partner_user_id=" + memberHashCode); // 성공 시 redirect url

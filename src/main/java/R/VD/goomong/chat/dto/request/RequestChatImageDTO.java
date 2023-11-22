@@ -11,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestChatImageDTO {
-
     private Long roomId;
     private Long memberId;
     private MultipartFile[] image;
-
 }

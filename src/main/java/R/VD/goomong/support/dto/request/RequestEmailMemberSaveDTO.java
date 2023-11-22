@@ -6,22 +6,22 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 public class RequestEmailMemberSaveDTO {
-    private String email;
+    private String memberEmail;
 
     private String code;
 
     private Boolean emailChecked = false;
 
     @Builder(toBuilder = true)
-    public RequestEmailMemberSaveDTO(String email, String code, Boolean emailChecked) {
-        this.email = email;
+    public RequestEmailMemberSaveDTO(String memberEmail, String code, Boolean emailChecked) {
+        this.memberEmail = memberEmail;
         this.code = code;
         this.emailChecked = emailChecked;
     }
 
     public EmailMemberSave toEntity() {
         return EmailMemberSave.builder()
-                .email(email)
+                .memberEmail(memberEmail)
                 .code(code)
                 .emailChecked(emailChecked)
                 .build();

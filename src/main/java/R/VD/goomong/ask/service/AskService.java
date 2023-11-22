@@ -164,6 +164,17 @@ public class AskService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // 아이템 id로 문의글 리스트 조회
+    public Page<Ask> listOfNotDeletedAndItemId(Long itemId, Pageable pageable) {
+        Page<Ask> all = askRepository.findAll(pageable);
+        List<Ask> list = new ArrayList<>();
+
+        for (Ask ask : all) {
+            if (ask.getDelDate() == null && ask.getItem().getId().equals(itemId) && ask.getAsk() == null) list.add(ask);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 삭제된 문의글 조회
     public Page<Ask> listOfDeleted(Pageable pageable) {
         Page<Ask> all = askRepository.findAll(pageable);

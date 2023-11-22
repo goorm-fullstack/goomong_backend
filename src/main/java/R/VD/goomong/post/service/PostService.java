@@ -184,9 +184,20 @@ public class PostService {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
         for (Post post : all) {
-            if (post.getDelDate() == null && post.getPostCategory().getDelDate() == null) list.add(post);
+            if (post.getDelDate() == null) list.add(post);
         }
 
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // member id로 게시글 리스트 조회
+    public Page<Post> listOfNotDeletedAndMemberId(Pageable pageable, Long memberId) {
+        Page<Post> all = postRepository.findAll(pageable);
+        List<Post> list = new ArrayList<>();
+
+        for (Post post : all) {
+            if (post.getDelDate() == null && post.getMember().getId().equals(memberId)) list.add(post);
+        }
         return new PageImpl<>(list, pageable, list.size());
     }
 
@@ -195,7 +206,7 @@ public class PostService {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
         for (Post post : all) {
-            if (post.getDelDate() != null && post.getPostCategory().getDelDate() == null) list.add(post);
+            if (post.getDelDate() != null) list.add(post);
         }
 
         return new PageImpl<>(list, pageable, list.size());
@@ -210,7 +221,7 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null && post.getDelDate() == null)
+            if (post.getPostType().equals(t) && post.getDelDate() == null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -225,7 +236,7 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null && post.getDelDate() != null)
+            if (post.getPostType().equals(t) && post.getDelDate() != null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -240,7 +251,7 @@ public class PostService {
         t = t.toType(type);
 
         for (Post post : all) {
-            if (post.getPostType().equals(t) && post.getPostCategory().getDelDate() == null) list.add(post);
+            if (post.getPostType().equals(t)) list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
     }
@@ -251,7 +262,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(category) && post.getPostCategory().getDelDate() == null && post.getDelDate() == null)
+            if (post.getPostCategory().getCategoryName().equals(category) && post.getDelDate() == null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -263,7 +274,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getPostCategory().getDelDate() == null && post.getDelDate() != null)
+            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getDelDate() != null)
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -275,7 +286,7 @@ public class PostService {
         List<Post> list = new ArrayList<>();
 
         for (Post post : all) {
-            if (post.getPostCategory().getCategoryName().equals(categoryName) && post.getPostCategory().getDelDate() == null)
+            if (post.getPostCategory().getCategoryName().equals(categoryName))
                 list.add(post);
         }
         return new PageImpl<>(list, pageable, list.size());
@@ -313,7 +324,7 @@ public class PostService {
 
         for (Post post : all) {
             if (list.size() == 5) break;
-            if (post.getDelDate() == null && post.getPostType().equals(Type.NOTICE) && post.getPostCategory().getDelDate() == null && !post.getId().equals(postId))
+            if (post.getDelDate() == null && post.getPostType().equals(Type.NOTICE) && !post.getId().equals(postId))
                 list.add(post);
         }
         return list;

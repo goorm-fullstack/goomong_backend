@@ -48,6 +48,9 @@ public class ResponsePostDto {
     @ArraySchema(schema = @Schema(description = "게시글 신고 id 리스트", implementation = Long.class))
     private List<Long> reportIdList;
 
+    @Schema(description = "게시글 카테고리 id", example = "1")
+    private Long postCategoryId;
+
     @Schema(description = "게시글 카테고리", example = "카테고리 이름")
     private String postCategory;
 

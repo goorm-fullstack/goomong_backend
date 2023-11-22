@@ -7,6 +7,7 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
 import R.VD.goomong.order.model.Order;
+import R.VD.goomong.point.model.Point;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -38,10 +39,10 @@ public class Member extends BaseTimeEntity {
     private String memberPassword;
 
     @Column(nullable = false)
-    private String memberName;
+    private String memberEmail;
 
     @Column(nullable = false)
-    private String memberEmail;
+    private String memberName;
 
     @Column(nullable = false)
     @JsonFormat(timezone = "Asia/Seoul")
