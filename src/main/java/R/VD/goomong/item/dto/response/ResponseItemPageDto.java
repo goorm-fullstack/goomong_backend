@@ -8,5 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class ResponseItemPageDto<T> {
     private T data;
-    private PageInfo pageInfo;
+    private int pageNum;
 }
