@@ -1,11 +1,16 @@
 package R.VD.goomong.point.service;
 
+import R.VD.goomong.global.model.PageInfo;
+import R.VD.goomong.global.model.ResponsePageWrap;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.point.dto.response.ResponsePointHistory;
+import R.VD.goomong.point.exception.PointNotFoundException;
 import R.VD.goomong.point.model.Point;
 import R.VD.goomong.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointService {
@@ -31,11 +37,25 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResponsePointHistory> getPointHistory(Long memberId, Pageable pageable) {
+    public ResponsePageWrap<List<ResponsePointHistory>> getPointHistory(Long memberId, Pageable pageable) {
 
-        return pointRepository.findByMember_Id(memberId, pageable).stream()
-                .map(ResponsePointHistory::new)
-                .toList();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PointNotFoundException("멤버 " + memberId + "는 찾을 수 없습니다."));
+
+        Page<Point> all = pointRepository.findByMember(member, pageable);
+
+        PageInfo pageInfo = PageInfo.builder()
+                .page(pageable.getPageNumber())
+                .size(pageable.getPageSize())
+                .totalPage(all.getTotalPages())
+                .totalElements(all.getTotalElements())
+                .build();
+
+        List<Point> content = all.getContent();
+
+        log.info("content = {}", content);
+        List<ResponsePointHistory> list = content.stream().map(ResponsePointHistory::new).toList();
+        return new ResponsePageWrap<>(list, pageInfo);
     }
 
     @Transactional
@@ -60,7 +80,7 @@ public class PointService {
             int totalExpiredPoints = ((Number) data[1]).intValue();
 
             if (totalExpiredPoints > 0)
-                expirePoint(member, totalExpiredPoints, "포인트 유효기간 만료", "");
+                expirePoint(member, totalExpiredPoints, "포인트 유효 기간 만료", "");
         }
     }
 

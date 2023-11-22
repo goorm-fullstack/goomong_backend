@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ResponsePointHistory {
 
-    private PointType type;
+    private String type;
 
     private int amount;
 
@@ -22,7 +22,10 @@ public class ResponsePointHistory {
     private LocalDateTime regDate;
 
     public ResponsePointHistory(Point point) {
-        this.type = point.getType();
+        if (point.getType() == PointType.EARNED)
+            this.type = "적립";
+        else
+            this.type = "사용";
         this.amount = point.getAmount();
         this.description = point.getDescription();
         this.orderNumber = point.getOrderNumber();
