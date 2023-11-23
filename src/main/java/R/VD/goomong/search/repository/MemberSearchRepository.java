@@ -1,8 +1,6 @@
 package R.VD.goomong.search.repository;
 
-import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Status;
-import R.VD.goomong.ranking.dto.response.ResponseTopRanking;
 import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -68,10 +66,12 @@ public class MemberSearchRepository {
 
     private JPAQuery<Tuple> getMemberQuery(String keyword, String category) {
         JPAQuery<Tuple> query = jpaQueryFactory
-                .select(member, itemCategory.title, item.countDistinct(), order.price.sum(), review.id.count())
+                .select(item.member, itemCategory.title, item.countDistinct(), order.price.sum(), review.id.count())
                 .from(order)
-                .join(order.member, member)
+//                .join(order.orderItem, item)
                 .join(order.orderItem, item)
+                .join(item)
+                .join(member)
                 .leftJoin(item.reviewList, review)
                 .join(item.itemCategories, itemCategory)
                 .where(order.status.eq(Status.COMPLETE)
