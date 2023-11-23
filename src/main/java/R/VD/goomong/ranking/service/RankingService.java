@@ -43,7 +43,7 @@ public class RankingService {
         List<Ranking> topRankings = rankingRepository.findAll();
 
         // RankingType 순서대로 정렬하기 위한 순서 목록
-        List<RankingType> order = Arrays.asList(RankingType.REVIEW, RankingType.ORDER, RankingType.SALES);
+        List<RankingType> order = Arrays.asList(RankingType.ORDER, RankingType.REVIEW, RankingType.SALES);
 
         return topRankings.stream()
                 .sorted(Comparator.comparingInt(r -> order.indexOf(r.getRankingType())))
@@ -105,7 +105,7 @@ public class RankingService {
                 List<Tuple> salesRankings = rankingSupportRepository.calculateTop5SellersBySalesAmount(start, end);
                 salesRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.SALES)));
                 break;
-                
+
             default:
                 throw new RankingIllegalArgumentException("알 수 없는 타입: " + type);
         }
