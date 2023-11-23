@@ -56,10 +56,12 @@ public class RankingService {
                 .map(tuple -> ResponseTopRanking.builder()
                         .memberId(tuple.get(member.id))
                         .memberName(tuple.get(member.memberName))
+                        .imageList(tuple.get(member.profileImages))
                         .categoryTitle(tuple.get(itemCategory.title))
-                        .itemCount(tuple.get(item.countDistinct()))
+                        .transaction(tuple.get(item.countDistinct()))
                         .totalSales(tuple.get(order.price.sum()).longValue())
                         .reviewCount(tuple.get(review.id.count()))
+                        .totalRating(tuple.get(review.rate.avg()))
                         .build())
                 .toList();
     }
