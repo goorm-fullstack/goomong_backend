@@ -34,6 +34,7 @@ public class ChatRoom extends BaseTimeEntity {
     private List<ChatMessage> messages;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ChatRoomMember> members;
 
     private LocalDateTime delDate;
