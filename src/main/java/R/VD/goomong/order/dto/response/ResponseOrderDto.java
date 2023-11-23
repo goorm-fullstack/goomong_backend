@@ -15,6 +15,7 @@ public class ResponseOrderDto {
     private List<Item> orderItem;
     private Member member;
     private int price;
+    private int point;
     private Address address;
     private Status status;//배송 상태
     private String orderNumber;
@@ -24,6 +25,7 @@ public class ResponseOrderDto {
         this.orderItem = order.getOrderItem();
         this.member = order.getMember();
         this.price = order.getPrice();
+        this.point = order.getPoint();
         this.address = order.getAddress();
         this.status = order.getStatus();
         this.orderNumber = order.getOrderNumber();

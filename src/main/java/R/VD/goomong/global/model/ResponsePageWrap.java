@@ -1,4 +1,4 @@
-package R.VD.goomong.support.dto.response;
+package R.VD.goomong.global.model;
 
 import R.VD.goomong.global.model.PageInfo;
 import lombok.AllArgsConstructor;

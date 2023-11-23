@@ -4,7 +4,6 @@ import R.VD.goomong.ask.dto.response.ResponseAnswerDto;
 import R.VD.goomong.ask.dto.response.ResponseAskDto;
 import R.VD.goomong.file.model.Files;
 import R.VD.goomong.global.model.BaseTimeEntity;
-import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.report.model.Report;
@@ -65,7 +64,7 @@ public class Ask extends BaseTimeEntity {
         List<ResponseAnswerDto> answers = new ArrayList<>();
         if (!answerList.isEmpty()) {
             for (Ask ask1 : answerList) {
-                if (ask1.getDelDate() == null && ask1.getAsk() != null) answers.add(ask1.toResponseAnswerDto());
+                if (ask1.getDelDate() == null) answers.add(ask1.toResponseAnswerDto());
             }
         }
 
@@ -79,7 +78,6 @@ public class Ask extends BaseTimeEntity {
         return ResponseAskDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .item(new ResponseItemDto(item))
                 .filesList(filesList)
                 .reportListId(reports)
                 .title(title)

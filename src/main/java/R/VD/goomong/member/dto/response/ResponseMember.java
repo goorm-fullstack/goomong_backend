@@ -1,9 +1,12 @@
 package R.VD.goomong.member.dto.response;
 
+import R.VD.goomong.like.dto.response.ResponseLikeDto;
+import R.VD.goomong.like.model.Like;
 import R.VD.goomong.member.model.Member;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ResponseMember {
@@ -15,6 +18,8 @@ public class ResponseMember {
     private String memberName;
 
     private String memberEmail;
+
+    private List<ResponseLikeDto> likeList; // 필요해서 추가합니다! @배진환
 
     private LocalDateTime memberSignupTime;
 
@@ -38,5 +43,6 @@ public class ResponseMember {
         this.memberName = member.getMemberName();
         this.memberEmail = member.getMemberEmail();
         this.memberSignupTime = member.getMemberSignupTime();
+        this.likeList = member.getLikeList() != null ? member.getLikeList().stream().map(Like::toResponseLikeDto).toList() : null; // likeList 필드 추가에 따른 추가 @배진환
     }
 }

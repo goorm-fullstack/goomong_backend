@@ -176,6 +176,28 @@ public class CommentController {
     }
 
     /**
+     * 회원 id로 댓글 리스트 조회
+     *
+     * @param pageable 페이징
+     * @param memberId 회원 id
+     * @return 조회된 댓글 리스트
+     */
+    @Operation(summary = "회원 id로 댓글 리스트 조회")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
+            @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "memberId", description = "회원 id", example = "1")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseCommentDto.class))))
+    @GetMapping("/{memberId}")
+    public ResponseEntity<List<ResponseCommentDto>> listOfNotDeletedAndMemberId(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long memberId) {
+        Page<Comment> comments = commentService.listOfNotDeletedAndMemberId(pageable, memberId);
+        List<ResponseCommentDto> responseCommentDtos = getResponseCommentDtos(pageable, comments);
+        return ResponseEntity.ok(responseCommentDtos);
+    }
+
+    /**
      * 삭제된 댓글 조회
      *
      * @param pageable 페이징

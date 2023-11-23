@@ -26,7 +26,7 @@ public class ChatRoom extends BaseTimeEntity {
     private Long roomId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = true)
+    @JoinColumn(name = "item_id", unique = true)
     private Item item;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
@@ -36,5 +36,9 @@ public class ChatRoom extends BaseTimeEntity {
     private List<ChatRoomMember> members;
 
     private LocalDateTime delDate;
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 
 }

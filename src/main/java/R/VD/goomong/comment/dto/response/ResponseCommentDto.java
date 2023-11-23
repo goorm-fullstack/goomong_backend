@@ -22,6 +22,12 @@ public class ResponseCommentDto {
     @Schema(description = "작성자 회원 id", example = "아이디")
     private String memberId;
 
+    @Schema(description = "댓글 달린 게시글 제목", example = "게시글 제목")
+    private String postTitle;
+
+    @Schema(description = "댓글 달린 게시글 id", example = "1")
+    private Long postId;
+
     @Schema(description = "작성자 이미지", implementation = Image.class)
     private List<Image> memberImageList;
 

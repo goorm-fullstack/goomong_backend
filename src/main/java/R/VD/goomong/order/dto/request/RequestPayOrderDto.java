@@ -24,6 +24,9 @@ public class RequestPayOrderDto {
     @Positive
     private int price;
 
+    @NotEmpty
+    private int point;
+
     private String orderNumber;
 
     @NotEmpty

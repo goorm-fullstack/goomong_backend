@@ -55,6 +55,8 @@ public class ReviewService {
                 .imageList(imageList)
                 .build();
         reviewRepository.save(build);
+        target.calculateRate();
+        target.setReviewCnt(target);
     }
 
     //리뷰 수정
@@ -104,6 +106,17 @@ public class ReviewService {
             if (review.getDelDate() == null) list.add(review);
         }
 
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 상품 id로 리뷰 리스트 조회
+    public Page<Review> listOfNotDeletedAndItemId(Pageable pageable, Long itemId) {
+        Page<Review> all = reviewRepository.findAll(pageable);
+        List<Review> list = new ArrayList<>();
+
+        for (Review review : all) {
+            if (review.getDelDate() == null && review.getItem().getId().equals(itemId)) list.add(review);
+        }
         return new PageImpl<>(list, pageable, list.size());
     }
 

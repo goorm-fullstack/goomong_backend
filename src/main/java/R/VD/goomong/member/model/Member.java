@@ -4,8 +4,8 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
-import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
+import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.order.model.Order;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
@@ -17,7 +17,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -77,10 +76,11 @@ public class Member extends BaseTimeEntity {
     private String saleInfo;                                    //판매자 소개
 
     @OneToMany
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "image_member_id")
     private List<Image> profileImages = new ArrayList<>();        //프로필 이미지
 
     @OneToMany
+    @JoinColumn(name = "item_id")
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
