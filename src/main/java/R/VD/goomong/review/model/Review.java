@@ -81,7 +81,7 @@ public class Review extends BaseTimeEntity {
                 .id(id)
                 .memberId(member.getMemberId())
                 .itemId(item.getId())
-                .itemCategory(item.getItemCategories().get(0).getTitle())
+                .itemCategory(item.getItemCategories().size() != 0 ? item.getItemCategories().get(0).getTitle() : null)
                 .itemName(item.getTitle())
                 .imageList(imageList)
                 .reportIdList(reports)
