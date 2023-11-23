@@ -31,6 +31,7 @@ public class ChatRoomMember extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 
     private LocalDateTime delDate;
