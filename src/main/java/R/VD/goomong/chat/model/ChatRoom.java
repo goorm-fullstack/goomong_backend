@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
@@ -25,8 +26,8 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "room_id")
     private Long roomId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)

@@ -24,6 +24,7 @@ public class Item extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스
+
     private String title;//제목
 
     @ManyToOne
