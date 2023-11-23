@@ -1,8 +1,6 @@
 package R.VD.goomong.search.repository;
 
-import R.VD.goomong.item.model.Item;
 import R.VD.goomong.order.model.Status;
-import R.VD.goomong.ranking.dto.response.ResponseTopRanking;
 import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
