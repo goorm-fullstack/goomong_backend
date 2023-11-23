@@ -75,6 +75,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
+    @Column
+    private int commentCnt;
+
     public ResponsePostDto toResponsePostDto() {
 
         List<ResponseCommentDto> comments = new ArrayList<>();
@@ -88,6 +91,8 @@ public class Post extends BaseTimeEntity {
         for (Report report : reportList) {
             if (report.getDelDate() == null) reports.add(report.getId());
         }
+
+        this.commentCnt = commentList.size();
 
         return ResponsePostDto.builder()
                 .id(id)

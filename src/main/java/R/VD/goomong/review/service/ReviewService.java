@@ -56,6 +56,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(build);
         target.calculateRate();
+        target.setReviewCnt(target);
     }
 
     //리뷰 수정

@@ -20,12 +20,12 @@ public class StatisticsService {
         Tuple reviewStats = statisticsRepository.getReviewStatistics();
         Tuple orderStats = statisticsRepository.getOrderStatistics();
 
-        Double averageRating = reviewStats.get(0, Double.class);
-        Long reviewCount = reviewStats.get(1, Long.class);
-        Long orderCount = orderStats.get(0, Long.class);
-        Long orderSum = orderStats.get(1, Long.class);
+        Double averageRating = reviewStats.size() != 0 ? reviewStats.get(0, Double.class) : null;
+        Long reviewCount = reviewStats.size() != 0 ? reviewStats.get(1, Long.class) : null;
+        Long orderCount = orderStats.size() != 0 ? orderStats.get(0, Long.class) : null;
+        Long orderSum = orderStats.size() != 0 ? orderStats.get(1, Long.class) : null;
 
-        Double customerSatisfaction = calculateCustomerSatisfaction(averageRating);
+        Double customerSatisfaction = averageRating != null ? calculateCustomerSatisfaction(averageRating) : null;
 
         return ReviewStatisDTO.builder()
                 .allReviewAvg(averageRating)

@@ -4,10 +4,9 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.item.model.Item;
-import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.like.model.Like;
+import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.order.model.Order;
-import R.VD.goomong.point.model.Point;
 import R.VD.goomong.post.model.Post;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,7 +17,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -52,11 +50,15 @@ public class Member extends BaseTimeEntity {
 
     private Long buyZipCode;                                    //구매자 우편 번호
 
+    private String buySido;                                     //구매자 시/도
+
     private String buySimpleAddress;                            //구매자 간단 주소
 
     private String buyDetailAddress;                            //구매자 상세 주소
 
     private Long saleZipCode;                                    //판매자 우편 번호
+
+    private String saleSido;                                     //판매자 시/도
 
     private String saleSimpleAddress;                            //판매자 간단 주소
 
@@ -71,13 +73,14 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isKakao;                                    //카카오 아이디인가?
 
-    private String saleInfo;                                      //판매자 소개
+    private String saleInfo;                                    //판매자 소개
 
     @OneToMany
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "image_member_id")
     private List<Image> profileImages = new ArrayList<>();        //프로필 이미지
 
     @OneToMany
+    @JoinColumn(name = "item_id")
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -103,15 +106,17 @@ public class Member extends BaseTimeEntity {
 
     private Boolean emailChecked;       //이메일 인증 확인 여부
 
-    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
+    public void memberUpdate(String memberId, String memberPassword, String memberName, String memberEmail, Long buyZipCode, String buySido, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSido, String saleSimpleAddress, String saleDetailAddress, String saleInfo) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.buyZipCode = buyZipCode;
+        this.buySido = buySido;
         this.buySimpleAddress = buySimpleAddress;
         this.buyDetailAddress = buyDetailAddress;
         this.saleZipCode = saleZipCode;
+        this.saleSido = saleSido;
         this.saleSimpleAddress = saleSimpleAddress;
         this.saleDetailAddress = saleDetailAddress;
         this.saleInfo = saleInfo;
@@ -164,6 +169,7 @@ public class Member extends BaseTimeEntity {
                 .id(id)
                 .memberId(memberId)
                 .memberPassword(memberPassword)
+                .memberRole(memberRole)
                 .build();
     }
 }
