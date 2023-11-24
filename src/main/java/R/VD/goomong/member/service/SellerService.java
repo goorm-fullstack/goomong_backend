@@ -64,9 +64,17 @@ public class SellerService {
     }
 
     // 판매자 리스트 조회
-    public Page<Seller> all(Pageable pageable) {
+    public Page<Seller> all(Pageable pageable, String region) {
         Page<Seller> all = sellerRepository.findAll(pageable);
         List<Seller> list = new ArrayList<>();
+
+        if (region != null) {
+            for (Seller seller : all) {
+                if (seller.getDelDate() == null && seller.getSaleSido() != null && region.contains(seller.getSaleSido()))
+                    list.add(seller);
+            }
+            return new PageImpl<>(list, pageable, list.size());
+        }
 
         for (Seller seller : all) {
             if (seller.getDelDate() == null) list.add(seller);

@@ -112,11 +112,11 @@ public class SellerController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseSellerDto.class))))
     @GetMapping
-    public ResponseEntity<List<ResponseSellerDto>> allSeller(@RequestParam(required = false) Optional<String> orderBy, @RequestParam(required = false) Optional<String> direction, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("orderBy={}, direction={}", orderBy, direction);
+    public ResponseEntity<List<ResponseSellerDto>> allSeller(@RequestParam(required = false) Optional<String> orderBy, @RequestParam(required = false) Optional<String> direction, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) String region) {
+        log.info("orderBy={}, direction={}, region={}", orderBy, direction, region);
         pageable = getPageable(orderBy, direction, pageable);
 
-        Page<Seller> all = sellerService.all(pageable);
+        Page<Seller> all = sellerService.all(pageable, region);
 
         long totalElements = all.getTotalElements();
         int totalPages = all.getTotalPages();
