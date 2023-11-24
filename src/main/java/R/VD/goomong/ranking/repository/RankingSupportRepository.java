@@ -22,7 +22,7 @@ public class RankingSupportRepository {
 
     public List<Tuple> calculateSellerRanking() {
         JPAQuery<Tuple> query = jpaQueryFactory
-                .select(
+                .selectDistinct(
                         item.member.id,
                         item.member.memberName,
                         item.member.saleSido, // 판매자 시/도
@@ -35,11 +35,11 @@ public class RankingSupportRepository {
                 .join(order.orderItem, item)
                 .join(item.member, member)
                 .leftJoin(item.reviewList, review)
-                .groupBy(item.member.id)
-                .orderBy(order.price.sum().multiply(0.5)
-                        .add(item.count().multiply(0.2))
-                        .add(review.rate.avg().multiply(0.2))
-                        .add(review.id.count().multiply(0.1)).asc())
+                .groupBy(order)
+                .orderBy(order.price.sum()
+                        .add(item.count())
+                        .add(review.rate.avg())
+                        .add(review.id.count()).asc())
                 .limit(5);
 
         return query.fetch();
