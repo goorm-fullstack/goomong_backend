@@ -10,15 +10,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @Tag(name = "Ranking", description = "랭킹 API")
 @RestController
 @RequiredArgsConstructor
@@ -42,10 +43,8 @@ public class RankingController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @GetMapping("/sellers")
-    public ResponseEntity<List<ResponseTopRanking>> getSellerRankings(
-            @RequestParam(required = false) String categoryTitle,
-            @RequestParam(defaultValue = "itemCount") String sortBy) {
-        List<ResponseTopRanking> rankings = rankingService.getSellerRankings(categoryTitle, sortBy);
+    public ResponseEntity<List<ResponseTopRanking>> getSellerRankings() {
+        List<ResponseTopRanking> rankings = rankingService.getSellerRankings();
         return ResponseEntity.ok(rankings);
     }
 
