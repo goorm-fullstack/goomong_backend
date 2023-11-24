@@ -32,6 +32,7 @@ public class Order extends BaseTimeEntity {
     private List<Item> orderItem = new ArrayList<>();
 
     @ManyToOne
+    @JsonIgnore
     private Member member;
 
     private int price;
