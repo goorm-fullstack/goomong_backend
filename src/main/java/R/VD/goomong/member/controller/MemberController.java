@@ -3,10 +3,12 @@ package R.VD.goomong.member.controller;
 import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.dto.response.ResponseMember;
+import R.VD.goomong.member.dto.response.ResponseMemberDto;
 import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,6 +93,14 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+    //회원 이름과 이메일로 회원 정보 찾기
+    @PostMapping("/findId")
+    public ResponseEntity<ResponseMember> findByMemberNameAndMemberEmail(RequestFindMember requestFindMember) {
+         Member member = memberService.findByMemberNameAndMemberEmail(requestFindMember.getMemberName(), requestFindMember.getMemberName());
+
+        return ResponseEntity.ok(new ResponseMember(member));
+    }
+
     //UPDATE
     // 회원 memberId로 회원 정보 수정
     @PutMapping("/update/memberId")
@@ -110,6 +120,14 @@ public class MemberController {
     @PutMapping("/update/password")
     public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword) {
         Member member = memberService.changePasswordByMemberId(requestChangePassword);
+
+        return ResponseEntity.ok(member);
+    }
+
+    //memberId로 비밀번호 찾기
+    @PutMapping("/update/findpassword")
+    public ResponseEntity<Member> findPasswordByMemberId(@RequestBody RequestFindPassword requestFindPassword) {
+        Member member = memberService.findPasswordByMemberId(requestFindPassword);
 
         return ResponseEntity.ok(member);
     }
@@ -188,7 +206,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "116cb3fda2149f8eaddf828c4f308179");
-        params.add("redirect_uri", "http://localhost:8080/api/member/kakao/callback");
+        params.add("redirect_uri", "http://localhost:3000");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
