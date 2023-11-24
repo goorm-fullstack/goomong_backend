@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class KakaoPayService {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final MemberRepository memberRepository;
-    //    @Value("${adminKey}")
+    @Value("${adminKey}")
     private String adminKey;
     private KakaoPayResponse kakaoPayResponse;
 

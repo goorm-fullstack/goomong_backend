@@ -35,6 +35,15 @@ public class ChatRoomController {
         return new ResponseEntity<>(chatRoomService.findByMemberId(memberId), HttpStatus.OK);
     }
 
+    @Operation(summary = "채팅방 조회", description = "멤버(memberId)를 이용하여 채팅방을 조회합니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "채팅방 조회 성공", content = @Content(schema = @Schema(implementation = ResponseChatRoomDTO.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @GetMapping("/roomId")
+    public ResponseEntity<ResponseChatRoomDTO> findChatRoomByRoomId(@RequestParam Long id) {
+        return new ResponseEntity<>(chatRoomService.findById(id), HttpStatus.OK);
+    }
+
     @Operation(summary = "채팅방 생성", description = "멤버(memberId)와 아이템(itemId)를 이용하여 채팅방을 생성합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "채팅방 생성 성공", content = @Content(schema = @Schema(implementation = ResponseChatRoomDTO.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))

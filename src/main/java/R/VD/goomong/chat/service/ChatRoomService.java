@@ -60,6 +60,15 @@ public class ChatRoomService {
         return responseList;
     }
 
+    public ResponseChatRoomDTO findById(Long id) {
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
+        if(optionalChatRoom.isEmpty())
+            throw new ChatNotFoundException("해당하는 방을 찾을 수 없습니다.");
+
+        ChatRoom chatRoom = optionalChatRoom.get();
+        return new ResponseChatRoomDTO(chatRoom, chatRoom.getItem(), "주문 대화방");
+    }
+
     @Transactional
     public ResponseChatRoomDTO createItemChatRoom(RequestItemChatRoomDTO chatRoomDTO) {
         Long memberId = chatRoomDTO.getMemberId();
