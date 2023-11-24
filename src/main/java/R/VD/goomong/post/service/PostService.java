@@ -213,12 +213,24 @@ public class PostService {
     }
 
     // 삭제되지 않은 게시글 중 게시글 종류로 조회(커뮤니티/공지사항/이벤트)
-    public Page<Post> listOfNotDeletedAndType(String type, Pageable pageable) {
+    public Page<Post> listOfNotDeletedAndType(String type, String region, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
 
         Type t = Type.COMMUNITY;
         t = t.toType(type);
+
+        if (region != null) {
+            for (Post post : all) {
+                if (post.getPostType().equals(t) && post.getDelDate() == null && (post.getMember().getSaleSido() != null || post.getMember().getBuySido() != null)) {
+                    if (post.getMember().getSaleSido() != null && region.contains(post.getMember().getSaleSido()))
+                        list.add(post);
+                    if (post.getMember().getBuySido() != null && region.contains(post.getMember().getBuySido()))
+                        list.add(post);
+                }
+            }
+            return new PageImpl<>(list, pageable, list.size());
+        }
 
         for (Post post : all) {
             if (post.getPostType().equals(t) && post.getDelDate() == null)
@@ -257,9 +269,21 @@ public class PostService {
     }
 
     // 삭제되지 않은 게시글 중 게시글 카테고리로 조회(커뮤니티)
-    public Page<Post> listOfNotDeletedAndCategory(String category, Pageable pageable) {
+    public Page<Post> listOfNotDeletedAndCategory(String category, String region, Pageable pageable) {
         Page<Post> all = postRepository.findAll(pageable);
         List<Post> list = new ArrayList<>();
+
+        if (region != null) {
+            for (Post post : all) {
+                if (post.getPostCategory().getCategoryName().equals(category) && post.getDelDate() == null && (post.getMember().getSaleSido() != null || post.getMember().getBuySido() != null)) {
+                    if (post.getMember().getSaleSido() != null && region.contains(post.getMember().getSaleSido()))
+                        list.add(post);
+                    if (post.getMember().getBuySido() != null && region.contains(post.getMember().getBuySido()))
+                        list.add(post);
+                }
+            }
+            return new PageImpl<>(list, pageable, list.size());
+        }
 
         for (Post post : all) {
             if (post.getPostCategory().getCategoryName().equals(category) && post.getDelDate() == null)

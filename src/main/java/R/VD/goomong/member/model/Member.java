@@ -86,7 +86,7 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Order> orderList = new ArrayList<>();
 
