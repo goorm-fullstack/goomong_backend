@@ -56,7 +56,7 @@ public class RankingSupportRepository {
                 query.orderBy(item.countDistinct().desc());
         }
 
-        return query.limit(10).fetch();
+        return query.limit(5).fetch();
     }
 
     // 리뷰 순
