@@ -7,12 +7,10 @@ import R.VD.goomong.order.model.Order;
 import R.VD.goomong.order.model.Status;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class ResponseOrderDto {
     private Long id;
-    private List<Item> orderItem;
+    private Item orderItem;
     private Member member;
     private int price;
     private int point;

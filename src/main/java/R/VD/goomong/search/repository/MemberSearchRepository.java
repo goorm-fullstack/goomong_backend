@@ -29,20 +29,21 @@ public class MemberSearchRepository {
 
         JPAQuery<Tuple> query = getMemberQuery(keyword, categoryTitle);
 
-        switch (orderBy) {
-            case "totalSales":
-                query.orderBy(order.price.sum().desc());
-                break;
-            case "reviewCount":
-                query.orderBy(review.id.count().desc());
-                break;
-            case "reviewAvg":
-                query.orderBy(review.rate.avg().desc());
-                break;
-            case "transaction":
-            default:
-                query.orderBy(item.countDistinct().desc());
-        }
+        if (orderBy != null)
+            switch (orderBy) {
+                case "totalSales":
+                    query.orderBy(order.price.sum().desc());
+                    break;
+                case "reviewCount":
+                    query.orderBy(review.id.count().desc());
+                    break;
+                case "reviewAvg":
+                    query.orderBy(review.rate.avg().desc());
+                    break;
+                case "transaction":
+                default:
+                    query.orderBy(item.countDistinct().desc());
+            }
 
         List<Tuple> fetch = query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

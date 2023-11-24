@@ -6,21 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseRecentKeword {
 
+    private Long searchId;
+
     private String keyword;
 
-    private LocalDateTime regDate;
-
     public ResponseRecentKeword(Search search) {
+        this.searchId = search.getSearchId();
         this.keyword = search.getWord().getKeyword();
-        this.regDate = search.getRegDate();
     }
 
 }

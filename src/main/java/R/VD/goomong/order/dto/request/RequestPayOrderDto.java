@@ -8,13 +8,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class RequestPayOrderDto {
     @NotEmpty
     @NotNull
-    private List<Long> orderItem;
+    private Long orderItem;
 
     @NotEmpty
     @Positive
@@ -35,7 +33,6 @@ public class RequestPayOrderDto {
 
     public Order toEntity() {
         return Order.builder()
-                .orderNumber(orderNumber)
                 .address(address)
                 .status(Status.WAITING)
                 .orderNumber(orderNumber)
