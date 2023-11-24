@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/item")
 @RequiredArgsConstructor
+@Slf4j
 public class ItemController {
     private final ItemService itemService;
 
@@ -71,11 +73,12 @@ public class ItemController {
         return ResponseEntity.ok("작성이 완료되었습니다.");
     }
 
+    // 컨틀롤러에도 리스트 출력 시 카테고리와 지역에 따라 다르게 출력되도록 추가되어있으니 확인 부탁드려요 - @배진환
+
     /**
-     *
-     * @param orderBy : title, price 같이 엔티티 기반 프로퍼티 명
+     * @param orderBy   : title, price 같이 엔티티 기반 프로퍼티 명
      * @param direction : asc, desc
-     * @param pageable : 페이지 번호
+     * @param pageable  : 페이지 번호
      */
     @Operation(
             summary = "판매 아이템 리스트 출력",
@@ -89,10 +92,11 @@ public class ItemController {
     )
     @GetMapping("/list/sale")
     public ResponseEntity<ResponseItemPageDto> getItemListBySale(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                 Pageable pageable) {
+                                                                 Pageable pageable, @RequestParam(required = false) String categoryName, @RequestParam(required = false) String region) {
+        log.info("categoryName={}, region={}", categoryName, region);
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllBySale(pageable));
+        return ResponseEntity.ok(itemService.findAllBySale(pageable, categoryName, region));
     }
 
     @Operation(
@@ -107,10 +111,11 @@ public class ItemController {
     )
     @GetMapping("/list/give")
     public ResponseEntity<ResponseItemPageDto> getItemListByGive(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                 Pageable pageable) {
+                                                                 Pageable pageable, @RequestParam(required = false) String categoryName, @RequestParam(required = false) String region) {
+        log.info("categoryName={}, region={}", categoryName, region);
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByGive(pageable));
+        return ResponseEntity.ok(itemService.findAllByGive(pageable, categoryName, region));
     }
 
     @Operation(
@@ -125,10 +130,11 @@ public class ItemController {
     )
     @GetMapping("/list/wanted")
     public ResponseEntity<ResponseItemPageDto> getItemListByWanted(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                   Pageable pageable) {
+                                                                   Pageable pageable, @RequestParam(required = false) String categoryName, @RequestParam(required = false) String region) {
+        log.info("categoryName={}, region={}", categoryName, region);
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByWanted(pageable));
+        return ResponseEntity.ok(itemService.findAllByWanted(pageable, categoryName, region));
     }
 
     @Operation(
@@ -143,10 +149,11 @@ public class ItemController {
     )
     @GetMapping("/list/exchange")
     public ResponseEntity<ResponseItemPageDto> getItemListByExchange(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                     Pageable pageable) {
+                                                                     Pageable pageable, @RequestParam(required = false) String categoryName, @RequestParam(required = false) String region) {
+        log.info("categoryName={}, region={}", categoryName, region);
         pageable = getPageable(orderBy, direction, pageable);
 
-        return ResponseEntity.ok(itemService.findAllByExchange(pageable));
+        return ResponseEntity.ok(itemService.findAllByExchange(pageable, categoryName, region));
     }
 
     @Operation(
