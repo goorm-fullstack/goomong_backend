@@ -5,6 +5,7 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,7 @@ public class Item extends BaseTimeEntity {
     private String title;//제목
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Member member;//작성자
 
     private int price;//가격
