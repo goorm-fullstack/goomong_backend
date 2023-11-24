@@ -1,13 +1,16 @@
 package R.VD.goomong.search.dto.request;
 
-import R.VD.goomong.post.model.Category;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class RequestSearchDTO {
     private String keyword;
-    private String order;
-    private String categoryTitle;
+    private String order = "";
+    private String categoryTitle = "";
+    private int page;
+    private int size;
 }

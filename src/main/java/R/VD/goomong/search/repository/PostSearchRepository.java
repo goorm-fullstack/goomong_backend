@@ -26,21 +26,22 @@ public class PostSearchRepository {
     public Page<Post> postSearch(String keyword, String orderBy, String categoryName, Pageable pageable) {
         JPAQuery<Post> query = getPostQuery(keyword, categoryName);
 
-        switch (orderBy) {
-            case "title":
-                query.orderBy(post.postTitle.asc());
-                break;
-            case "views":
-                query.orderBy(post.postViews.desc());
-                break;
-            case "likes":
-                query.orderBy(post.postLikeNo.desc());
-                break;
-            case "time":
-            default:
-                query.orderBy(post.regDate.desc());
-                break;
-        }
+        if (orderBy != null)
+            switch (orderBy) {
+                case "title":
+                    query.orderBy(post.postTitle.asc());
+                    break;
+                case "views":
+                    query.orderBy(post.postViews.desc());
+                    break;
+                case "likes":
+                    query.orderBy(post.postLikeNo.desc());
+                    break;
+                case "time":
+                default:
+                    query.orderBy(post.regDate.desc());
+                    break;
+            }
 
         List<Post> posts = query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

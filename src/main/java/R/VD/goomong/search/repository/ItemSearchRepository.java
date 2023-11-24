@@ -25,23 +25,24 @@ public class ItemSearchRepository {
 
         JPAQuery<Item> query = getItemQuery(keyword, categoryTitle);
 
-        switch (orderBy) {
-            case "title":
-                query.orderBy(item.title.asc());
-            case "price":
-                query.orderBy(item.price.desc());
-                break;
-            case "orderNumber":
-                query.orderBy(order.orderNumber.desc());
-            case "time":
-                query.orderBy(item.regDate.desc());
-                break;
-            case "rate":
-                query.orderBy(item.rate.desc());
-                break;
-            default:
-                query.orderBy(item.regDate.desc());
-        }
+        if (orderBy != null)
+            switch (orderBy) {
+                case "title":
+                    query.orderBy(item.title.asc());
+                case "price":
+                    query.orderBy(item.price.desc());
+                    break;
+                case "orderNumber":
+                    query.orderBy(order.orderNumber.desc());
+                case "time":
+                    query.orderBy(item.regDate.desc());
+                    break;
+                case "rate":
+                    query.orderBy(item.rate.desc());
+                    break;
+                default:
+                    query.orderBy(item.regDate.desc());
+            }
 
         List<Item> items = query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
