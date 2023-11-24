@@ -125,7 +125,7 @@ public class SellerService {
 
     // 오더 정보를 통해 판매자 수익 업데이트
     public void updateIncomeByOrder(Order order) {
-        Seller seller = sellerRepository.findByMemberId(order.getOrderItem().get(0).getMember().getMemberId()).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + order.getOrderItem().get(0).getMember().getMemberId()));
+        Seller seller = sellerRepository.findByMemberId(order.getOrderItem().getMember().getMemberId()).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + order.getOrderItem().getMember().getMemberId()));
 
         Seller build = seller.toBuilder()
                 .income(seller.getIncome() != null ? seller.getIncome() + order.getPrice() : order.getPrice())
@@ -136,7 +136,7 @@ public class SellerService {
 
     // 오더 정보를 통해 판매자 수익 환불
     public void minusIncomeByOrder(Order order) {
-        Seller seller = sellerRepository.findByMemberId(order.getOrderItem().get(0).getMember().getMemberId()).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + order.getOrderItem().get(0).getMember().getMemberId()));
+        Seller seller = sellerRepository.findByMemberId(order.getOrderItem().getMember().getMemberId()).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + order.getOrderItem().getMember().getMemberId()));
 
         Seller build = seller.toBuilder()
                 .income(seller.getIncome() - order.getPrice())

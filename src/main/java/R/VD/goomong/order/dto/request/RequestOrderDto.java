@@ -14,7 +14,7 @@ import java.util.List;
 public class RequestOrderDto {
     @NotEmpty
     @NotNull
-    private List<Long> orderItem;
+    private Long orderItem;
 
     @NotEmpty
     @Positive
@@ -28,7 +28,6 @@ public class RequestOrderDto {
 
     public Order toEntity() {
         return Order.builder()
-                .orderNumber(orderNumber)
                 .address(address)
                 .status(Status.WAITING)
                 .orderNumber(orderNumber)

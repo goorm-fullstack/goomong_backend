@@ -29,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -91,9 +94,9 @@ public class OrderService {
         Member member = customer.get();
         order.setMember(member);
 
-        List<Item> itemList = getItems(orderDto);
+        Item items = getItems(orderDto);
 
-        order.setOrderItem(itemList);
+        order.setOrderItem(items);
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
         sellerService.updateIncomeByOrder(save);
@@ -102,14 +105,14 @@ public class OrderService {
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(member,
                     save.getPoint(),
-                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderItem().getTitle(),
                     save.getOrderNumber(),
                     EventType.POINT_SPENT)); // 포인트 사용
         }
 
         eventPublisher.publishEvent(new PointEvent(member,
                 save.getPrice(),
-                save.getOrderItem().get(0).getTitle(),
+                save.getOrderItem().getTitle(),
                 save.getOrderNumber(),
                 EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
@@ -126,14 +129,12 @@ public class OrderService {
         order.setMember(member);
 
         //주문할 아이템 등록
-        List<Item> itemList = new ArrayList<>();
-        for (Long itemId : orderDto.getOrderItem()) {
-            Optional<Item> item = itemRepository.findById(itemId);
-            item.ifPresent(itemList::add);
-        }
-        order.setOrderItem(itemList);
+        Long orderItem = orderDto.getOrderItem();
+        Item item = itemRepository.findById(orderItem)
+                .orElseThrow(() -> new NotFoundItem("아이템 id " + orderItem + " 는 찾을 수 없습니다."));
 
-        order.calculatePrice();
+        order.setOrderItem(item);
+
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
         sellerService.updateIncomeByOrder(save);
@@ -142,14 +143,14 @@ public class OrderService {
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(member,
                     save.getPoint(),
-                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderItem().getTitle(),
                     save.getOrderNumber(),
                     EventType.POINT_SPENT)); // 포인트 사용
         }
 
         eventPublisher.publishEvent(new PointEvent(member,
                 save.getPrice(),
-                save.getOrderItem().get(0).getTitle(),
+                save.getOrderItem().getTitle(),
                 save.getOrderNumber(),
                 EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
@@ -180,13 +181,13 @@ public class OrderService {
         // 포인트 이벤트 리스너
         eventPublisher.publishEvent(new PointEvent(order.getMember(),
                 order.getPrice(),
-                order.getOrderItem().get(0).getTitle(),
+                order.getOrderItem().getTitle(),
                 order.getOrderNumber(),
                 EventType.REFUND));
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(order.getMember(),
                     order.getPoint(),
-                    order.getOrderItem().get(0).getTitle(),
+                    order.getOrderItem().getTitle(),
                     order.getOrderNumber(),
                     EventType.POINT_REDEMPTION_CANCELLATION));
         }
@@ -194,23 +195,19 @@ public class OrderService {
     }
 
     // 주문한 아이템을 찾아서 주문에 반영
-    private List<Item> getItems(RequestOrderDto orderDto) {
+    private Item getItems(RequestOrderDto orderDto) {
         //주문할 아이템 등록
         //만약 대상 아이템이 판매 타입인 경우 예외 발생
-        List<Item> itemList = new ArrayList<>();
-        for (Long itemId : orderDto.getOrderItem()) {
-            Optional<Item> item = itemRepository.findById(itemId);
-            if (item.isEmpty())
-                throw new NotFoundItem();
+        Optional<Item> item = itemRepository.findById(orderDto.getOrderItem());
+        if (item.isEmpty())
+            throw new NotFoundItem();
 
-            Item findItem = item.get();
+        Item findItem = item.get();
 
-            if (findItem.getStatus().equals(Status.SALE))
-                throw new InvalidOrderType();
+        if (findItem.getStatus().equals(Status.SALE))
+            throw new InvalidOrderType();
 
-            itemList.add(findItem);
-        }
-        return itemList;
+        return findItem;
     }
 
     private Order findOrder(Long id) {
