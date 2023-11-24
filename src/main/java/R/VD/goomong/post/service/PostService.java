@@ -282,6 +282,7 @@ public class PostService {
                         list.add(post);
                 }
             }
+            return new PageImpl<>(list, pageable, list.size());
         }
 
         for (Post post : all) {

@@ -316,7 +316,7 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedcategory/{category}")
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, String region) {
+                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) String region) {
         log.info("category={}, region={}", category, region);
 
         pageable = getPageable(orderBy, direction, pageable);

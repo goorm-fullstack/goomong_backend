@@ -97,7 +97,7 @@ public class Post extends BaseTimeEntity {
         return ResponsePostDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSimpleAddress() : null)
+                .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSido() : member.getBuySimpleAddress() != null ? member.getBuySido() : null)
                 .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
                 .postCategory(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getCategoryName() : null)
                 .postCategoryId(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getId() : null)
