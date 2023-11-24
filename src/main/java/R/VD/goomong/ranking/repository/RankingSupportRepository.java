@@ -36,10 +36,10 @@ public class RankingSupportRepository {
                 .join(item.member, member)
                 .leftJoin(item.reviewList, review)
                 .groupBy(order)
-                .orderBy(order.price.sum()
-                        .add(item.count())
-                        .add(review.rate.avg())
-                        .add(review.id.count()).asc())
+                .orderBy(item.count().desc())
+                .orderBy(order.price.sum().desc())
+                .orderBy(review.id.count().desc())
+                .orderBy(review.rate.avg().desc())
                 .limit(5);
 
         return query.fetch();
