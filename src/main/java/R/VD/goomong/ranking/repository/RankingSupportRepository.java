@@ -23,31 +23,35 @@ public class RankingSupportRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<Tuple> calculateSellerRanking(String categoryTitle, String sortBy) {
-
         JPAQuery<Tuple> query = jpaQueryFactory
-                .select(member, itemCategory.title, item.countDistinct(), order.price.sum(), review.id.count())
+                .select(
+                        member.id, member.memberName, member.profileImages,
+                        itemCategory.title, item.countDistinct(), order.price.sum(),
+                        review.rate.avg(), review.id.count()
+                )
                 .from(order)
-                .join(order.member, member)
                 .join(order.orderItem, item)
+                .join(item.member, member)
                 .leftJoin(item.reviewList, review)
                 .join(item.itemCategories, itemCategory)
-                .where(order.status.eq(Status.COMPLETE));
+                .where(order.status.eq(Status.COMPLETE))
+                .groupBy(member.id);
 
         if (categoryTitle != null && !categoryTitle.trim().isEmpty()) {
             query.where(itemCategory.title.eq(categoryTitle));
         }
 
         switch (sortBy) {
-            case "totalSales": // 총 누적 금액 순으로 정렬
+            case "totalSales":
                 query.orderBy(order.price.sum().desc());
                 break;
-            case "reviewCount": // 총 리뷰 순으로 정렬
+            case "reviewCount":
                 query.orderBy(review.id.count().desc());
                 break;
-            case "reviewAvg": // 리뷰 평점 순으로 정렬
+            case "reviewAvg":
                 query.orderBy(review.rate.avg().desc());
                 break;
-            case "transaction" : // 총 거래 순으로 정렬
+            case "transaction":
             default:
                 query.orderBy(item.countDistinct().desc());
         }

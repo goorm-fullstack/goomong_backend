@@ -21,7 +21,6 @@ import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +40,62 @@ public class ItemService {
     private final MemberRepository memberRepository;
     private final ItemOptionRepository itemOptionRepository;
 
+    // 카테고리와 지역에 따라 판매 아이템 리스트 불러오기 - @배진환
+    private static ResponseItemPageDto getResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseItemDto> result) {
+        if (categoryName != null && region != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                    result.add(new ResponseItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+
+        if (categoryName != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                    result.add(new ResponseItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+
+        if (region != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                    result.add(new ResponseItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+        return null;
+    }
+
+    // 카테고리와 지역에 따라 기부, 교환 아이템 리스트 불러오기 - @배진환
+    private static ResponseItemPageDto getNonSaleResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseNonSaleItemDto> result) {
+        if (categoryName != null && region != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+
+        if (categoryName != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+
+        if (region != null) {
+            for (Item item : items) {
+                if (item.getDelDate() == null && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                    result.add(new ResponseNonSaleItemDto(item));
+            }
+            return new ResponseItemPageDto(result, items.getTotalPages());
+        }
+        return null;
+    }
+
     // 아이템 저장
     public void save(RequestItemDto itemDto, MultipartFile[] multipartFiles) {
         saveItem(multipartFiles, itemDto, itemDto.getItemCategories());
@@ -58,45 +113,63 @@ public class ItemService {
         return items.stream().map(ResponseItemDto::new).toList();
     }
 
+    // 여기부터 리스트 조회에 카테고리 및 지역에 따라 리스트 불러오게 수정되어있으니 확인 후 병합 부탁드려요 - @배진환
+
     // 판매 조회
-    public ResponseItemPageDto findAllBySale(Pageable pageable) {
+    public ResponseItemPageDto findAllBySale(Pageable pageable, String categoryName, String region) {
         Page<Item> items = itemRepository.findAllByStatus(Status.SALE, pageable);
         List<ResponseItemDto> result = new ArrayList<>();
+
+        ResponseItemPageDto result1 = getResponseItemPageDtoByCategoryNameAndRegion(categoryName, region, items, result);
+        if (result1 != null) return result1;
+
         for (Item item : items) {
-            result.add(new ResponseItemDto(item));
+            if (item.getDelDate() == null) result.add(new ResponseItemDto(item));
         }
 
         return new ResponseItemPageDto(result, items.getTotalPages());
     }
 
     // 재능 기부 조회
-    public ResponseItemPageDto findAllByGive(Pageable pageable) {
+    public ResponseItemPageDto findAllByGive(Pageable pageable, String categoryName, String region) {
         Page<Item> items = itemRepository.findAllByStatus(Status.GIVE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
+
+        ResponseItemPageDto result1 = getNonSaleResponseItemPageDtoByCategoryNameAndRegion(categoryName, region, items, result);
+        if (result1 != null) return result1;
+
         for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
+            if (item.getDelDate() == null) result.add(new ResponseNonSaleItemDto(item));
         }
 
         return new ResponseItemPageDto(result, items.getTotalPages());
     }
 
     // 구인 조회
-    public ResponseItemPageDto findAllByExchange(Pageable pageable) {
+    public ResponseItemPageDto findAllByExchange(Pageable pageable, String categoryName, String region) {
         Page<Item> items = itemRepository.findAllByStatus(Status.EXCHANGE, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
+
+        ResponseItemPageDto result1 = getNonSaleResponseItemPageDtoByCategoryNameAndRegion(categoryName, region, items, result);
+        if (result1 != null) return result1;
+
         for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
+            if (item.getDelDate() == null) result.add(new ResponseNonSaleItemDto(item));
         }
 
         return new ResponseItemPageDto(result, items.getTotalPages());
     }
 
     // 구인 조회
-    public ResponseItemPageDto findAllByWanted(Pageable pageable) {
+    public ResponseItemPageDto findAllByWanted(Pageable pageable, String categoryName, String region) {
         Page<Item> items = itemRepository.findAllByStatus(Status.WANTED, pageable);
         List<ResponseNonSaleItemDto> result = new ArrayList<>();
+
+        ResponseItemPageDto result1 = getNonSaleResponseItemPageDtoByCategoryNameAndRegion(categoryName, region, items, result);
+        if (result1 != null) return result1;
+
         for (Item item : items) {
-            result.add(new ResponseNonSaleItemDto(item));
+            if (item.getDelDate() == null) result.add(new ResponseNonSaleItemDto(item));
         }
 
         return new ResponseItemPageDto(result, items.getTotalPages());
@@ -138,7 +211,7 @@ public class ItemService {
             throw new NotFoundMember();
 
         List<ItemOption> itemOptions = new ArrayList<>();
-        for(ItemOption option : entity.getItemOptions()) {
+        for (ItemOption option : entity.getItemOptions()) {
             ItemOption itemOption = itemOptionRepository.save(option);
             itemOptions.add(itemOption);
         }

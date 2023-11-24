@@ -8,6 +8,7 @@ import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.member.service.SellerService;
 import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.order.dto.request.RequestPayOrderDto;
 import R.VD.goomong.order.dto.request.RequestSearchDto;
@@ -39,6 +40,7 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final SellerService sellerService;
 
     public List<ResponseOrderDto> getAllOrderList() {
         return orderRepository.findAll().stream().map(ResponseOrderDto::new).toList();
@@ -94,6 +96,7 @@ public class OrderService {
         order.setOrderItem(itemList);
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+        sellerService.updateIncomeByOrder(save);
 
         // 포인트 이벤트 리스너
         if (order.getPoint() != 0) {
@@ -133,6 +136,7 @@ public class OrderService {
         order.calculatePrice();
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+        sellerService.updateIncomeByOrder(save);
 
         // 포인트 이벤트 리스너
         if (order.getPoint() != 0) {
@@ -186,6 +190,7 @@ public class OrderService {
                     order.getOrderNumber(),
                     EventType.POINT_REDEMPTION_CANCELLATION));
         }
+        sellerService.minusIncomeByOrder(order);
     }
 
     // 주문한 아이템을 찾아서 주문에 반영

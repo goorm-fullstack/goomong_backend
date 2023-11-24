@@ -2,6 +2,7 @@ package R.VD.goomong.chat.dto.response;
 
 import R.VD.goomong.chat.model.ChatMessage;
 import R.VD.goomong.chat.model.ChatRoom;
+import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.model.Item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,14 +21,13 @@ public class ResponseChatRoomDTO {
     private String roomId;
     private String roomName;
     private String lastMessage;
-    private ResponseChatItem itemDto;
+    private ResponseItemDto itemDto;
     private LocalDateTime lastDate;
 
     public ResponseChatRoomDTO(ChatRoom chatRoom, Item item, String roomName) {
         this.roomId = chatRoom.getRoomId().toString();
         this.roomName = roomName;
-        if (item != null)
-            this.itemDto = new ResponseChatItem(item);
+        this.itemDto = item != null ? new ResponseItemDto(item) : null;
 
         ChatMessage lastChatMessage = findLastMessage(chatRoom.getMessages());
         if (lastChatMessage != null) {

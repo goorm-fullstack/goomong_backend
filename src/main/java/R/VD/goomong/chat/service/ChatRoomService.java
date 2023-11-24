@@ -12,7 +12,6 @@ import R.VD.goomong.chat.repository.ChatRoomMemberRepository;
 import R.VD.goomong.chat.repository.ChatRoomRepository;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.repository.ItemRepository;
-import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,17 +82,18 @@ public class ChatRoomService {
 
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByItem(item);
 
-        for(ChatRoom chatRoom : chatRoomList) {
-            for(ChatRoomMember member : chatRoom.getMembers()) {
-                if(Objects.equals(member.getMember().getId(), buyer.getId())) {
+        for (ChatRoom chatRoom : chatRoomList) {
+            for (ChatRoomMember member : chatRoom.getMembers()) {
+                if (Objects.equals(member.getMember().getId(), buyer.getId())) {
                     return new ResponseChatRoomDTO(chatRoom, item, seller.getMemberName());
                 }
             }
         }
 
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByItemAndMembers_Member(item, buyer);
-        if (existingChatRoom.isPresent())
+        if (existingChatRoom.isPresent()) {
             return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getMemberName());
+        }
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .build();

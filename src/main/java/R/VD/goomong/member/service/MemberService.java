@@ -31,6 +31,7 @@ public class MemberService {
     private final BCryptPasswordEncoder encoder;
     private final ImageService imageService;
     private final EmailMemberSaveRepository emailMemberSaveRepository;
+    private final SellerService sellerService;
 
     //CREATE
     //아이디 중복 체크
@@ -115,7 +116,7 @@ public class MemberService {
     }
 
     //이메일로 회원 찾기
-    public Member findByMemberEmail(String memberEmail){
+    public Member findByMemberEmail(String memberEmail) {
         Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
 
         return member.orElse(null);
@@ -187,6 +188,8 @@ public class MemberService {
                 member.setSaleInfo(requestUpdate.getSaleInfo());
             }
 
+            sellerService.saveSellerFromMember(member);
+
             return memberRepository.save(member);
         } else {
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + requestUpdate.getMemberId());
@@ -206,6 +209,9 @@ public class MemberService {
 //            }
 
             member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySido(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSido(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+
+            sellerService.saveSellerFromMember(member);
+
             return memberRepository.save(member);
 
         } else {
@@ -214,25 +220,22 @@ public class MemberService {
     }
 
     //memberId로 비밀번호 변경
-    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword){
+    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangePassword.getMemberId());
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
 
-            if(encoder.matches(requestChangePassword.getMemberPassword(), member.getMemberPassword())) {
+            if (encoder.matches(requestChangePassword.getMemberPassword(), member.getMemberPassword())) {
                 String rawPassword2 = requestChangePassword.getNewPassword();
                 String newPassword = encoder.encode(rawPassword2);
 
                 member.changePassword(requestChangePassword.getMemberId(), newPassword);
+                sellerService.saveSellerFromMember(member);
                 return memberRepository.save(member);
-            }
+            } else throw new NotFoundMember("현재 비밀번호가 틀렸습니다.");
 
-            else throw new NotFoundMember("현재 비밀번호가 틀렸습니다.");
-
-        }
-
-        else
+        } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
 
@@ -240,13 +243,13 @@ public class MemberService {
     public Member changeEmailByMemberId(RequestChangeEmail requestChangeEmail) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangeEmail.getMemberId());
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
             member.changeEmail(requestChangeEmail.getMemberId(), requestChangeEmail.getMemberEmail());
+            sellerService.saveSellerFromMember(member);
 
             return memberRepository.save(member);
-        }
-        else
+        } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
 
@@ -254,18 +257,17 @@ public class MemberService {
     public Member changeProfileImageByMemberId(String memberId, MultipartFile[] multipartFiles) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
             List<Image> imageList = null;
             if (multipartFiles.length != 0)
                 imageList = imageService.saveImage(multipartFiles);
 
             member.changeProfileImage(member.getMemberId(), imageList);
+            sellerService.saveSellerFromMember(member);
 
             return memberRepository.save(member);
-        }
-
-        else throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+        } else throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
 
     }
 
@@ -295,6 +297,7 @@ public class MemberService {
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
             member1.setDelDate(softDeleteTime);
+            sellerService.deleteSellerByMemberId(member1.getMemberId());
 
             return memberRepository.save(member1);
         } else {
@@ -316,6 +319,7 @@ public class MemberService {
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
             member1.setDelDate(softDeleteTime);
+            sellerService.deleteSellerByMemberId(member1.getMemberId());
 
             return memberRepository.save(member1);
         } else {
