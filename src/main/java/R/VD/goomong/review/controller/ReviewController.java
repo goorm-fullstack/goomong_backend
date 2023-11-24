@@ -73,7 +73,7 @@ public class ReviewController {
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping(value = "/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> initReview(@Validated @ModelAttribute RequestReviewDto requestReviewDto, @RequestParam(required = false) MultipartFile[] images) {
-        System.out.println("Date : "+requestReviewDto.toString());
+        System.out.println("Date : " + requestReviewDto.toString());
         log.info("requestReviewDto={}", requestReviewDto);
 
         reviewService.save(requestReviewDto, images);
@@ -176,7 +176,10 @@ public class ReviewController {
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
     @GetMapping("/{itemId}")
-    public ResponseEntity<List<ResponseReviewDto>> listOfNotDeletedAndItemId(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long itemId) {
+    public ResponseEntity<List<ResponseReviewDto>> listOfNotDeletedAndItemId(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long itemId) {
+
+        pageable = getPageable(orderBy, direction, pageable);
+
         Page<Review> reviews = reviewService.listOfNotDeletedAndItemId(pageable, itemId);
         return getListResponseEntity(pageable, reviews);
     }
