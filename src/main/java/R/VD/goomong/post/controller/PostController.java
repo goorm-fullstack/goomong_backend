@@ -219,6 +219,7 @@ public class PostController {
      * 삭제되지 않은 게시글 중 게시글 종류에 따라 리스트 조회(커뮤니티/공지사항/이벤트)
      *
      * @param type     게시글 종류
+     * @param region   조회할 지역
      * @param pageable 페이징
      * @return 조회된 게시글 리스트
      */
@@ -227,17 +228,18 @@ public class PostController {
             @Parameter(name = "type", description = "종류(커뮤니티/공지사항/이벤트)", schema = @Schema(implementation = Type.class)),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
-            @Parameter(name = "pageable", hidden = true)
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "region", description = "조회하고자 하는 지역", example = "지역")
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedtype/{type}")
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedAndType(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                         @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("type={}", type);
+                                                                         @EnumValue(enumClass = Type.class) @PathVariable String type, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) String region) {
+        log.info("type={}, region={}", type, region);
 
         pageable = getPageable(orderBy, direction, pageable);
 
-        Page<Post> posts = postService.listOfNotDeletedAndType(type, pageable);
+        Page<Post> posts = postService.listOfNotDeletedAndType(type, region, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
         return ResponseEntity.ok(list);
@@ -300,6 +302,7 @@ public class PostController {
      *
      * @param category 게시글 카테고리
      * @param pageable 페이징
+     * @param region   조회할 지역
      * @return 조회된 게시글 리스트
      */
     @Operation(summary = "삭제되지 않은 게시글 중 카테고리에 따라 게시글 리스트 조회")
@@ -307,17 +310,18 @@ public class PostController {
             @Parameter(name = "category", description = "카테고리 이름", example = "카테고리 이름"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 갯수", example = "10", schema = @Schema(type = "int")),
             @Parameter(name = "page", description = "몇 번째 페이지를 보여주는지 정함", example = "0", schema = @Schema(type = "int")),
-            @Parameter(name = "pageable", hidden = true)
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "region", description = "조회할 지역", example = "지역")
     })
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
     @GetMapping("/notdeletedcategory/{category}")
     public ResponseEntity<List<ResponsePostDto>> listOfNotDeletedCategory(@RequestParam Optional<String> orderBy, @RequestParam Optional<String> direction,
-                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.info("category={}", category);
+                                                                          @PathVariable String category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable, String region) {
+        log.info("category={}, region={}", category, region);
 
         pageable = getPageable(orderBy, direction, pageable);
 
-        Page<Post> posts = postService.listOfNotDeletedAndCategory(category, pageable);
+        Page<Post> posts = postService.listOfNotDeletedAndCategory(category, region, pageable);
         List<ResponsePostDto> list = getResponsePostDtos(pageable, posts);
 
         return ResponseEntity.ok(list);
