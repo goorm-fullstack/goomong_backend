@@ -44,7 +44,7 @@ public class ItemService {
     private static ResponseItemPageDto getResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseItemDto> result) {
         if (categoryName != null && region != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
                     result.add(new ResponseItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -52,7 +52,7 @@ public class ItemService {
 
         if (categoryName != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName))
                     result.add(new ResponseItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -72,7 +72,7 @@ public class ItemService {
     private static ResponseItemPageDto getNonSaleResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseNonSaleItemDto> result) {
         if (categoryName != null && region != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
                     result.add(new ResponseNonSaleItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -80,7 +80,7 @@ public class ItemService {
 
         if (categoryName != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName))
                     result.add(new ResponseNonSaleItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
