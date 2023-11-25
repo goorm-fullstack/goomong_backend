@@ -10,8 +10,11 @@ import lombok.*;
 public class ResponseFindMemberDTO {
     private Long memberId;
     private String memberName;
-    private String categoryTitle;
-    private Long itemCount;
+    private String imagePath;
+    private String saleSido;
+    private String saleInfo;
+    private Long transaction;
     private Long totalSales;
     private Long reviewCount;
+    private Double totalRating;
 }

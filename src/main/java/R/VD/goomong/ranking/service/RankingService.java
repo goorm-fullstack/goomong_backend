@@ -62,7 +62,7 @@ public class RankingService {
                     .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
             ranking.setImagePath(seller.getImagePath());
         });
-        
+
         return list;
     }
 
@@ -70,7 +70,7 @@ public class RankingService {
         List<ResponseTopRanking> rankings = rankingSupportRepository.calculateSellerRanking().stream()
                 .map(tuple -> ResponseTopRanking.builder()
                         .memberId(tuple.get(item.member.id))
-                        .memberName(tuple.get(item.member.memberName))
+                        .memberName(tuple.get(item.member.memberId))
                         .saleSido(tuple.get(item.member.saleSido))
                         .transaction(tuple.get(item.count()))
                         .totalSales(tuple.get(order.price.sum()).longValue())

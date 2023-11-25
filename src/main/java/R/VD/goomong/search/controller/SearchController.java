@@ -54,7 +54,6 @@ public class SearchController {
     })
     @PostMapping("/item")
     public ResponseEntity<ResponseSearchDTO> searchItem(@RequestBody RequestSearchDTO requestSearchDTO) {
-        searchService.saveKeyword(requestSearchDTO);
         Pageable pageable = PageRequest.of(requestSearchDTO.getPage(), requestSearchDTO.getSize());
         ResponseSearchDTO responseSearchDTO = searchService.searchItem(pageable, requestSearchDTO);
         return new ResponseEntity<>(responseSearchDTO, HttpStatus.OK);

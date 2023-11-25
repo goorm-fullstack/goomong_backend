@@ -24,7 +24,7 @@ public class RankingSupportRepository {
         JPAQuery<Tuple> query = jpaQueryFactory
                 .selectDistinct(
                         item.member.id,
-                        item.member.memberName,
+                        item.member.memberId,
                         item.member.saleSido, // 판매자 시/도
                         item.count(),
                         order.price.sum(),
