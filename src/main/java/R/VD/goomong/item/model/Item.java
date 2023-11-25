@@ -4,7 +4,6 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
-import R.VD.goomong.order.model.Order;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -54,17 +53,18 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "item_category_id")
     private List<ItemCategory> itemCategories = new ArrayList<>();//카테고리 목록
 
-    @OneToMany(mappedBy = "orderItem")
-    private List<Order> salseList = new ArrayList<>();
-
     @OneToMany(mappedBy = "item")
     private List<Review> reviewList = new ArrayList<>();//리뷰 목록
 
     @OneToMany(mappedBy = "item")
     private List<Ask> askList = new ArrayList<>();
 
+
     @Builder.Default
     private Float rate = 0F;//평점
+
+    @Builder.Default
+    private Long salesCount = 0L;
 
     @Column
     @Builder.Default
@@ -115,5 +115,14 @@ public class Item extends BaseTimeEntity {
         }
 
         rate = (result / reviewList.size());
+    }
+
+    public void incrementSalesCouning() {
+        this.salesCount++;
+    }
+
+    public void decremnetSalesCounting() {
+        if (this.salesCount > 0)
+            this.salesCount--;
     }
 }

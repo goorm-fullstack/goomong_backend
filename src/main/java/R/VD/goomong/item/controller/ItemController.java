@@ -6,7 +6,9 @@ import R.VD.goomong.item.dto.response.ResponseItemDto;
 import R.VD.goomong.item.dto.response.ResponseItemPageDto;
 import R.VD.goomong.item.dto.response.ResponseNonSaleItemDto;
 import R.VD.goomong.item.service.ItemService;
+import R.VD.goomong.post.dto.response.ResponsePostDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -154,6 +157,14 @@ public class ItemController {
         pageable = getPageable(orderBy, direction, pageable);
 
         return ResponseEntity.ok(itemService.findAllByExchange(pageable, categoryName, region));
+    }
+
+    @Operation(summary = "hot 아이템 리스트")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponsePostDto.class))))
+    @GetMapping("/hot")
+    public ResponseEntity<ResponseItemPageDto> hotPost() {
+        ResponseItemPageDto hotItem = itemService.getHotItem();
+        return new ResponseEntity<>(hotItem, HttpStatus.OK);
     }
 
     @Operation(

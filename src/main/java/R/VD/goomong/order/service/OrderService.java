@@ -74,6 +74,7 @@ public class OrderService {
         order.setMember(member);
 
         Item items = getItems(orderDto);
+        items.incrementSalesCouning();
 
         order.setOrderItem(items);
         Order save = orderRepository.save(order);
@@ -111,6 +112,7 @@ public class OrderService {
         Long orderItem = orderDto.getOrderItem();
         Item item = itemRepository.findById(orderItem)
                 .orElseThrow(() -> new NotFoundItem("아이템 id " + orderItem + " 는 찾을 수 없습니다."));
+        item.incrementSalesCouning();
 
         order.setOrderItem(item);
 
@@ -156,6 +158,8 @@ public class OrderService {
     public void refundComplete(Long id) {
         Order order = findOrder(id);
         order.refundComplete();
+
+        order.getOrderItem().decremnetSalesCounting();
 
         // 포인트 이벤트 리스너
         eventPublisher.publishEvent(new PointEvent(order.getMember(),
