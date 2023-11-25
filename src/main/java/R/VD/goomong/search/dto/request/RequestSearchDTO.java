@@ -8,9 +8,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class RequestSearchDTO {
+    private Long memberId;
     private String keyword;
-    private String order = "";
-    private String categoryTitle = "";
+    private String order;
+    private String categoryTitle;
     private int page;
     private int size;
 }

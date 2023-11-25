@@ -13,7 +13,6 @@ import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
 import static R.VD.goomong.item.model.QItemCategory.itemCategory;
-import static R.VD.goomong.order.model.QOrder.order;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,8 +31,6 @@ public class ItemSearchRepository {
                 case "price":
                     query.orderBy(item.price.desc());
                     break;
-                case "orderNumber":
-                    query.orderBy(order.orderNumber.desc());
                 case "time":
                     query.orderBy(item.regDate.desc());
                     break;
@@ -58,13 +55,12 @@ public class ItemSearchRepository {
         JPAQuery<Item> query = jpaQueryFactory
                 .selectFrom(item)
                 .leftJoin(item.itemCategories, itemCategory)
-                .leftJoin(order.orderItem, item)
                 .where(
                         item.title.contains(keyword)
                                 .or(item.describe.contains(keyword))
                                 .or(itemCategory.title.contains(keyword))
                                 .or(item.member.memberName.contains(keyword))
-                                .and(item.regDate.isNull())
+                                .and(item.delDate.isNull())
                 );
         if (categoryTitle != null && !categoryTitle.isEmpty())
             query.where(itemCategory.title.eq(categoryTitle));
