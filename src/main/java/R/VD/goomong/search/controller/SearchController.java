@@ -1,7 +1,6 @@
 package R.VD.goomong.search.controller;
 
 import R.VD.goomong.global.model.ErrorResponseDTO;
-import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseRecentKeword;
 import R.VD.goomong.search.dto.response.ResponseSearchDTO;
@@ -54,10 +53,10 @@ public class SearchController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @PostMapping("/item")
-    public ResponseEntity<ResponseSearchDTO> searchItem(@RequestBody RequestItemSearchDTO requestItemSearchDTO) {
-        searchService.saveKeyword(requestItemSearchDTO);
-        Pageable pageable = PageRequest.of(requestItemSearchDTO.getPage(), requestItemSearchDTO.getSize());
-        ResponseSearchDTO responseSearchDTO = searchService.searchItem(pageable, requestItemSearchDTO);
+    public ResponseEntity<ResponseSearchDTO> searchItem(@RequestBody RequestSearchDTO requestSearchDTO) {
+        searchService.saveKeyword(requestSearchDTO);
+        Pageable pageable = PageRequest.of(requestSearchDTO.getPage(), requestSearchDTO.getSize());
+        ResponseSearchDTO responseSearchDTO = searchService.searchItem(pageable, requestSearchDTO);
         return new ResponseEntity<>(responseSearchDTO, HttpStatus.OK);
     }
 
@@ -67,6 +66,7 @@ public class SearchController {
     })
     @PostMapping("/post")
     public ResponseEntity<ResponseSearchDTO> searchPost(@RequestBody RequestSearchDTO requestSearchDTO) {
+        searchService.saveKeyword(requestSearchDTO);
         Pageable pageable = PageRequest.of(requestSearchDTO.getPage(), requestSearchDTO.getSize());
         ResponseSearchDTO responseSearchDTO = searchService.searchPost(pageable, requestSearchDTO);
         return new ResponseEntity<>(responseSearchDTO, HttpStatus.OK);

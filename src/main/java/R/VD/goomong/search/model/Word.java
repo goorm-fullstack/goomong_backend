@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
@@ -24,9 +23,6 @@ public class Word extends BaseTimeEntity {
     @Column(nullable = false)
     private String keyword;
 
-    @ColumnDefault("1")
-    private Long wordCount;
-    
     private LocalDateTime delDate;
 
     public Word(String keyword) {

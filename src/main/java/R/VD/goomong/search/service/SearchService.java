@@ -7,7 +7,6 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.post.dto.response.ResponsePostDto;
 import R.VD.goomong.post.model.Post;
-import R.VD.goomong.search.dto.request.RequestItemSearchDTO;
 import R.VD.goomong.search.dto.request.RequestSearchDTO;
 import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import R.VD.goomong.search.dto.response.ResponseRecentKeword;
@@ -17,7 +16,6 @@ import R.VD.goomong.search.exception.SearchNotFoundException;
 import R.VD.goomong.search.model.Search;
 import R.VD.goomong.search.model.Word;
 import R.VD.goomong.search.repository.*;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,24 +49,25 @@ public class SearchService {
     }
 
     public List<ResponseTopSearchKeyword> getTopSearchKeywords() {
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(6);
-        return wordRepository.findTopWords(cutoff).stream()
-                .map(ResponseTopSearchKeyword::new)
+        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime startTime = endTime.minusHours(6);
+
+        List<Object[]> topKeywords = searchRepository.findTopKeywordsNative(startTime, endTime);
+
+        return topKeywords.stream()
+                .map(result -> new ResponseTopSearchKeyword((String) result[0]))
                 .toList();
     }
 
-    public void saveKeyword(RequestItemSearchDTO requestItemSearchDTO) {
-        Long memberId = requestItemSearchDTO.getMemberId();
+    public void saveKeyword(RequestSearchDTO requestSearchDTO) {
+        Long memberId = requestSearchDTO.getMemberId();
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new SearchNotFoundException("멤버 " + memberId + "는 존재하지 않습니다."));
 
-        String keyword = requestItemSearchDTO.getKeyword();
-        Word word = wordRepository.findByKeyword(keyword).orElseGet(() -> new Word(keyword));
+        String keyword = requestSearchDTO.getKeyword();
+        Word word = new Word(keyword);
 
-        if (word.getWordId() == null)
-            wordRepository.save(word);
-        else
-            wordRepository.incrementWordCount(keyword);
+        wordRepository.save(word);
 
         Search search = Search.builder()
                 .member(member)
@@ -78,7 +77,7 @@ public class SearchService {
         searchRepository.save(search);
     }
 
-    public ResponseSearchDTO searchItem(Pageable pageable, RequestItemSearchDTO searchDTO) {
+    public ResponseSearchDTO searchItem(Pageable pageable, RequestSearchDTO searchDTO) {
         Page<Item> itemPage = itemSearchRepository.itemSearch(searchDTO.getKeyword(), searchDTO.getOrder(), searchDTO.getCategoryTitle(), pageable);
 
         PageInfo pageinfo = PageInfo.builder()
