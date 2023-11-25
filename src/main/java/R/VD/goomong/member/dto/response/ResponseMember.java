@@ -1,6 +1,8 @@
 package R.VD.goomong.member.dto.response;
 
 import R.VD.goomong.image.model.Image;
+import R.VD.goomong.item.dto.response.ResponseItemDto;
+import R.VD.goomong.item.model.Item;
 import R.VD.goomong.like.dto.response.ResponseLikeDto;
 import R.VD.goomong.like.model.Like;
 import R.VD.goomong.member.model.Member;
@@ -27,16 +29,20 @@ public class ResponseMember {
 
     private LocalDateTime memberSignupTime;
 
-    private List<Image> profileImages = new ArrayList<>();
+    private List<Image> profileImages;
 
-    public ResponseMember(String memberId, String memberPassword, String memberName, String memberEmail, String saleSido, LocalDateTime memberSignupTime, List<Image> profileImages) {
+    private List<ResponseItemDto> itemList;
+
+    public ResponseMember(String memberId, String memberPassword, String memberName, String memberEmail, String saleSido, List<ResponseLikeDto> likeList, LocalDateTime memberSignupTime, List<Image> profileImages, List<ResponseItemDto> itemList) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.saleSido = saleSido;
+        this.likeList = likeList;
         this.memberSignupTime = memberSignupTime;
         this.profileImages = profileImages;
+        this.itemList = itemList;
     }
 
     /**
@@ -55,5 +61,6 @@ public class ResponseMember {
         this.saleSido = member.getSaleSido();
         this.likeList = member.getLikeList() != null ? member.getLikeList().stream().map(Like::toResponseLikeDto).toList() : null; // likeList 필드 추가에 따른 추가 @배진환
         this.profileImages = member.getProfileImages();
+        this.itemList = member.getItemList().stream().map(ResponseItemDto::new).toList();
     }
 }

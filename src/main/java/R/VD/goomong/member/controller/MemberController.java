@@ -3,17 +3,17 @@ package R.VD.goomong.member.controller;
 import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.dto.response.ResponseMember;
-import R.VD.goomong.member.dto.response.ResponseMemberDto;
 import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
-import R.VD.goomong.search.dto.response.ResponseFindMemberDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -197,7 +198,7 @@ public class MemberController {
 
     //카카오톡 로그인
     @GetMapping("/kakao/callback")
-    public String kakaoCallBack(@RequestParam String code, HttpServletResponse response3) {
+    public String kakaoCallBack(@RequestParam String code, HttpServletResponse response3) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -206,7 +207,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "116cb3fda2149f8eaddf828c4f308179");
-        params.add("redirect_uri", "http://localhost:3000");
+        params.add("redirect_uri", "http://localhost:8080/api/member/kakao/callback");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
@@ -253,8 +254,8 @@ public class MemberController {
         System.out.println("카카오 회원번호: " + kakaoProfile.getId());
         System.out.println("카카오 이메일: " + kakaoProfile.getKakao_account().getEmail());
         System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail() + "_" + kakaoProfile.getId());
-        System.out.println("블로그서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
-        System.out.println("블로그서버 패스워드: " + cosKey);
+        System.out.println("구몽서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
+        System.out.println("구몽서버 패스워드: " + cosKey);
 
         Member kakaoMember = Member.builder()
                 .memberId(String.valueOf(kakaoProfile.getId()))
@@ -284,11 +285,11 @@ public class MemberController {
         requestLogin.setMemberPassword(cosKey);
         memberService.memberLogin(requestLogin);
 
-        Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
-        cookie.setMaxAge(60 * 30);
-        response3.addCookie(cookie);
+        Member member = memberService.findByMemberId(kakaoMember.getMemberId());
 
-        return "자동 회원가입 및 로그인 진행 완료";
+        response3.sendRedirect("http://localhost:3000?id="+member.getId());
+
+        return "kakao signup and login success";
     }
 
 }
