@@ -151,7 +151,7 @@ public class SellerService {
 
         Seller build = seller.toBuilder()
                 .reviewCnt(seller.getReviewCnt() != null ? seller.getReviewCnt() + 1 : 1)
-                .rate(seller.getRate() != null ? (seller.getRate() + review.getRate()) / (seller.getReviewCnt() + 1) : review.getRate())
+                .rate(seller.getRate() != null ? seller.getRate() + review.getRate() : review.getRate())
                 .build();
         sellerRepository.save(build);
     }
