@@ -82,4 +82,19 @@ public class SearchController {
         return new ResponseEntity<>(responseSearchDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = "삭제 최근 검색어", description = "특정 멤버의 모든 최근 검색 기록을 삭제합니다.")
+    @DeleteMapping("/recent/key/{searchId}")
+    public ResponseEntity<Void> deleteRecentSearch(@PathVariable Long searchId) {
+        log.info("searchId = {}", searchId);
+        searchService.deleteSearchBySearchId(searchId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "삭제 최근 검색어", description = "특정 멤버의 모든 최근 검색 기록을 삭제합니다.")
+    @DeleteMapping("/recent/{memberId}")
+    public ResponseEntity<Void> deleteAllRecentSearch(@PathVariable Long memberId) {
+        searchService.deleteAllSearchesByMember(memberId);
+        return ResponseEntity.ok().build();
+    }
+
 }

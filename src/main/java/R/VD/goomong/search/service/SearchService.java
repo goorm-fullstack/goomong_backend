@@ -121,4 +121,12 @@ public class SearchService {
         return new ResponseSearchDTO(memberList, pageInfo);
     }
 
+    public void deleteSearchBySearchId(Long searchId) {
+        searchRepository.deleteById(searchId);
+    }
+
+    @Transactional
+    public void deleteAllSearchesByMember(Long memberId) {
+        searchRepository.deleteAllByMemberId(memberId);
+    }
 }
