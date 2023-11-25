@@ -82,6 +82,24 @@ public class SellerService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    public Page<Seller> allByKeyword(String keyword, Pageable pageable, String region) {
+        Page<Seller> all = sellerRepository.findAllByMemberIdContainingIgnoreCaseOrNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, keyword, pageable);
+        List<Seller> list = new ArrayList<>();
+
+        if (region != null) {
+            for (Seller seller : all) {
+                if (seller.getDelDate() == null && seller.getSaleSido() != null && region.contains(seller.getSaleSido()))
+                    list.add(seller);
+            }
+            return new PageImpl<>(list, pageable, list.size());
+        }
+
+        for (Seller seller : all) {
+            if (seller.getDelDate() == null) list.add(seller);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 회원 정보를 통해 판매자 삭제
     public void deleteSellerByMemberId(String memberId) {
         Seller seller = sellerRepository.findByMemberId(memberId).orElse(null);
@@ -155,4 +173,5 @@ public class SellerService {
                 .build();
         sellerRepository.save(build);
     }
+
 }
