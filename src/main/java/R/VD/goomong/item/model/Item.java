@@ -4,6 +4,7 @@ import R.VD.goomong.ask.model.Ask;
 import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
+import R.VD.goomong.order.model.Order;
 import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -29,6 +30,7 @@ public class Item extends BaseTimeEntity {
     private String title;//제목
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member;//작성자
 
@@ -51,6 +53,9 @@ public class Item extends BaseTimeEntity {
     @OneToMany
     @JoinColumn(name = "item_category_id")
     private List<ItemCategory> itemCategories = new ArrayList<>();//카테고리 목록
+
+    @OneToMany(mappedBy = "orderItem")
+    private List<Order> salseList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
     private List<Review> reviewList = new ArrayList<>();//리뷰 목록

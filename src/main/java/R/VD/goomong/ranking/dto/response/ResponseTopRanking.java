@@ -1,5 +1,6 @@
 package R.VD.goomong.ranking.dto.response;
 
+import R.VD.goomong.member.model.Seller;
 import lombok.*;
 
 @Getter
@@ -16,5 +17,16 @@ public class ResponseTopRanking {
     private Long transaction;
     private Long totalSales;
     private Long reviewCount;
-    private Double totalRating;
+    private Float totalRating;
+
+    public ResponseTopRanking(Seller seller) {
+        this.memberId = seller.getId();
+        this.memberName = seller.getMemberId();
+        this.imagePath = seller.getImagePath();
+        this.saleSido = seller.getSaleSido();
+        this.transaction = seller.getTransactionCnt();
+        this.totalSales = seller.getIncome();
+        this.reviewCount = seller.getReviewCnt();
+        this.totalRating = seller.getRate();
+    }
 }
