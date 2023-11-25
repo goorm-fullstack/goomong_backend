@@ -79,8 +79,7 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "image_member_id")
     private List<Image> profileImages = new ArrayList<>();        //프로필 이미지
 
-    @OneToMany
-    @JoinColumn(name = "item_id")
+    @OneToMany(mappedBy = "member")
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
