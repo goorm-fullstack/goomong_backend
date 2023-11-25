@@ -12,6 +12,7 @@ import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import R.VD.goomong.review.model.Review;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ResponseItemDto {
     private List<ResponseAskDto> askList;
     private Float rate;//평점
     private Status status;
+    private LocalDateTime regDate;
 
     public ResponseItemDto(Item item) {
 
@@ -44,6 +46,7 @@ public class ResponseItemDto {
         this.askList = getAskDto(item.getAskList());
         this.rate = item.getRate();
         this.status = item.getStatus();
+        this.regDate = item.getRegDate();
     }
 
     public List<ResponseItemCategoryDto> getCategoryDto(List<ItemCategory> categories) {
