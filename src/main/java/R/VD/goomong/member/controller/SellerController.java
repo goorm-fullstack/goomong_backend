@@ -147,6 +147,12 @@ public class SellerController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ResponseSellerDto>> allSeller() {
+        List<Seller> sellers = sellerService.notPaging();
+        return ResponseEntity.ok(sellers.size() > 0 ? sellers.stream().map(Seller::toResponseSellerDto).toList() : null);
+    }
+
     // 정렬에 따른 pageable settings
     private Pageable getPageable(Optional<String> orderBy, Optional<String> direction, Pageable pageable) {
         if (orderBy.isPresent() && direction.isPresent()) {

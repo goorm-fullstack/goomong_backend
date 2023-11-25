@@ -82,6 +82,11 @@ public class SellerService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // 페이징 처리 안된 전체 판매자 리스트 가져오기
+    public List<Seller> notPaging() {
+        return sellerRepository.findAll();
+    }
+
     public Page<Seller> allByKeyword(String keyword, Pageable pageable, String region) {
         Page<Seller> all = sellerRepository.findAllByMemberIdContainingIgnoreCaseOrNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, keyword, pageable);
         List<Seller> list = new ArrayList<>();
