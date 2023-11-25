@@ -1,6 +1,5 @@
 package R.VD.goomong.order.service;
 
-import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.Status;
@@ -11,9 +10,7 @@ import R.VD.goomong.member.repository.MemberRepository;
 import R.VD.goomong.member.service.SellerService;
 import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.order.dto.request.RequestPayOrderDto;
-import R.VD.goomong.order.dto.request.RequestSearchDto;
 import R.VD.goomong.order.dto.response.ResponseOrderDto;
-import R.VD.goomong.order.dto.response.ResponsePageOrderDto;
 import R.VD.goomong.order.exception.InvalidOrderType;
 import R.VD.goomong.order.exception.NotExistOrder;
 import R.VD.goomong.order.model.Order;
@@ -22,9 +19,6 @@ import R.VD.goomong.point.model.EventType;
 import R.VD.goomong.point.model.PointEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +43,7 @@ public class OrderService {
         return orderRepository.findAll().stream().map(ResponseOrderDto::new).toList();
     }
 
-    public ResponsePageOrderDto<List<ResponseOrderDto>> findByMemberOrderList(Long memberId, RequestSearchDto searchDto) {
-        int page = searchDto.getPage() - 1;
-        int pageSize = searchDto.getPageSize();
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+    public List<ResponseOrderDto> findByMemberOrderList(Long memberId) {
         Optional<Member> member = memberRepository.findById(memberId);
 
         if (member.isEmpty()) {
@@ -62,19 +53,7 @@ public class OrderService {
         Member targetMember = member.get();
         List<Order> orderList = targetMember.getOrderList();
 
-        // List to Page
-        int end = Math.min((page + pageRequest.getPageSize()), orderList.size());
-        Page<Order> orders = new PageImpl<>(orderList.subList(page, end), pageRequest, orderList.size());
-
-        PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
-                .totalElements(orders.getTotalElements())
-                .totalPage(orders.getTotalPages())
-                .build();
-
-        List<Order> pagingOrderList = orders.getContent();
-        return new ResponsePageOrderDto<>(pagingOrderList.stream().map(ResponseOrderDto::new).toList(), pageInfo);
+        return orderList.stream().map(ResponseOrderDto::new).toList();
     }
 
     public ResponseOrderDto findByOrderId(Long id) {
