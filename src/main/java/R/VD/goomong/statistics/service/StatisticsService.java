@@ -20,10 +20,10 @@ public class StatisticsService {
         Tuple reviewStats = statisticsRepository.getReviewStatistics();
         Tuple orderStats = statisticsRepository.getOrderStatistics();
 
-        Double averageRating = reviewStats.size() != 0 ? reviewStats.get(0, Double.class) : null;
-        Long reviewCount = reviewStats.size() != 0 ? ((Number) reviewStats.get(1, Integer.class)).longValue() : null;
-        Long orderCount = orderStats.size() != 0 ? ((Number) orderStats.get(0, Integer.class)).longValue() : null;
-        Long orderSum = orderStats.size() != 0 ? ((Number) orderStats.get(1, Integer.class)).longValue() : null;
+        Double averageRating = reviewStats.size() != 0 && reviewStats.get(0, Double.class) != null ? reviewStats.get(0, Double.class) : null;
+        Long reviewCount = reviewStats.size() != 0 && reviewStats.get(1, Long.class) != null ? ((Number) reviewStats.get(1, Long.class)).longValue() : null;
+        Long orderCount = orderStats.size() != 0 && orderStats.get(0, Long.class) != null ? ((Number) orderStats.get(0, Long.class)).longValue() : null;
+        Long orderSum = orderStats.size() != 0 && orderStats.get(1, Long.class) != null ? ((Number) orderStats.get(1, Long.class)).longValue() : null;
 
         Double customerSatisfaction = averageRating != null ? calculateCustomerSatisfaction(averageRating) : null;
 

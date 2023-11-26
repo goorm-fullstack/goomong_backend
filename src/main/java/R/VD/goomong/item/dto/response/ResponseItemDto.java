@@ -7,7 +7,6 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.ItemCategory;
 import R.VD.goomong.item.model.ItemOption;
 import R.VD.goomong.item.model.Status;
-import R.VD.goomong.member.dto.response.ResponseMember;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import R.VD.goomong.review.model.Review;
 import lombok.Data;
@@ -20,7 +19,13 @@ import java.util.List;
 public class ResponseItemDto {
     private Long id;//DB 인덱스
     private String title;//제목
-    private ResponseMember member;//작성자
+    //    private ResponseMember member;//작성자
+    private String memberId;
+    private String memberName;
+    private String memberEmail;
+    private String saleSido;
+    private String memberAddress;
+    private List<Image> profileImages;
     private int price;//가격
     private List<ItemOption> itemOptions;//아이템 옵션
     private List<Image> thumbNailList;//썸네일 리스트
@@ -36,7 +41,13 @@ public class ResponseItemDto {
 
         this.id = item.getId();
         this.title = item.getTitle();
-        this.member = new ResponseMember(item.getMember());
+//        this.member = new ResponseMember(item.getMember());
+        this.memberId = item.getMember().getMemberId();
+        this.memberName = item.getMember().getMemberName();
+        this.memberEmail = item.getMember().getMemberEmail();
+        this.saleSido = item.getMember().getSaleSido();
+        this.memberAddress = item.getMember().getSaleSimpleAddress();
+        this.profileImages = item.getMember().getProfileImages();
         this.price = item.getPrice();
         this.itemOptions = item.getItemOptions();
         this.thumbNailList = item.getThumbNailList();
