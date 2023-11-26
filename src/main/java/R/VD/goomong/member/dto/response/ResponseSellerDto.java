@@ -53,4 +53,7 @@ public class ResponseSellerDto {
     private LocalDateTime regDate; // 생성 날짜
 
     private PageInfo pageInfo; // 페이징 정보
+
+    @Schema(description = "별명", example = "별명")
+    private String name;
 }

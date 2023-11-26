@@ -2,13 +2,18 @@ package R.VD.goomong.member.service;
 
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.image.service.ImageService;
+import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.review.model.Review;
 import R.VD.goomong.support.repository.EmailMemberSaveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -129,6 +135,13 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    //별명과 이메일로 회원 찾기
+    public Member findByMemberNameAndMemberEmail(String memberName, String email) {
+        Optional<Member> member = memberRepository.findByMemberNameAndMemberEmail(memberName, email);
+
+        return member.orElse(null);
+    }
+
 
     //UPDATE
     //memberId로 회원 정보 변경
@@ -196,7 +209,6 @@ public class MemberService {
         }
     }
 
-
     //index로 회원 정보 변경
     public Member updateMemberById(Long id, RequestUpdateDto requestUpdate) {
         Optional<Member> optionalMember = memberRepository.findById(id);
@@ -234,6 +246,25 @@ public class MemberService {
                 sellerService.saveSellerFromMember(member);
                 return memberRepository.save(member);
             } else throw new NotFoundMember("현재 비밀번호가 틀렸습니다.");
+
+        } else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+    }
+
+    //memberId로 비밀번호 찾기
+    public Member findPasswordByMemberId(RequestFindPassword requestFindPassword) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestFindPassword.getMemberId());
+
+        if (byMemberId.isPresent()) {
+            Member member = byMemberId.get();
+
+            String rawPassword = requestFindPassword.getNewPassword();
+            String newPassword = encoder.encode(rawPassword);
+
+            member.changePassword(requestFindPassword.getMemberId(), newPassword);
+            sellerService.saveSellerFromMember(member);
+
+            return memberRepository.save(member);
 
         } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
@@ -351,6 +382,31 @@ public class MemberService {
             memberRepository.save(member); // 초기화된 실패 횟수를 저장
         }
         return member;
+    }
+
+    // 회원 아이디로 상품 리스트 가져오기 - @배진환
+    public Page<Item> getMemberItem(String memberId, Pageable pageable){
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + memberId));
+
+        List<Item> itemList = member.getItemList();
+        List<Item> list = new ArrayList<>();
+        for (Item item : itemList) {
+            if(item.getDelDate() == null) list.add(item);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    // 회원 아이디로 리뷰 리스트 가져오기 - @배진환
+    public Page<Review> getMemberReview(String memberId, Pageable pageable){
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new NotFoundMember("해당 아이디의 회원을 찾을 수 없습니다. memberId = " + memberId));
+
+        List<Review> reviewList = new ArrayList<>();
+        for (Item item : member.getItemList()) {
+            for (Review review : item.getReviewList()) {
+                if(review.getDelDate() == null) reviewList.add(review);
+            }
+        }
+        return new PageImpl<>(reviewList, pageable, reviewList.size());
     }
 }
 
