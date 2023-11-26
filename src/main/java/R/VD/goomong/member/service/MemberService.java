@@ -135,6 +135,13 @@ public class MemberService {
         return member.orElse(null);
     }
 
+    //별명과 이메일로 회원 찾기
+    public Member findByMemberNameAndMemberEmail(String memberName, String email) {
+        Optional<Member> member = memberRepository.findByMemberNameAndMemberEmail(memberName, email);
+
+        return member.orElse(null);
+    }
+
 
     //UPDATE
     //memberId로 회원 정보 변경
@@ -202,7 +209,6 @@ public class MemberService {
         }
     }
 
-
     //index로 회원 정보 변경
     public Member updateMemberById(Long id, RequestUpdateDto requestUpdate) {
         Optional<Member> optionalMember = memberRepository.findById(id);
@@ -240,6 +246,25 @@ public class MemberService {
                 sellerService.saveSellerFromMember(member);
                 return memberRepository.save(member);
             } else throw new NotFoundMember("현재 비밀번호가 틀렸습니다.");
+
+        } else
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+    }
+
+    //memberId로 비밀번호 찾기
+    public Member findPasswordByMemberId(RequestFindPassword requestFindPassword) {
+        Optional<Member> byMemberId = memberRepository.findByMemberId(requestFindPassword.getMemberId());
+
+        if (byMemberId.isPresent()) {
+            Member member = byMemberId.get();
+
+            String rawPassword = requestFindPassword.getNewPassword();
+            String newPassword = encoder.encode(rawPassword);
+
+            member.changePassword(requestFindPassword.getMemberId(), newPassword);
+            sellerService.saveSellerFromMember(member);
+
+            return memberRepository.save(member);
 
         } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
