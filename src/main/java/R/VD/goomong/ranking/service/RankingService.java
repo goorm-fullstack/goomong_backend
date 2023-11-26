@@ -1,9 +1,13 @@
 package R.VD.goomong.ranking.service;
 
 import R.VD.goomong.member.model.Member;
+import R.VD.goomong.member.model.Seller;
+import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.member.repository.SellerRepository;
 import R.VD.goomong.ranking.dto.response.ResponseMonthTopRanking;
 import R.VD.goomong.ranking.dto.response.ResponseTopRanking;
 import R.VD.goomong.ranking.exception.RankingIllegalArgumentException;
+import R.VD.goomong.ranking.exception.RankingNotFoundException;
 import R.VD.goomong.ranking.model.Ranking;
 import R.VD.goomong.ranking.model.RankingType;
 import R.VD.goomong.ranking.repository.RankingRepository;
@@ -24,12 +28,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static R.VD.goomong.item.model.QItem.item;
-import static R.VD.goomong.item.model.QItemCategory.itemCategory;
-import static R.VD.goomong.member.model.QMember.member;
-import static R.VD.goomong.order.model.QOrder.order;
-import static R.VD.goomong.review.model.QReview.review;
-
 @Slf4j
 @Service
 @EnableScheduling
@@ -38,30 +36,35 @@ public class RankingService {
 
     private final RankingRepository rankingRepository;
     private final RankingSupportRepository rankingSupportRepository;
+    private final MemberRepository memberRepository;
+    private final SellerRepository sellerRepository;
 
     public List<ResponseMonthTopRanking> getMonthRanking() {
         List<Ranking> topRankings = rankingRepository.findAll();
 
         // RankingType 순서대로 정렬하기 위한 순서 목록
-        List<RankingType> order = Arrays.asList(RankingType.REVIEW, RankingType.ORDER, RankingType.SALES);
+        List<RankingType> order = Arrays.asList(RankingType.ORDER, RankingType.REVIEW, RankingType.SALES);
 
-        return topRankings.stream()
+        List<ResponseMonthTopRanking> list = topRankings.stream()
                 .sorted(Comparator.comparingInt(r -> order.indexOf(r.getRankingType())))
                 .map(ResponseMonthTopRanking::new)
                 .toList();
+
+        list.forEach(ranking -> {
+            Long memberId = ranking.getMemberId();
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
+            Seller seller = sellerRepository.findByMemberId(member.getMemberId())
+                    .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
+            ranking.setImagePath(seller.getImagePath());
+        });
+
+        return list;
     }
 
-    public List<ResponseTopRanking> getSellerRankings(String categoryTitle, String sortBy) {
-        return rankingSupportRepository.calculateSellerRanking(categoryTitle, sortBy).stream()
-                .map(tuple -> ResponseTopRanking.builder()
-                        .memberId(tuple.get(member.id))
-                        .memberName(tuple.get(member.memberName))
-                        .categoryTitle(tuple.get(itemCategory.title))
-                        .itemCount(tuple.get(item.countDistinct()))
-                        .totalSales(tuple.get(order.price.sum()).longValue())
-                        .reviewCount(tuple.get(review.id.count()))
-                        .build())
-                .toList();
+    public List<ResponseTopRanking> getSellerRankings() {
+        return rankingSupportRepository.calculateSellerRanking().stream()
+                .map(ResponseTopRanking::new).toList();
     }
 
     @Transactional
@@ -105,7 +108,7 @@ public class RankingService {
                 List<Tuple> salesRankings = rankingSupportRepository.calculateTop5SellersBySalesAmount(start, end);
                 salesRankings.forEach(tuple -> rankings.add(createRanking(tuple, RankingType.SALES)));
                 break;
-                
+
             default:
                 throw new RankingIllegalArgumentException("알 수 없는 타입: " + type);
         }

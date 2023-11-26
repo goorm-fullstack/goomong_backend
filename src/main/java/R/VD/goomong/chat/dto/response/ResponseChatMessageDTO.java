@@ -20,6 +20,7 @@ public class ResponseChatMessageDTO {
     private List<Image> imageList;
     private String senderName;
     private LocalDateTime regDate;
+    private Long memberId;
 
     public ResponseChatMessageDTO(ChatMessage chatMessage) {
         this.roomId = chatMessage.getChatRoom().getRoomId();
@@ -27,5 +28,6 @@ public class ResponseChatMessageDTO {
         this.imageList = chatMessage.getImageList();
         this.senderName = chatMessage.getMember().getMemberName();
         this.regDate = chatMessage.getRegDate();
+        this.memberId = chatMessage.getMember().getId();
     }
 }

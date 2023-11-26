@@ -1,8 +1,7 @@
 package R.VD.goomong.ranking.repository;
 
-import R.VD.goomong.order.model.Status;
+import R.VD.goomong.member.model.Seller;
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,8 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
-import static R.VD.goomong.item.model.QItemCategory.itemCategory;
-import static R.VD.goomong.member.model.QMember.member;
+import static R.VD.goomong.member.model.QSeller.seller;
 import static R.VD.goomong.order.model.QOrder.order;
 import static R.VD.goomong.review.model.QReview.review;
 
@@ -22,38 +20,14 @@ public class RankingSupportRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Tuple> calculateSellerRanking(String categoryTitle, String sortBy) {
-
-        JPAQuery<Tuple> query = jpaQueryFactory
-                .select(member, itemCategory.title, item.countDistinct(), order.price.sum(), review.id.count())
-                .from(order)
-                .join(order.member, member)
-                .join(order.orderItem, item)
-                .leftJoin(item.reviewList, review)
-                .join(item.itemCategories, itemCategory)
-                .where(order.status.eq(Status.COMPLETE));
-
-        if (categoryTitle != null && !categoryTitle.trim().isEmpty()) {
-            query.where(itemCategory.title.eq(categoryTitle));
-        }
-
-        switch (sortBy) {
-            case "totalSales": // 총 누적 금액 순으로 정렬
-                query.orderBy(order.price.sum().desc());
-                break;
-            case "reviewCount": // 총 리뷰 순으로 정렬
-                query.orderBy(review.id.count().desc());
-                break;
-            case "reviewAvg": // 리뷰 평점 순으로 정렬
-                query.orderBy(review.rate.avg().desc());
-                break;
-            case "transaction" : // 총 거래 순으로 정렬
-            default:
-                query.orderBy(item.countDistinct().desc());
-        }
-
-        return query.limit(10).fetch();
+    public List<Seller> calculateSellerRanking() {
+        return jpaQueryFactory
+                .selectFrom(seller)
+                .orderBy(seller.transactionCnt.desc(), seller.income.desc(), seller.reviewCnt.desc(), seller.rate.desc())
+                .limit(5)
+                .fetch();
     }
+
 
     // 리뷰 순
     public List<Tuple> calculateTop5SellersByReviewCount(LocalDateTime start, LocalDateTime end) {
@@ -74,8 +48,7 @@ public class RankingSupportRepository {
                 .select(item.member, item.count())
                 .from(order)
                 .join(order.orderItem, item)
-                .where(order.status.eq(Status.COMPLETE)
-                        .and(order.regDate.between(start, end)))
+                .where(order.regDate.between(start, end))
                 .groupBy(item.member)
                 .orderBy(item.count().desc())
                 .limit(5)
@@ -85,11 +58,11 @@ public class RankingSupportRepository {
     // 누적 거래 순
     public List<Tuple> calculateTop5SellersBySalesAmount(LocalDateTime start, LocalDateTime end) {
         return jpaQueryFactory
-                .select(order.member, order.price.sum())
+                .select(item.member, order.price.sum())
                 .from(order)
-                .where(order.status.eq(Status.COMPLETE)
-                        .and(order.regDate.between(start, end)))
-                .groupBy(order.member)
+                .join(order.orderItem, item)
+                .where(order.regDate.between(start, end))
+                .groupBy(item.member)
                 .orderBy(order.price.sum().desc())
                 .limit(5)
                 .fetch();

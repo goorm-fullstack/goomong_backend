@@ -80,6 +80,7 @@ public class KakaoPayService {
                     "https://kapi.kakao.com/v1/payment/approve",
                     requestEntity,
                     KakaoPayApproveResponse.class);
+            log.info("orderDto = {}", orderDto);
             orderService.createNewOrder(orderDto);//주문 정보 저장
             status.setComplete();//세션 클리어
             return kakaoPayApproveResponse;

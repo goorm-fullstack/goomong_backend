@@ -7,6 +7,7 @@ import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.member.service.SellerService;
 import R.VD.goomong.review.dto.request.RequestReviewDto;
 import R.VD.goomong.review.dto.response.ResponseReviewDto;
 import R.VD.goomong.review.exception.AlreadyDeletedReviewException;
@@ -33,6 +34,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final ImageService imageService;
+    private final SellerService sellerService;
 
     // 리뷰 저장
     public void save(RequestReviewDto requestReviewDto, MultipartFile[] multipartFiles) {
@@ -56,6 +58,8 @@ public class ReviewService {
                 .build();
         reviewRepository.save(build);
         target.calculateRate();
+        target.setReviewCnt(target);
+        sellerService.updateReviewCntAndRateByReview(build);
     }
 
     //리뷰 수정

@@ -12,9 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "orders")
 @NoArgsConstructor
@@ -26,12 +23,13 @@ public class Order extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "item_id")
     @JsonIgnore
-    private List<Item> orderItem = new ArrayList<>();
+    private Item orderItem;
 
     @ManyToOne
+    @JsonIgnore
     private Member member;
 
     private int price;
@@ -50,7 +48,7 @@ public class Order extends BaseTimeEntity {
         this.member = member;
     }
 
-    public void setOrderItem(List<Item> itemList) {
+    public void setOrderItem(Item itemList) {
         this.orderItem = itemList;
     }
 
@@ -61,16 +59,6 @@ public class Order extends BaseTimeEntity {
 
     public void jobsFinish() {
         this.status = Status.COMPLETE;
-    }
-
-    // 가격 계산
-    public void calculatePrice() {
-        int result = 0;
-        for (Item item : orderItem) {
-            result += item.getPrice();
-        }
-        
-        price = result;
     }
 
     // 환불 신청

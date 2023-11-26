@@ -31,6 +31,7 @@ public class MemberService {
     private final BCryptPasswordEncoder encoder;
     private final ImageService imageService;
     private final EmailMemberSaveRepository emailMemberSaveRepository;
+    private final SellerService sellerService;
 
     //CREATE
     //아이디 중복 체크
@@ -115,7 +116,7 @@ public class MemberService {
     }
 
     //이메일로 회원 찾기
-    public Member findByMemberEmail(String memberEmail){
+    public Member findByMemberEmail(String memberEmail) {
         Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
 
         return member.orElse(null);
@@ -131,34 +132,86 @@ public class MemberService {
 
     //UPDATE
     //memberId로 회원 정보 변경
-    public Member updateMemberByMemberId(String memberId, RequestUpdateDto requestUpdate, MultipartFile[] multipartFiles) {
-        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+    public Member updateMemberByMemberId(RequestUpdateDto requestUpdate) {
+        Optional<Member> optionalMember = memberRepository.findByMemberId(requestUpdate.getMemberId());
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            if(multipartFiles != null){
-                List<Image> images = imageService.saveImage(multipartFiles);
-                member.setProfileImages(images);
+
+            if (requestUpdate.getMemberPassword() != null) {
+                String rawPassword = requestUpdate.getMemberPassword();
+                String encodePassword = encoder.encode(rawPassword);
+                member.setMemberPassword(encodePassword);
             }
-            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+
+            if (requestUpdate.getMemberName() != null) {
+                member.setMemberName(requestUpdate.getMemberName());
+            }
+
+            if (requestUpdate.getMemberEmail() != null) {
+                member.setMemberEmail(requestUpdate.getMemberEmail());
+            }
+
+            if (requestUpdate.getBuyZipCode() != null) {
+                member.setBuyZipCode(requestUpdate.getBuyZipCode());
+            }
+
+            if (requestUpdate.getBuySido() != null) {
+                member.setBuySido(requestUpdate.getBuySido());
+            }
+
+            if (requestUpdate.getBuySimpleAddress() != null) {
+                member.setBuySimpleAddress(requestUpdate.getBuySimpleAddress());
+            }
+
+            if (requestUpdate.getBuyDetailAddress() != null) {
+                member.setBuyDetailAddress(requestUpdate.getBuyDetailAddress());
+            }
+
+            if (requestUpdate.getSaleZipCode() != null) {
+                member.setSaleZipCode(requestUpdate.getSaleZipCode());
+            }
+
+            if (requestUpdate.getSaleSido() != null) {
+                member.setSaleSido(requestUpdate.getSaleSido());
+            }
+
+            if (requestUpdate.getSaleSimpleAddress() != null) {
+                member.setSaleSimpleAddress(requestUpdate.getSaleSimpleAddress());
+            }
+
+            if (requestUpdate.getSaleDetailAddress() != null) {
+                member.setSaleDetailAddress(requestUpdate.getSaleDetailAddress());
+            }
+
+            if (requestUpdate.getSaleInfo() != null) {
+                member.setSaleInfo(requestUpdate.getSaleInfo());
+            }
+
+            sellerService.saveSellerFromMember(member);
+
             return memberRepository.save(member);
         } else {
-            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + memberId);
+            throw new NotFoundMember("회원 아이디를 찾을 수 없습니다. : " + requestUpdate.getMemberId());
         }
     }
 
+
     //index로 회원 정보 변경
-    public Member updateMemberById(Long id, RequestUpdateDto requestUpdate, MultipartFile[] multipartFiles) {
+    public Member updateMemberById(Long id, RequestUpdateDto requestUpdate) {
         Optional<Member> optionalMember = memberRepository.findById(id);
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            if (multipartFiles != null) {
-                List<Image> images = imageService.saveImage(multipartFiles);
-                member.setProfileImages(images);
-            }
+//            if (multipartFiles != null) {
+//                List<Image> images = imageService.saveImage(multipartFiles);
+//                member.setProfileImages(images);
+//            }
 
-            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+            member.memberUpdate(requestUpdate.getMemberId(), requestUpdate.getMemberPassword(), requestUpdate.getMemberName(), requestUpdate.getMemberEmail(), requestUpdate.getBuyZipCode(), requestUpdate.getBuySido(), requestUpdate.getBuySimpleAddress(), requestUpdate.getBuyDetailAddress(), requestUpdate.getSaleZipCode(), requestUpdate.getSaleSido(), requestUpdate.getSaleSimpleAddress(), requestUpdate.getSaleDetailAddress(), requestUpdate.getSaleInfo());
+
+            sellerService.saveSellerFromMember(member);
+
             return memberRepository.save(member);
 
         } else {
@@ -167,17 +220,22 @@ public class MemberService {
     }
 
     //memberId로 비밀번호 변경
-    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword){
+    public Member changePasswordByMemberId(RequestChangePassword requestChangePassword) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangePassword.getMemberId());
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
-            member.changePassword(requestChangePassword.getMemberId(), requestChangePassword.getMemberPassword());
 
-            return memberRepository.save(member);
-        }
+            if (encoder.matches(requestChangePassword.getMemberPassword(), member.getMemberPassword())) {
+                String rawPassword2 = requestChangePassword.getNewPassword();
+                String newPassword = encoder.encode(rawPassword2);
 
-        else
+                member.changePassword(requestChangePassword.getMemberId(), newPassword);
+                sellerService.saveSellerFromMember(member);
+                return memberRepository.save(member);
+            } else throw new NotFoundMember("현재 비밀번호가 틀렸습니다.");
+
+        } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
 
@@ -185,13 +243,13 @@ public class MemberService {
     public Member changeEmailByMemberId(RequestChangeEmail requestChangeEmail) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(requestChangeEmail.getMemberId());
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
             member.changeEmail(requestChangeEmail.getMemberId(), requestChangeEmail.getMemberEmail());
+            sellerService.saveSellerFromMember(member);
 
             return memberRepository.save(member);
-        }
-        else
+        } else
             throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
     }
 
@@ -199,18 +257,17 @@ public class MemberService {
     public Member changeProfileImageByMemberId(String memberId, MultipartFile[] multipartFiles) {
         Optional<Member> byMemberId = memberRepository.findByMemberId(memberId);
 
-        if(byMemberId.isPresent()){
+        if (byMemberId.isPresent()) {
             Member member = byMemberId.get();
             List<Image> imageList = null;
             if (multipartFiles.length != 0)
                 imageList = imageService.saveImage(multipartFiles);
 
             member.changeProfileImage(member.getMemberId(), imageList);
+            sellerService.saveSellerFromMember(member);
 
             return memberRepository.save(member);
-        }
-
-        else throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
+        } else throw new NotFoundMember("회원 아이디를 찾을 수 없습니다.");
 
     }
 
@@ -240,6 +297,7 @@ public class MemberService {
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
             member1.setDelDate(softDeleteTime);
+            sellerService.deleteSellerByMemberId(member1.getMemberId());
 
             return memberRepository.save(member1);
         } else {
@@ -261,6 +319,7 @@ public class MemberService {
             LocalDateTime softDeleteTime = LocalDateTime.parse(now, formatter);
 
             member1.setDelDate(softDeleteTime);
+            sellerService.deleteSellerByMemberId(member1.getMemberId());
 
             return memberRepository.save(member1);
         } else {
@@ -278,8 +337,6 @@ public class MemberService {
         }
 
         Member member = byMemberId.get();
-        System.out.println(member.getMemberPassword());
-        System.out.println(requestLogin.getMemberPassword());
         if (!encoder.matches(requestLogin.getMemberPassword(), member.getMemberPassword())) { // 비밀번호 틀림
             member.incrementLoginFailed(); // 로그인 실패 횟수 증가
             memberRepository.save(member); // 실패 횟수를 저장

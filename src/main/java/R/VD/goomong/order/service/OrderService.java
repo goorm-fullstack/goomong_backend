@@ -1,6 +1,5 @@
 package R.VD.goomong.order.service;
 
-import R.VD.goomong.global.model.PageInfo;
 import R.VD.goomong.item.exception.NotFoundItem;
 import R.VD.goomong.item.model.Item;
 import R.VD.goomong.item.model.Status;
@@ -8,11 +7,10 @@ import R.VD.goomong.item.repository.ItemRepository;
 import R.VD.goomong.member.exception.NotFoundMember;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
+import R.VD.goomong.member.service.SellerService;
 import R.VD.goomong.order.dto.request.RequestOrderDto;
 import R.VD.goomong.order.dto.request.RequestPayOrderDto;
-import R.VD.goomong.order.dto.request.RequestSearchDto;
 import R.VD.goomong.order.dto.response.ResponseOrderDto;
-import R.VD.goomong.order.dto.response.ResponsePageOrderDto;
 import R.VD.goomong.order.exception.InvalidOrderType;
 import R.VD.goomong.order.exception.NotExistOrder;
 import R.VD.goomong.order.model.Order;
@@ -21,14 +19,14 @@ import R.VD.goomong.point.model.EventType;
 import R.VD.goomong.point.model.PointEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -39,15 +37,13 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final SellerService sellerService;
 
     public List<ResponseOrderDto> getAllOrderList() {
         return orderRepository.findAll().stream().map(ResponseOrderDto::new).toList();
     }
 
-    public ResponsePageOrderDto<List<ResponseOrderDto>> findByMemberOrderList(Long memberId, RequestSearchDto searchDto) {
-        int page = searchDto.getPage() - 1;
-        int pageSize = searchDto.getPageSize();
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+    public List<ResponseOrderDto> findByMemberOrderList(Long memberId) {
         Optional<Member> member = memberRepository.findById(memberId);
 
         if (member.isEmpty()) {
@@ -57,19 +53,7 @@ public class OrderService {
         Member targetMember = member.get();
         List<Order> orderList = targetMember.getOrderList();
 
-        // List to Page
-        int end = Math.min((page + pageRequest.getPageSize()), orderList.size());
-        Page<Order> orders = new PageImpl<>(orderList.subList(page, end), pageRequest, orderList.size());
-
-        PageInfo pageInfo = PageInfo.builder()
-                .page(page)
-                .size(pageSize)
-                .totalElements(orders.getTotalElements())
-                .totalPage(orders.getTotalPages())
-                .build();
-
-        List<Order> pagingOrderList = orders.getContent();
-        return new ResponsePageOrderDto<>(pagingOrderList.stream().map(ResponseOrderDto::new).toList(), pageInfo);
+        return orderList.stream().map(ResponseOrderDto::new).toList();
     }
 
     public ResponseOrderDto findByOrderId(Long id) {
@@ -89,24 +73,26 @@ public class OrderService {
         Member member = customer.get();
         order.setMember(member);
 
-        List<Item> itemList = getItems(orderDto);
+        Item items = getItems(orderDto);
+        items.incrementSalesCouning();
 
-        order.setOrderItem(itemList);
+        order.setOrderItem(items);
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+        sellerService.updateIncomeByOrder(save);
 
         // 포인트 이벤트 리스너
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(member,
                     save.getPoint(),
-                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderItem().getTitle(),
                     save.getOrderNumber(),
                     EventType.POINT_SPENT)); // 포인트 사용
         }
 
         eventPublisher.publishEvent(new PointEvent(member,
                 save.getPrice(),
-                save.getOrderItem().get(0).getTitle(),
+                save.getOrderItem().getTitle(),
                 save.getOrderNumber(),
                 EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
@@ -123,29 +109,29 @@ public class OrderService {
         order.setMember(member);
 
         //주문할 아이템 등록
-        List<Item> itemList = new ArrayList<>();
-        for (Long itemId : orderDto.getOrderItem()) {
-            Optional<Item> item = itemRepository.findById(itemId);
-            item.ifPresent(itemList::add);
-        }
-        order.setOrderItem(itemList);
+        Long orderItem = orderDto.getOrderItem();
+        Item item = itemRepository.findById(orderItem)
+                .orElseThrow(() -> new NotFoundItem("아이템 id " + orderItem + " 는 찾을 수 없습니다."));
+        item.incrementSalesCouning();
 
-        order.calculatePrice();
+        order.setOrderItem(item);
+
         Order save = orderRepository.save(order);
         member.getOrderList().add(save);
+        sellerService.updateIncomeByOrder(save);
 
         // 포인트 이벤트 리스너
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(member,
                     save.getPoint(),
-                    save.getOrderItem().get(0).getTitle(),
+                    save.getOrderItem().getTitle(),
                     save.getOrderNumber(),
                     EventType.POINT_SPENT)); // 포인트 사용
         }
 
         eventPublisher.publishEvent(new PointEvent(member,
                 save.getPrice(),
-                save.getOrderItem().get(0).getTitle(),
+                save.getOrderItem().getTitle(),
                 save.getOrderNumber(),
                 EventType.PAYMENT_COMPLETED)); // 포인트 적립
     }
@@ -173,39 +159,38 @@ public class OrderService {
         Order order = findOrder(id);
         order.refundComplete();
 
+        order.getOrderItem().decremnetSalesCounting();
+
         // 포인트 이벤트 리스너
         eventPublisher.publishEvent(new PointEvent(order.getMember(),
                 order.getPrice(),
-                order.getOrderItem().get(0).getTitle(),
+                order.getOrderItem().getTitle(),
                 order.getOrderNumber(),
                 EventType.REFUND));
         if (order.getPoint() != 0) {
             eventPublisher.publishEvent(new PointEvent(order.getMember(),
                     order.getPoint(),
-                    order.getOrderItem().get(0).getTitle(),
+                    order.getOrderItem().getTitle(),
                     order.getOrderNumber(),
                     EventType.POINT_REDEMPTION_CANCELLATION));
         }
+        sellerService.minusIncomeByOrder(order);
     }
 
     // 주문한 아이템을 찾아서 주문에 반영
-    private List<Item> getItems(RequestOrderDto orderDto) {
+    private Item getItems(RequestOrderDto orderDto) {
         //주문할 아이템 등록
         //만약 대상 아이템이 판매 타입인 경우 예외 발생
-        List<Item> itemList = new ArrayList<>();
-        for (Long itemId : orderDto.getOrderItem()) {
-            Optional<Item> item = itemRepository.findById(itemId);
-            if (item.isEmpty())
-                throw new NotFoundItem();
+        Optional<Item> item = itemRepository.findById(orderDto.getOrderItem());
+        if (item.isEmpty())
+            throw new NotFoundItem();
 
-            Item findItem = item.get();
+        Item findItem = item.get();
 
-            if (findItem.getStatus().equals(Status.SALE))
-                throw new InvalidOrderType();
+        if (findItem.getStatus().equals(Status.SALE))
+            throw new InvalidOrderType();
 
-            itemList.add(findItem);
-        }
-        return itemList;
+        return findItem;
     }
 
     private Order findOrder(Long id) {

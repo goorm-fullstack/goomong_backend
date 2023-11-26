@@ -75,6 +75,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private LocalDateTime delDate; // 삭제 날짜
 
+    @Column
+    private int commentCnt;
+
     public ResponsePostDto toResponsePostDto() {
 
         List<ResponseCommentDto> comments = new ArrayList<>();
@@ -89,10 +92,12 @@ public class Post extends BaseTimeEntity {
             if (report.getDelDate() == null) reports.add(report.getId());
         }
 
+        this.commentCnt = commentList.size();
+
         return ResponsePostDto.builder()
                 .id(id)
                 .memberId(member.getMemberId())
-                .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSimpleAddress() : null)
+                .memberAddress(member.getSaleSimpleAddress() != null ? member.getSaleSido() : member.getBuySimpleAddress() != null ? member.getBuySido() : null)
                 .memberImageList(member.getProfileImages() != null ? member.getProfileImages() : null)
                 .postCategory(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getCategoryName() : null)
                 .postCategoryId(postCategory == null ? null : postCategory.getDelDate() == null ? postCategory.getId() : null)

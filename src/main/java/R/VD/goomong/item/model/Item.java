@@ -5,6 +5,7 @@ import R.VD.goomong.global.model.BaseTimeEntity;
 import R.VD.goomong.image.model.Image;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.review.model.Review;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +25,12 @@ public class Item extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//DB 인덱스
+
     private String title;//제목
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;//작성자
 
     private int price;//가격
@@ -55,10 +59,22 @@ public class Item extends BaseTimeEntity {
     @OneToMany(mappedBy = "item")
     private List<Ask> askList = new ArrayList<>();
 
+
     @Builder.Default
     private Float rate = 0F;//평점
 
+    @Builder.Default
+    private Long salesCount = 0L;
+
+    @Column
+    @Builder.Default
+    private int reviewCnt = 0; // 리뷰 갯수 순으로 정렬을 위한 필드 추가 - @배진환
+
     private ZonedDateTime delDate;
+
+    public void setReviewCnt(Item item) {
+        this.reviewCnt = item.getReviewList().size();
+    }
 
     public void setMember(Member member) {
         this.member = member;
@@ -99,5 +115,14 @@ public class Item extends BaseTimeEntity {
         }
 
         rate = (result / reviewList.size());
+    }
+
+    public void incrementSalesCouning() {
+        this.salesCount++;
+    }
+
+    public void decremnetSalesCounting() {
+        if (this.salesCount > 0)
+            this.salesCount--;
     }
 }

@@ -1,6 +1,5 @@
 package R.VD.goomong.statistics.repository;
 
-import R.VD.goomong.order.model.Status;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,8 @@ public class StatisticsRepository {
     @Transactional(readOnly = true)
     public Tuple getOrderStatistics() {
         return jpaQueryFactory
-                .select(order.id.countDistinct(), order.price.sum())
+                .select(order.id.count(), order.price.sum())
                 .from(order)
-                .where(order.status.eq(Status.COMPLETE))
                 .fetchOne();
     }
 }

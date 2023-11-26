@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class Search extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long searchId;
 
     @ManyToOne(fetch = FetchType.LAZY)

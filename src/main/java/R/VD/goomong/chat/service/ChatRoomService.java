@@ -27,6 +27,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ChatRoomService {
 
@@ -59,6 +60,15 @@ public class ChatRoomService {
         return responseList;
     }
 
+    public ResponseChatRoomDTO findById(Long id) {
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
+        if(optionalChatRoom.isEmpty())
+            throw new ChatNotFoundException("해당하는 방을 찾을 수 없습니다.");
+
+        ChatRoom chatRoom = optionalChatRoom.get();
+        return new ResponseChatRoomDTO(chatRoom, chatRoom.getItem(), "주문 대화방");
+    }
+
     @Transactional
     public ResponseChatRoomDTO createItemChatRoom(RequestItemChatRoomDTO chatRoomDTO) {
         Long memberId = chatRoomDTO.getMemberId();
@@ -70,9 +80,20 @@ public class ChatRoomService {
                 .orElseThrow(() -> new ChatNotFoundException("상품 " + itemId + "는 찾을 수 없습니다."));
         Member seller = item.getMember();
 
+        List<ChatRoom> chatRoomList = chatRoomRepository.findAllByItem(item);
+
+        for (ChatRoom chatRoom : chatRoomList) {
+            for (ChatRoomMember member : chatRoom.getMembers()) {
+                if (Objects.equals(member.getMember().getId(), buyer.getId())) {
+                    return new ResponseChatRoomDTO(chatRoom, item, seller.getMemberName());
+                }
+            }
+        }
+
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByItemAndMembers_Member(item, buyer);
-        if (existingChatRoom.isPresent())
+        if (existingChatRoom.isPresent()) {
             return new ResponseChatRoomDTO(existingChatRoom.get(), item, seller.getMemberName());
+        }
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .build();

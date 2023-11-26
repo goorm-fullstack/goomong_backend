@@ -25,11 +25,15 @@ public class RequestMember {
 
     private Long buyZipCode;
 
+    private String buySido;
+
     private String buySimpleAddress;
 
     private String buyDetailAddress;
 
     private Long saleZipCode;
+
+    private String saleSido;
 
     private String saleSimpleAddress;
 
@@ -46,16 +50,18 @@ public class RequestMember {
     private List<Image> profileImage;
 
     @Builder(toBuilder = true)
-    public RequestMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, String saleInfo, List<Image> profileImage) { // 'Image' 객체를 'List<Image>'로 수정
+    public RequestMember(String memberId, String memberPassword, String memberName, String memberEmail, LocalDateTime memberSignupTime, Long buyZipCode, String buySido, String buySimpleAddress, String buyDetailAddress, Long saleZipCode, String saleSido, String saleSimpleAddress, String saleDetailAddress, String memberRole, Long memberLoginFailed, Boolean isKakao, String saleInfo, List<Image> profileImage) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
         this.memberSignupTime = memberSignupTime;
         this.buyZipCode = buyZipCode;
+        this.buySido = buySido;
         this.buySimpleAddress = buySimpleAddress;
         this.buyDetailAddress = buyDetailAddress;
         this.saleZipCode = saleZipCode;
+        this.saleSido = saleSido;
         this.saleSimpleAddress = saleSimpleAddress;
         this.saleDetailAddress = saleDetailAddress;
         this.memberRole = memberRole;
@@ -65,6 +71,8 @@ public class RequestMember {
         this.profileImage = profileImage;
     }
 
+
+
     public Member toEntity(){
         return Member.builder()
                 .memberId(memberId)
@@ -73,9 +81,11 @@ public class RequestMember {
                 .memberName(memberName)
                 .memberSignupTime(memberSignupTime)
                 .buyZipCode(buyZipCode)
+                .buySido(buySido)
                 .buySimpleAddress(buySimpleAddress)
                 .buyDetailAddress(buyDetailAddress)
                 .saleZipCode(saleZipCode)
+                .saleSido(saleSido)
                 .saleSimpleAddress(saleSimpleAddress)
                 .saleDetailAddress(saleDetailAddress)
                 .memberRole(memberRole)
