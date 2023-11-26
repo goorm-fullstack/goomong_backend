@@ -29,5 +29,4 @@ public class RequestLogin {
                 .memberPassword(memberPassword)
                 .build();
     }
-
 }

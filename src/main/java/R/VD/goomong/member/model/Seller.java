@@ -63,6 +63,7 @@ public class Seller extends BaseTimeEntity {
     public ResponseSellerDto toResponseSellerDto() {
         return ResponseSellerDto.builder()
                 .description(description)
+                .name(name)
                 .reviewCnt(reviewCnt)
                 .income(income)
                 .rate(rate)

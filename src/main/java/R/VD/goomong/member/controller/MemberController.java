@@ -11,7 +11,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -91,6 +94,14 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
+    //회원 이름과 이메일로 회원 정보 찾기
+    @PostMapping("/findId")
+    public ResponseEntity<ResponseMember> findByMemberNameAndMemberEmail(RequestFindMember requestFindMember) {
+         Member member = memberService.findByMemberNameAndMemberEmail(requestFindMember.getMemberName(), requestFindMember.getMemberName());
+
+        return ResponseEntity.ok(new ResponseMember(member));
+    }
+
     //UPDATE
     // 회원 memberId로 회원 정보 수정
     @PutMapping("/update/memberId")
@@ -110,6 +121,14 @@ public class MemberController {
     @PutMapping("/update/password")
     public ResponseEntity<Member> updatePasswordByMemberId(@RequestBody RequestChangePassword requestChangePassword) {
         Member member = memberService.changePasswordByMemberId(requestChangePassword);
+
+        return ResponseEntity.ok(member);
+    }
+
+    //memberId로 비밀번호 찾기
+    @PutMapping("/update/findpassword")
+    public ResponseEntity<Member> findPasswordByMemberId(@RequestBody RequestFindPassword requestFindPassword) {
+        Member member = memberService.findPasswordByMemberId(requestFindPassword);
 
         return ResponseEntity.ok(member);
     }
@@ -179,7 +198,7 @@ public class MemberController {
 
     //카카오톡 로그인
     @GetMapping("/kakao/callback")
-    public String kakaoCallBack(@RequestParam String code, HttpServletResponse response3) {
+    public String kakaoCallBack(@RequestParam String code, HttpServletResponse response3) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -235,8 +254,8 @@ public class MemberController {
         System.out.println("카카오 회원번호: " + kakaoProfile.getId());
         System.out.println("카카오 이메일: " + kakaoProfile.getKakao_account().getEmail());
         System.out.println("카카오 유저네임: " + kakaoProfile.getKakao_account().getEmail() + "_" + kakaoProfile.getId());
-        System.out.println("블로그서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
-        System.out.println("블로그서버 패스워드: " + cosKey);
+        System.out.println("구몽서버 이메일: " + kakaoProfile.getKakao_account().getEmail());
+        System.out.println("구몽서버 패스워드: " + cosKey);
 
         Member kakaoMember = Member.builder()
                 .memberId(String.valueOf(kakaoProfile.getId()))
@@ -266,11 +285,11 @@ public class MemberController {
         requestLogin.setMemberPassword(cosKey);
         memberService.memberLogin(requestLogin);
 
-        Cookie cookie = new Cookie("memberId", String.valueOf(requestLogin.getMemberId()));
-        cookie.setMaxAge(60 * 30);
-        response3.addCookie(cookie);
+        Member member = memberService.findByMemberId(kakaoMember.getMemberId());
 
-        return "자동 회원가입 및 로그인 진행 완료";
+        response3.sendRedirect("http://localhost:3000?id="+member.getId());
+
+        return "kakao signup and login success";
     }
 
 }
