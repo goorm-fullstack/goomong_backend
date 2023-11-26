@@ -76,7 +76,7 @@ public class Post extends BaseTimeEntity {
     private LocalDateTime delDate; // 삭제 날짜
 
     @Column
-    private int commentCnt;
+    private Integer commentCnt;
 
     public ResponsePostDto toResponsePostDto() {
 
