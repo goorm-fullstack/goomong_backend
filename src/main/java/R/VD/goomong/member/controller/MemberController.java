@@ -222,7 +222,7 @@ public class MemberController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "116cb3fda2149f8eaddf828c4f308179");
-        params.add("redirect_uri", "http://localhost:8080/api/member/kakao/callback");
+        params.add("redirect_uri", "https://keba1da28866ea.user-app.krampoline.com/api/member/kakao/callback");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
