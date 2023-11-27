@@ -30,7 +30,7 @@ public class ChatMessageController {
     private final SimpMessagingTemplate template;
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("/chat/sendMessage")
+    @MessageMapping("/api/chat/sendMessage")
     public void sendMessage(@Payload RequestChatMessageDTO requestChatMessageDTO) {
 
         log.info("sendMessage : {}", requestChatMessageDTO);
