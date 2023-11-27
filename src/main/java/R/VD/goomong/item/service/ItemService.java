@@ -20,7 +20,9 @@ import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +46,7 @@ public class ItemService {
     private static ResponseItemPageDto getResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseItemDto> result) {
         if (categoryName != null && region != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
                     result.add(new ResponseItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -52,7 +54,7 @@ public class ItemService {
 
         if (categoryName != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName))
                     result.add(new ResponseItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -72,7 +74,7 @@ public class ItemService {
     private static ResponseItemPageDto getNonSaleResponseItemPageDtoByCategoryNameAndRegion(String categoryName, String region, Page<Item> items, List<ResponseNonSaleItemDto> result) {
         if (categoryName != null && region != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName) && item.getMember().getSaleSido() != null && region.contains(item.getMember().getSaleSido()))
                     result.add(new ResponseNonSaleItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -80,7 +82,7 @@ public class ItemService {
 
         if (categoryName != null) {
             for (Item item : items) {
-                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().get(0).getTitle().equals(categoryName))
+                if (item.getDelDate() == null && item.getItemCategories() != null && item.getItemCategories().size() > 0 && item.getItemCategories().get(0).getTitle().equals(categoryName))
                     result.add(new ResponseNonSaleItemDto(item));
             }
             return new ResponseItemPageDto(result, items.getTotalPages());
@@ -122,6 +124,23 @@ public class ItemService {
 
         ResponseItemPageDto result1 = getResponseItemPageDtoByCategoryNameAndRegion(categoryName, region, items, result);
         if (result1 != null) return result1;
+
+        for (Item item : items) {
+            if (item.getDelDate() == null) result.add(new ResponseItemDto(item));
+        }
+
+        return new ResponseItemPageDto(result, items.getTotalPages());
+    }
+
+    public ResponseItemPageDto getHotItem() {
+        Sort by = Sort.by(
+                Sort.Order.desc("salesCount"),
+                Sort.Order.desc("reviewCnt"),
+                Sort.Order.desc("rate")
+        );
+        Pageable pageable = PageRequest.of(0, 6, by);
+        Page<Item> items = itemRepository.findAllByStatus(Status.SALE, pageable);
+        List<ResponseItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
             if (item.getDelDate() == null) result.add(new ResponseItemDto(item));

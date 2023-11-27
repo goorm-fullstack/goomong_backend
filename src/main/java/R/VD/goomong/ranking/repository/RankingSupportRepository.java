@@ -1,7 +1,7 @@
 package R.VD.goomong.ranking.repository;
 
+import R.VD.goomong.member.model.Seller;
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static R.VD.goomong.item.model.QItem.item;
-import static R.VD.goomong.member.model.QMember.member;
+import static R.VD.goomong.member.model.QSeller.seller;
 import static R.VD.goomong.order.model.QOrder.order;
 import static R.VD.goomong.review.model.QReview.review;
 
@@ -20,30 +20,14 @@ public class RankingSupportRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<Tuple> calculateSellerRanking() {
-        JPAQuery<Tuple> query = jpaQueryFactory
-                .selectDistinct(
-                        item.member.id,
-                        item.member.memberName,
-                        item.member.saleSido, // 판매자 시/도
-                        item.count(),
-                        order.price.sum(),
-                        review.rate.avg(),
-                        review.id.count()
-                )
-                .from(order)
-                .join(order.orderItem, item)
-                .join(item.member, member)
-                .leftJoin(item.reviewList, review)
-                .groupBy(order)
-                .orderBy(item.count().desc())
-                .orderBy(order.price.sum().desc())
-                .orderBy(review.id.count().desc())
-                .orderBy(review.rate.avg().desc())
-                .limit(5);
-
-        return query.fetch();
+    public List<Seller> calculateSellerRanking() {
+        return jpaQueryFactory
+                .selectFrom(seller)
+                .orderBy(seller.transactionCnt.desc(), seller.income.desc(), seller.reviewCnt.desc(), seller.rate.desc())
+                .limit(5)
+                .fetch();
     }
+
 
     // 리뷰 순
     public List<Tuple> calculateTop5SellersByReviewCount(LocalDateTime start, LocalDateTime end) {

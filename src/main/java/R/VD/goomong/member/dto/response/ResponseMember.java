@@ -27,6 +27,8 @@ public class ResponseMember {
 
     private List<ResponseLikeDto> likeList; // 필요해서 추가합니다! @배진환 // 확인했습니다. @동규
 
+    private String memberAddress; // @배진환
+
     private LocalDateTime memberSignupTime;
 
     private List<Image> profileImages;
@@ -58,6 +60,7 @@ public class ResponseMember {
         this.memberName = member.getMemberName();
         this.memberEmail = member.getMemberEmail();
         this.memberSignupTime = member.getMemberSignupTime();
+        this.memberAddress = member.getSaleSimpleAddress() != null ? member.getSaleSimpleAddress() : member.getBuySimpleAddress() != null ? member.getBuySimpleAddress() : null;
         this.saleSido = member.getSaleSido();
         this.likeList = member.getLikeList() != null ? member.getLikeList().stream().map(Like::toResponseLikeDto).toList() : null; // likeList 필드 추가에 따른 추가 @배진환
         this.profileImages = member.getProfileImages();

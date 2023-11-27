@@ -29,6 +29,7 @@ public class Item extends BaseTimeEntity {
     private String title;//제목
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member;//작성자
 
@@ -58,8 +59,12 @@ public class Item extends BaseTimeEntity {
     @OneToMany(mappedBy = "item")
     private List<Ask> askList = new ArrayList<>();
 
+
     @Builder.Default
     private Float rate = 0F;//평점
+
+    @Builder.Default
+    private Long salesCount = 0L;
 
     @Column
     @Builder.Default
@@ -110,5 +115,14 @@ public class Item extends BaseTimeEntity {
         }
 
         rate = (result / reviewList.size());
+    }
+
+    public void incrementSalesCouning() {
+        this.salesCount++;
+    }
+
+    public void decremnetSalesCounting() {
+        if (this.salesCount > 0)
+            this.salesCount--;
     }
 }

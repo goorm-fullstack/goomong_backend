@@ -28,10 +28,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static R.VD.goomong.item.model.QItem.item;
-import static R.VD.goomong.order.model.QOrder.order;
-import static R.VD.goomong.review.model.QReview.review;
-
 @Slf4j
 @Service
 @EnableScheduling
@@ -62,33 +58,13 @@ public class RankingService {
                     .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
             ranking.setImagePath(seller.getImagePath());
         });
-        
+
         return list;
     }
 
     public List<ResponseTopRanking> getSellerRankings() {
-        List<ResponseTopRanking> rankings = rankingSupportRepository.calculateSellerRanking().stream()
-                .map(tuple -> ResponseTopRanking.builder()
-                        .memberId(tuple.get(item.member.id))
-                        .memberName(tuple.get(item.member.memberName))
-                        .saleSido(tuple.get(item.member.saleSido))
-                        .transaction(tuple.get(item.count()))
-                        .totalSales(tuple.get(order.price.sum()).longValue())
-                        .reviewCount(tuple.get(review.id.count()))
-                        .totalRating(tuple.get(review.rate.avg()))
-                        .build())
-                .toList();
-
-        rankings.forEach(ranking -> {
-            Long memberId = ranking.getMemberId();
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
-            Seller seller = sellerRepository.findByMemberId(member.getMemberId())
-                    .orElseThrow(() -> new RankingNotFoundException("멤버 id " + memberId + " 는 찾을 수 없습니다."));
-            ranking.setImagePath(seller.getImagePath());
-        });
-
-        return rankings;
+        return rankingSupportRepository.calculateSellerRanking().stream()
+                .map(ResponseTopRanking::new).toList();
     }
 
     @Transactional

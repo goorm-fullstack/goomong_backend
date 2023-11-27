@@ -82,6 +82,29 @@ public class SellerService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    // 페이징 처리 안된 전체 판매자 리스트 가져오기
+    public List<Seller> notPaging() {
+        return sellerRepository.findAll();
+    }
+
+    public Page<Seller> allByKeyword(String keyword, Pageable pageable, String region) {
+        Page<Seller> all = sellerRepository.findAllByMemberIdContainingIgnoreCaseOrNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, keyword, pageable);
+        List<Seller> list = new ArrayList<>();
+
+        if (region != null) {
+            for (Seller seller : all) {
+                if (seller.getDelDate() == null && seller.getSaleSido() != null && region.contains(seller.getSaleSido()))
+                    list.add(seller);
+            }
+            return new PageImpl<>(list, pageable, list.size());
+        }
+
+        for (Seller seller : all) {
+            if (seller.getDelDate() == null) list.add(seller);
+        }
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
     // 회원 정보를 통해 판매자 삭제
     public void deleteSellerByMemberId(String memberId) {
         Seller seller = sellerRepository.findByMemberId(memberId).orElse(null);
@@ -151,8 +174,9 @@ public class SellerService {
 
         Seller build = seller.toBuilder()
                 .reviewCnt(seller.getReviewCnt() != null ? seller.getReviewCnt() + 1 : 1)
-                .rate(seller.getRate() != null ? (seller.getRate() + review.getRate()) / (seller.getReviewCnt() + 1) : review.getRate())
+                .rate(seller.getRate() != null ? seller.getRate() + review.getRate() : review.getRate())
                 .build();
         sellerRepository.save(build);
     }
+
 }

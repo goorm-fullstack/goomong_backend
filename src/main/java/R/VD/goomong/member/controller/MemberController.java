@@ -1,5 +1,8 @@
 package R.VD.goomong.member.controller;
 
+import R.VD.goomong.global.model.PageInfo;
+import R.VD.goomong.item.dto.response.ResponseItemPageDto;
+import R.VD.goomong.item.model.Item;
 import R.VD.goomong.member.dto.request.*;
 import R.VD.goomong.member.dto.response.ResponseLogin;
 import R.VD.goomong.member.dto.response.ResponseMember;
@@ -7,15 +10,26 @@ import R.VD.goomong.member.model.KakaoOAuthToken;
 import R.VD.goomong.member.model.KakaoProfile;
 import R.VD.goomong.member.model.Member;
 import R.VD.goomong.member.service.MemberService;
+import R.VD.goomong.review.dto.response.ResponseReviewDto;
+import R.VD.goomong.review.model.Review;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,6 +41,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -97,7 +112,7 @@ public class MemberController {
     //회원 이름과 이메일로 회원 정보 찾기
     @PostMapping("/findId")
     public ResponseEntity<ResponseMember> findByMemberNameAndMemberEmail(RequestFindMember requestFindMember) {
-         Member member = memberService.findByMemberNameAndMemberEmail(requestFindMember.getMemberName(), requestFindMember.getMemberName());
+        Member member = memberService.findByMemberNameAndMemberEmail(requestFindMember.getMemberName(), requestFindMember.getMemberName());
 
         return ResponseEntity.ok(new ResponseMember(member));
     }
@@ -292,4 +307,66 @@ public class MemberController {
         return "kakao signup and login success";
     }
 
+    /**
+     * 회원아이디로 상품 리스트 페이징해서 가져오기 - @배진환
+     *
+     * @param memberId 회원 아이디
+     * @param pageable 페이징
+     * @return 조회된 상품 리스트
+     */
+    @Operation(summary = "회원아이디로 상품 리스트 페이징해서 가져오기")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "페이지에 표시할 갯수", example = "10"),
+            @Parameter(name = "page", description = "몇 번쨰 페이지인지", example = "0"),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "memberId", description = "회원 아이디", example = "회원아이디")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseItemPageDto.class)))
+    @GetMapping("/items")
+    public ResponseEntity<ResponseItemPageDto> getItem(@RequestParam String memberId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Item> memberItem = memberService.getMemberItem(memberId, pageable);
+        int totalPages = memberItem.getTotalPages();
+
+        return ResponseEntity.ok(new ResponseItemPageDto(memberItem.getContent(), totalPages));
+    }
+
+    /**
+     * 회원아이디로 리뷰 리스트 페이징해서 가져오기 - @배진환
+     *
+     * @param memberId 회원 아이디
+     * @param pageable 페이징
+     * @return 조회된 리뷰 리스트
+     */
+    @Operation(summary = "회원아이디로 리뷰 리스트 페이징해서 가져오기")
+    @Parameters(value = {
+            @Parameter(name = "size", description = "페이지에 표시할 갯수", example = "10"),
+            @Parameter(name = "page", description = "몇 번쨰 페이지인지", example = "0"),
+            @Parameter(name = "pageable", hidden = true),
+            @Parameter(name = "memberId", description = "회원 아이디", example = "회원아이디")
+    })
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ResponseReviewDto.class))))
+    @GetMapping("/reviews")
+    public ResponseEntity<List<ResponseReviewDto>> getReview(@RequestParam String memberId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Review> memberReview = memberService.getMemberReview(memberId, pageable);
+        int totalPages = memberReview.getTotalPages();
+        long totalElements = memberReview.getTotalElements();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+
+        List<ResponseReviewDto> list = new ArrayList<>();
+        for (Review review : memberReview.getContent()) {
+            ResponseReviewDto responseReviewDto = review.toResponseReviewDto();
+            PageInfo pageInfo = PageInfo.builder()
+                    .size(pageSize)
+                    .totalPage(totalPages)
+                    .totalElements(totalElements)
+                    .page(pageNumber)
+                    .build();
+            ResponseReviewDto result = responseReviewDto.toBuilder()
+                    .pageInfo(pageInfo)
+                    .build();
+            list.add(result);
+        }
+        return ResponseEntity.ok(list);
+    }
 }
