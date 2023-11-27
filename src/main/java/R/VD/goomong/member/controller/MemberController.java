@@ -302,7 +302,7 @@ public class MemberController {
 
         Member member = memberService.findByMemberId(kakaoMember.getMemberId());
 
-        response3.sendRedirect("https://k5fb919a75e08a.user-app.krampoline.com?id="+member.getId());
+        response3.sendRedirect("https://keba1da28866ea.user-app.krampoline.com/?id=" + member.getId());
 
         return "kakao signup and login success";
     }
