@@ -43,7 +43,7 @@ public class Item extends BaseTimeEntity {
     private List<ItemOption> itemOptions = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "item_id")
     private List<Image> thumbNailList = new ArrayList<>();//썸네일 리스트
 
     @Lob//긴 문자열 저장을 위한 어노테이션

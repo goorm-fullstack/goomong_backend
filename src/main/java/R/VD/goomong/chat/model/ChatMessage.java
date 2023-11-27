@@ -36,7 +36,7 @@ public class ChatMessage extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "chat_message_id")
     @Builder.Default
     private List<Image> imageList = new ArrayList<>();
 
