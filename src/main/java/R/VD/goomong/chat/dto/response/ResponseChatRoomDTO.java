@@ -30,7 +30,10 @@ public class ResponseChatRoomDTO {
         this.itemDto = item != null ? new ResponseItemDto(item) : null;
 
         ChatMessage lastChatMessage = findLastMessage(chatRoom.getMessages());
-        if (lastChatMessage != null) {
+        if (lastChatMessage == null) {
+            this.lastMessage = "";
+            this.lastDate = LocalDateTime.now();
+        } else {
             this.lastMessage = lastChatMessage.getMessage();
             this.lastDate = lastChatMessage.getRegDate();
         }
